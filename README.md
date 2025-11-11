@@ -1,19 +1,10 @@
-Currently Implemented:
-
- - SFML integration (window, rendering, input)
-
- - Basic engine loop and entity system
-
- - WPF project browser with custom templates (EP, 1P, 3P, TD)
-
- - Cross-language communication between C++ core and .NET front-end
-
-Planned Features:
-
- - ECS architecture
-
- - Scene graph and serialization
-
- - In-editor asset preview
-
- - Scripting and shader integration
+﻿- [x] Visual Studio solution with C++ engine and C# editor projects.
+- [x] C++ static-library scaffold with precompiled headers (no runtime functionality yet).
+- [x] .NET 8 WPF editor shell.
+- [x] Project-browser dialog shown on editor startup.
+- [x] Switching between Open Project and Create Project views.
+- [x] Project-browser UI layouts with project lists, preview areas, and action buttons (project actions are not wired up).
+- [x] Bindable new-project name and destination path fields.
+- [x] Shared property-change notification base for view models.
+- [x] Initial project-template model and unfinished template-discovery code.
+- [x] Prototype icons and screenshots for Empty, Top-Down, First-Person, and Third-Person projects.

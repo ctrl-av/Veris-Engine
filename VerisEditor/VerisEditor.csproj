@@ -6,8 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <BaseOutputPath>C:\Users\avinu\AppData\Local\Programs\Visual Studio Stuff\Projects\Veris\x64</BaseOutputPath>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
 </Project>

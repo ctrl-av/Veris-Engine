@@ -19,8 +19,8 @@ namespace VerisEditor.GameProject
     }
     class NewProject : ViewModelBase
     {
-        // get path from installation location
-        private readonly string _templatePath = @"..\..\VerisEditor\ProjectTemplates\";
+        private readonly string _templatePath = System.IO.Path.Combine(AppContext.BaseDirectory, "ProjectTemplates");
+        public IReadOnlyList<string> TemplateFiles { get; private set; } = Array.Empty<string>();
         private string _name = "NewProject";
         public string Name
         {
@@ -53,18 +53,7 @@ namespace VerisEditor.GameProject
         {
             try
             {
-                var templatesFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
-                Debug.Assert(templatesFiles.Any());
-                foreach (var file in templatesFiles)
-                {
-                    var template = new ProjectTemplate()
-                    {
-                        ProjectType = "Empty Project",
-                        ProjectFile = "project.veris",
-                        Folders = new List<string>() { ".Veris", "Content", "GameCode" }
-
-                    };
-                }
+                TemplateFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
             } catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message);

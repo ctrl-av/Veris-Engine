@@ -1,0 +1,26 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SfmlRoot>$(MSBuildThisFileDirectory)..\.dependencies\SFML-3.0.1\</SfmlRoot>
+    <SfmlDebugSuffix Condition="'$(Configuration)' == 'Debug'">-d</SfmlDebugSuffix>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SfmlRoot)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SfmlRoot)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics$(SfmlDebugSuffix).lib;sfml-window$(SfmlDebugSuffix).lib;sfml-system$(SfmlDebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Target Name="ValidateSfmlDependency" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="The SFML backend supports x64 builds only." />
+    <Error Condition="!Exists('$(SfmlRoot)include\SFML\Graphics.hpp')" Text="SFML is missing. Run powershell -File scripts/InitializeDependencies.ps1 from the repository root." />
+  </Target>
+  <Target Name="CopySfmlRuntime" AfterTargets="Build" Condition="'$(ConfigurationType)' == 'Application'">
+    <ItemGroup>
+      <SfmlRuntime Include="$(SfmlRoot)bin\sfml-graphics$(SfmlDebugSuffix)-3.dll;$(SfmlRoot)bin\sfml-window$(SfmlDebugSuffix)-3.dll;$(SfmlRoot)bin\sfml-system$(SfmlDebugSuffix)-3.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SfmlRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

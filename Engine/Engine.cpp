@@ -1,10 +1,5 @@
-// Engine.cpp : Defines the functions for the static library.
-//
-
 #include "pch.h"
-#include "framework.h"
+#include <SFML/Graphics.hpp>
 
-// TODO: This is an example of a library function
-void fnEngine()
-{
-}
+static_assert(SFML_VERSION_MAJOR == 3 && SFML_VERSION_MINOR == 0 && SFML_VERSION_PATCH == 1,
+    "Veris requires the pinned SFML 3.0.1 backend.");

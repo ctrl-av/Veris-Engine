@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # Repository-local build output
 /artifacts/
+/.dependencies/

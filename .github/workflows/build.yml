@@ -1,0 +1,56 @@
+name: Windows builds
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: microsoft/setup-msbuild@v2
+      - name: Cache verified native dependency
+        uses: actions/cache@v4
+        with:
+          path: .dependencies
+          key: sfml-windows-x64-${{ hashFiles('scripts/InitializeDependencies.ps1') }}
+      - name: Initialize native dependency
+        run: ./scripts/InitializeDependencies.ps1
+      - name: Build editor, engine, and native smoke check
+        run: msbuild Veris.sln /restore /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /verbosity:minimal /nologo
+      - name: Verify template discovery from another working directory
+        run: dotnet run --project Tests/ResourceDiscovery/ResourceDiscovery.csproj --configuration ${{ matrix.configuration }}
+      - name: Verify native graphics dependency
+        run: ./artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/RenderingDependency.exe
+      - name: Publish editor prototype
+        run: dotnet publish VerisEditor/VerisEditor.csproj --configuration ${{ matrix.configuration }} --no-build --no-restore --output artifacts/publish/editor
+      - name: Verify built editor resources
+        run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/bin/VerisEditor/${{ matrix.configuration }}/net8.0-windows
+      - name: Verify published editor resources
+        run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/publish/editor
+      - name: Check whitespace
+        run: git diff --check
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-${{ matrix.configuration }}
+          if-no-files-found: error
+          path: |
+            artifacts/publish/editor/
+            artifacts/bin/Engine/x64/${{ matrix.configuration }}/
+            artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/

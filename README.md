@@ -6,5 +6,10 @@
 - [x] Project-browser UI layouts with project lists, preview areas, and action buttons (project actions are not wired up).
 - [x] Bindable new-project name and destination path fields.
 - [x] Shared property-change notification base for view models.
-- [x] Initial project-template model and unfinished template-discovery code.
+- [x] Initial project-template model with application-relative descriptor discovery (descriptor parsing remains unimplemented).
 - [x] Prototype icons and screenshots for Empty, Top-Down, First-Person, and Third-Person projects.
+- [x] Version 1 scope and release acceptance criteria.
+- [x] Portable repository-local build output paths.
+- [x] Template assets copied beside the built and published editor.
+- [x] Pinned SFML 3.0.1 graphics dependency with checksum-verified setup and native smoke checks.
+- [x] Automated Windows Debug and Release builds with resource checks and build artifacts.

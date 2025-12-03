@@ -25,7 +25,6 @@ namespace VerisEditor
         {
             InitializeComponent();
             Loaded += OnMainWindowLoaded;
-            Loaded += (_, __) => MessageBox.Show("Editor booted!", "Hello");
 
         }
 

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\VerisEditor\Common\EditorLog.cs" Link="EditorLog.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\NewProject.cs" Link="NewProject.cs" />
     <Compile Include="..\..\VerisEditor\Common\ViewModelBase.cs" Link="ViewModelBase.cs" />
   </ItemGroup>

@@ -37,6 +37,8 @@ jobs:
         run: dotnet run --project Tests/ResourceDiscovery/ResourceDiscovery.csproj --configuration ${{ matrix.configuration }}
       - name: Verify native graphics dependency
         run: ./artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/RenderingDependency.exe
+      - name: Verify editor business rules
+        run: dotnet run --project Tests/EditorBehavior/EditorBehavior.csproj --configuration ${{ matrix.configuration }}
       - name: Publish editor prototype
         run: dotnet publish VerisEditor/VerisEditor.csproj --configuration ${{ matrix.configuration }} --no-build --no-restore --output artifacts/publish/editor
       - name: Verify built editor resources

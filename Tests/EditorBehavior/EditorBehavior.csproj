@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\VerisEditor\Common\EditorLog.cs" Link="EditorLog.cs" />
+    <Compile Include="..\..\VerisEditor\GameProject\ProjectDocument.cs" Link="ProjectDocument.cs" />
   </ItemGroup>
 </Project>

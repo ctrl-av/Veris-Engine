@@ -10,18 +10,12 @@ using System.Threading.Tasks;
 
 namespace VerisEditor.GameProject
 {
-    public class ProjectTemplate
-    {
-        public string ProjectType { get; set; }
-        public string ProjectFile { get; set; }
-        public List<string> Folders { get; set; }
-
-    }
     class NewProject : ViewModelBase
     {
         private readonly string _templatePath = System.IO.Path.Combine(AppContext.BaseDirectory, "ProjectTemplates");
         public IReadOnlyList<string> TemplateFiles { get; private set; } = Array.Empty<string>();
         public string ErrorMessage { get; private set; } = string.Empty;
+        public IReadOnlyList<ProjectTemplate> Templates { get; private set; } = Array.Empty<ProjectTemplate>();
         private string _name = "NewProject";
         public string Name
         {
@@ -55,6 +49,12 @@ namespace VerisEditor.GameProject
             try
             {
                 TemplateFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
+                Templates = ProjectTemplate.LoadAvailable(TemplateFiles, (descriptorPath, exception) =>
+                {
+                    EditorLog.Error($"Cannot load template {descriptorPath}.", exception);
+                    ErrorMessage += $"Cannot load template {System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(descriptorPath))}: {exception.Message}\n";
+                });
+                if (TemplateFiles.Count == 0) ErrorMessage = "No project templates were found in the installation.";
             } catch(Exception ex)
             {
                 EditorLog.Error("Cannot discover project templates.", ex);

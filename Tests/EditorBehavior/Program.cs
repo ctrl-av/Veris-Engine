@@ -14,6 +14,8 @@ internal static class Program
             Logging_UnwritableDestinationDoesNotCrash();
             ProjectFormat_RoundTripsIdentityAndSettings();
             ProjectFormat_RejectsInvalidDocuments();
+            Templates_LoadSupportedDescriptors();
+            Templates_RejectInvalidDescriptorsAndKeepValidOnes();
             Console.WriteLine("PASS: Editor behavior checks.");
             return 0;
         }
@@ -86,6 +88,33 @@ internal static class Program
         GameCodeDirectory = "GameCode",
         StartupScene = "Content/Scenes/Main.scene"
     };
+
+    private static void Templates_LoadSupportedDescriptors()
+    {
+        var descriptorPaths = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "ProjectTemplates"), "template.xml", SearchOption.AllDirectories);
+        var templates = ProjectTemplate.LoadAvailable(descriptorPaths, (_, exception) => throw exception);
+        Assert(templates.Count == 2, "Exactly Empty and Top-Down descriptors must be available.");
+        Assert(templates.Any(template => template.TemplateId == "empty") && templates.Any(template => template.TemplateId == "top-down"),
+            "Supported template identities must be loaded.");
+        Assert(templates.All(template => template.Folders.Contains("Content") && File.Exists(template.IconPath)),
+            "Loaded templates must provide folders and existing assets.");
+    }
+
+    private static void Templates_RejectInvalidDescriptorsAndKeepValidOnes()
+    {
+        var validDescriptor = Path.Combine(AppContext.BaseDirectory, "ProjectTemplates", "EmptyProject", "template.xml");
+        var invalidDescriptor = Path.Combine(TestDirectory, "template.xml");
+        var xml = File.ReadAllText(validDescriptor);
+        File.WriteAllText(invalidDescriptor, xml.Replace("<Id>empty</Id>", "<Id>../invalid</Id>"));
+        Reject<InvalidDataException>(() => ProjectTemplate.Load(invalidDescriptor));
+        var failures = new List<Exception>();
+        var templates = ProjectTemplate.LoadAvailable(new[] { invalidDescriptor, validDescriptor, validDescriptor }, (_, exception) => failures.Add(exception));
+        Assert(templates.Count == 1 && failures.Count == 2, "Invalid and duplicate templates must be skipped without dropping valid templates.");
+        File.WriteAllText(invalidDescriptor, xml.Replace("<Icon>Icon.png.png</Icon>", "<Icon>../outside.png</Icon>"));
+        Reject<InvalidDataException>(() => ProjectTemplate.Load(invalidDescriptor));
+        File.WriteAllText(invalidDescriptor, "<!DOCTYPE Template [<!ENTITY external SYSTEM 'file:///outside'>]><Template Version=\"1\">&external;</Template>");
+        Reject<System.Xml.XmlException>(() => ProjectTemplate.Load(invalidDescriptor));
+    }
 
     private static void Reject<TException>(Action operation) where TException : Exception
     {

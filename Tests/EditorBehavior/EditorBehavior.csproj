@@ -8,5 +8,7 @@
   <ItemGroup>
     <Compile Include="..\..\VerisEditor\Common\EditorLog.cs" Link="EditorLog.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\ProjectDocument.cs" Link="ProjectDocument.cs" />
+    <Compile Include="..\..\VerisEditor\GameProject\ProjectTemplate.cs" Link="ProjectTemplate.cs" />
+    <Content Include="..\..\VerisEditor\ProjectTemplates\**\*" Link="ProjectTemplates\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

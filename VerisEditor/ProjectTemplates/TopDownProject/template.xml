@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template Version="1">
+  <Id>top-down</Id>
+  <Name>Top-Down Project</Name>
+  <Description>A 2D top-down project layout. The preview is concept artwork; playable movement and example gameplay are not included yet.</Description>
+  <ProjectFile>project.veris</ProjectFile>
+  <Icon>Icon.png.png</Icon>
+  <Screenshot>Screenshot.png.png</Screenshot>
+  <Folders>
+    <Folder>.Veris</Folder>
+    <Folder>Content</Folder>
+    <Folder>GameCode</Folder>
+  </Folders>
+</Template>

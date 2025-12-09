@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template Version="1">
+  <Id>empty</Id>
+  <Name>Empty Project</Name>
+  <Description>A blank 2D project with Content and GameCode directories. Gameplay and scene setup start empty.</Description>
+  <ProjectFile>project.veris</ProjectFile>
+  <Icon>Icon.png.png</Icon>
+  <Screenshot>Screenshot.png.png</Screenshot>
+  <Folders>
+    <Folder>.Veris</Folder>
+    <Folder>Content</Folder>
+    <Folder>GameCode</Folder>
+  </Folders>
+</Template>

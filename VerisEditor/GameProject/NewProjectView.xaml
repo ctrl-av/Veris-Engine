@@ -11,22 +11,37 @@
         <local:NewProject />
     </UserControl.DataContext>
     <StackPanel Background="White">
-        <TextBlock Text="{Binding ErrorMessage}" Foreground="DarkRed" TextWrapping="Wrap" Margin="10,0,10,8" />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ListBox Width="195" Height="250"/>
-            <Border Width="400" Height="250" Margin="5,0,0,0"/>
+            <ListBox x:Name="TemplatesList" Width="195" Height="250" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="2,6">
+                            <Image Source="{Binding IconPath}" Width="36" Height="36" Stretch="Uniform" ImageFailed="OnTemplateImageFailed" />
+                            <TextBlock Text="{Binding ProjectType}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Border Width="400" Height="250" Margin="5,0,0,0" BorderBrush="LightGray" BorderThickness="1" Padding="8">
+                <StackPanel>
+                    <Image x:Name="TemplatePreview" Source="{Binding SelectedTemplate.ScreenshotPath}" Height="150" Stretch="Uniform" ImageFailed="OnTemplateImageFailed" />
+                    <TextBlock x:Name="TemplateName" Text="{Binding SelectedTemplate.ProjectType}" FontWeight="SemiBold" Margin="0,5,0,3" />
+                    <TextBlock Text="{Binding SelectedTemplate.Description}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
             <TextBlock Text="Name" Width="50"/>
-            <TextBox Width="550" Text="{Binding Name}"/>
+            <TextBox Width="550" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
             <TextBlock Text="Path" Width="50"/>
-            <TextBox Width="500" Text="{Binding Path}"/>
-            <Button Content="Browse" Width="45" Margin="5,0,0,0"/>
+            <TextBox Width="500" Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Browse" Width="45" Margin="5,0,0,0" Click="OnBrowse_Click"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
-            <Button Content="Create" Width="96" IsDefault="True"/>
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="DarkRed" TextWrapping="Wrap" Margin="100,8,100,0" MaxHeight="48" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+            <Button Content="Create" Width="96" IsEnabled="False" ToolTip="Project creation is not available."/>
             <Button Content="Exit" Width="96" Margin="30,0,0,0" IsCancel="True"/>
         </StackPanel>
     </StackPanel>

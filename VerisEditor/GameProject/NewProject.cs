@@ -14,8 +14,28 @@ namespace VerisEditor.GameProject
     {
         private readonly string _templatePath = System.IO.Path.Combine(AppContext.BaseDirectory, "ProjectTemplates");
         public IReadOnlyList<string> TemplateFiles { get; private set; } = Array.Empty<string>();
-        public string ErrorMessage { get; private set; } = string.Empty;
+        private string _errorMessage = string.Empty;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            internal set
+            {
+                _errorMessage = value;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
+        }
         public IReadOnlyList<ProjectTemplate> Templates { get; private set; } = Array.Empty<ProjectTemplate>();
+        private ProjectTemplate? _selectedTemplate;
+        public ProjectTemplate? SelectedTemplate
+        {
+            get => _selectedTemplate;
+            set
+            {
+                if (_selectedTemplate == value) return;
+                _selectedTemplate = value;
+                OnPropertyChanged(nameof(SelectedTemplate));
+            }
+        }
         private string _name = "NewProject";
         public string Name
         {
@@ -55,6 +75,7 @@ namespace VerisEditor.GameProject
                     ErrorMessage += $"Cannot load template {System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(descriptorPath))}: {exception.Message}\n";
                 });
                 if (TemplateFiles.Count == 0) ErrorMessage = "No project templates were found in the installation.";
+                SelectedTemplate = Templates.FirstOrDefault();
             } catch(Exception ex)
             {
                 EditorLog.Error("Cannot discover project templates.", ex);

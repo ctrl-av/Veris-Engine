@@ -39,6 +39,8 @@ jobs:
         run: ./artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/RenderingDependency.exe
       - name: Verify editor business rules
         run: dotnet run --project Tests/EditorBehavior/EditorBehavior.csproj --configuration ${{ matrix.configuration }}
+      - name: Verify template browser bindings
+        run: dotnet run --project Tests/EditorUi/EditorUi.csproj --configuration ${{ matrix.configuration }}
       - name: Publish editor prototype
         run: dotnet publish VerisEditor/VerisEditor.csproj --configuration ${{ matrix.configuration }} --no-build --no-restore --output artifacts/publish/editor
       - name: Verify built editor resources
@@ -56,3 +58,4 @@ jobs:
             artifacts/publish/editor/
             artifacts/bin/Engine/x64/${{ matrix.configuration }}/
             artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/
+            artifacts/bin/EditorUi/${{ matrix.configuration }}/net8.0-windows/template-browser.png

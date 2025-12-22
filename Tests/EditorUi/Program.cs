@@ -17,6 +17,7 @@ internal static class Program
             EditorLog.Initialize(Path.Combine(AppContext.BaseDirectory, "Logs"));
             var view = new NewProjectView();
             VerifyBrowserSelection(view);
+            VerifyLocationValidation(view);
             SavePreview(view);
             Console.WriteLine("PASS: Template browser selection, metadata, and preview bindings.");
             return 0;
@@ -47,6 +48,26 @@ internal static class Program
         view.Arrange(new Rect(0, 0, 800, 450));
         view.UpdateLayout();
         Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
+    }
+
+    private static void VerifyLocationValidation(NewProjectView view)
+    {
+        var name = (TextBox)view.FindName("ProjectNameInput");
+        var parent = (TextBox)view.FindName("ProjectParentInput");
+        var checkLocation = (Button)view.FindName("CheckLocationButton");
+        var status = (TextBlock)view.FindName("ValidationStatus");
+        parent.Text = AppContext.BaseDirectory;
+        name.Text = "Bad?Name";
+        checkLocation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Arrange(view);
+        Assert(status.Text.Contains("Invalid project-relative path"), "Validation errors must appear in the browser.");
+        name.Text = "UiValidationGame";
+        Arrange(view);
+        Assert(status.Text == "", "Editing inputs must clear stale validation feedback.");
+        checkLocation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Arrange(view);
+        Assert(status.Text.StartsWith("Location available:"), "A writable location must produce success feedback.");
+        Assert(!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "UiValidationGame")), "Checking a location must not create a project.");
     }
 
     private static void SavePreview(NewProjectView view)

@@ -3,13 +3,17 @@
 - [x] .NET 8 WPF editor shell.
 - [x] Project-browser dialog shown on editor startup.
 - [x] Switching between Open Project and Create Project views.
-- [x] Project-browser UI layouts with project lists, preview areas, and action buttons (project actions are not wired up).
+- [x] Project-browser UI layouts with project lists, preview areas, and action buttons (Open and Create are not wired up).
 - [x] Bindable new-project name and destination path fields.
 - [x] Shared property-change notification base for view models.
-- [x] Initial project-template model with application-relative descriptor discovery (descriptor parsing remains unimplemented).
+- [x] Validated Empty and Top-Down template loading with application-relative resource discovery.
 - [x] Prototype icons and screenshots for Empty, Top-Down, First-Person, and Third-Person projects.
 - [x] Version 1 scope and release acceptance criteria.
 - [x] Portable repository-local build output paths.
 - [x] Template assets copied beside the built and published editor.
 - [x] Pinned SFML 3.0.1 graphics dependency with checksum-verified setup and native smoke checks.
 - [x] Automated Windows Debug and Release builds with resource checks and build artifacts.
+- [x] Persistent editor logging and visible template and application error reporting.
+- [x] Versioned .veris JSON format with validated identity, paths, and window settings.
+- [x] Template browser with icons, descriptions, previews, selection, and folder browsing.
+- [x] Project location validation for names, destination conflicts, parent paths, and write access (project creation remains unimplemented).

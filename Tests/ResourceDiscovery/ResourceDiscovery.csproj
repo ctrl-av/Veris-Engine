@@ -9,6 +9,7 @@
     <Compile Include="..\..\VerisEditor\Common\EditorLog.cs" Link="EditorLog.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\ProjectDocument.cs" Link="ProjectDocument.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\ProjectTemplate.cs" Link="ProjectTemplate.cs" />
+    <Compile Include="..\..\VerisEditor\GameProject\ProjectCreationValidation.cs" Link="ProjectCreationValidation.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\NewProject.cs" Link="NewProject.cs" />
     <Compile Include="..\..\VerisEditor\Common\ViewModelBase.cs" Link="ViewModelBase.cs" />
   </ItemGroup>

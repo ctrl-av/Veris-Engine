@@ -32,15 +32,28 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
             <TextBlock Text="Name" Width="50"/>
-            <TextBox Width="550" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox x:Name="ProjectNameInput" Width="550" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
             <TextBlock Text="Path" Width="50"/>
-            <TextBox Width="500" Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox x:Name="ProjectParentInput" Width="500" Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Browse" Width="45" Margin="5,0,0,0" Click="OnBrowse_Click"/>
         </StackPanel>
         <TextBlock Text="{Binding ErrorMessage}" Foreground="DarkRed" TextWrapping="Wrap" Margin="100,8,100,0" MaxHeight="48" />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+        <TextBlock x:Name="ValidationStatus" Text="{Binding ValidationMessage}" TextWrapping="Wrap" Margin="100,4,100,0" MaxHeight="40">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="DarkRed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsProjectLocationValid}" Value="True">
+                            <Setter Property="Foreground" Value="DarkGreen" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+            <Button x:Name="CheckLocationButton" Content="Check Location" Width="110" Margin="0,0,15,0" Click="OnCheckLocation_Click" IsDefault="True" />
             <Button Content="Create" Width="96" IsEnabled="False" ToolTip="Project creation is not available."/>
             <Button Content="Exit" Width="96" Margin="30,0,0,0" IsCancel="True"/>
         </StackPanel>

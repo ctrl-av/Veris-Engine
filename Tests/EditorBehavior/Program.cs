@@ -4,19 +4,23 @@ using VerisEditor.GameProject;
 internal static class Program
 {
     private static readonly string TestDirectory = Path.Combine(AppContext.BaseDirectory, "BehaviorChecks", Guid.NewGuid().ToString("N"));
+    private static readonly Action[] Checks =
+    {
+        Logging_AppendsMessagesAndExceptionDetails, Logging_UnwritableDestinationDoesNotCrash,
+        ProjectFormat_RoundTripsIdentityAndSettings, ProjectFormat_RejectsInvalidDocuments,
+        Templates_LoadSupportedDescriptors, Templates_RejectInvalidDescriptorsAndKeepValidOnes,
+        Templates_RejectMissingAssetsAndInvalidFolders,
+        ProjectCreation_RejectsInvalidNamesAndLocations, ProjectCreation_ValidatesWithoutCreatingDirectories,
+        ProjectCreation_InputChangesInvalidatePriorValidation
+    };
 
     private static int Main()
     {
         Directory.CreateDirectory(TestDirectory);
         try
         {
-            Logging_AppendsMessagesAndExceptionDetails();
-            Logging_UnwritableDestinationDoesNotCrash();
-            ProjectFormat_RoundTripsIdentityAndSettings();
-            ProjectFormat_RejectsInvalidDocuments();
-            Templates_LoadSupportedDescriptors();
-            Templates_RejectInvalidDescriptorsAndKeepValidOnes();
-            Console.WriteLine("PASS: Editor behavior checks.");
+            foreach (var check in Checks) check();
+            Console.WriteLine($"PASS: {Checks.Length} editor behavior checks.");
             return 0;
         }
         catch (Exception exception)
@@ -122,4 +126,62 @@ internal static class Program
         catch (TException) { return; }
         throw new InvalidOperationException($"Expected {typeof(TException).Name}.");
     }
+
+    private static void ProjectCreation_RejectsInvalidNamesAndLocations()
+    {
+        var template = new NewProject().SelectedTemplate;
+        foreach (var name in new[] { "", "..", "../Outside", "nested/name", "Bad?Name", "CON", "NUL.txt", "COM1", "COM¹", " Game", "Game.", "Game " })
+            Reject<InvalidDataException>(() => ProjectCreationValidation.Validate(name, TestDirectory, template));
+        Directory.CreateDirectory(Path.Combine(TestDirectory, "ExistingGame"));
+        File.WriteAllText(Path.Combine(TestDirectory, "ExistingFile"), "Preserve this file.");
+        Reject<InvalidDataException>(() => ProjectCreationValidation.Validate("ExistingGame", TestDirectory, template));
+        Reject<InvalidDataException>(() => ProjectCreationValidation.Validate("ExistingFile", TestDirectory, template));
+        Reject<InvalidDataException>(() => ProjectCreationValidation.Validate("Game", "relative", template));
+        Reject<InvalidDataException>(() => ProjectCreationValidation.Validate("Game", Path.Combine(TestDirectory, "ExistingFile", "Nested"), template));
+        Reject<InvalidDataException>(() => ProjectCreationValidation.Validate("Game", TestDirectory, null));
+        Assert(File.ReadAllText(Path.Combine(TestDirectory, "ExistingFile")) == "Preserve this file.", "Validation must preserve conflicting files.");
+    }
+
+    private static void ProjectCreation_ValidatesWithoutCreatingDirectories()
+    {
+        var parentDirectory = Path.Combine(TestDirectory, "FutureParent", "Projects");
+        var destination = ProjectCreationValidation.Validate("NewGame", parentDirectory, new NewProject().SelectedTemplate);
+        Assert(destination == Path.Combine(parentDirectory, "NewGame"), "Validation must return the normalized destination.");
+        Assert(!Directory.Exists(Path.Combine(TestDirectory, "FutureParent")), "Validation must not create project or parent directories.");
+        Assert(!Directory.GetFiles(TestDirectory, ".veris-write-check-*").Any(), "Write probes must be removed after validation.");
+    }
+
+    private static void ProjectCreation_InputChangesInvalidatePriorValidation()
+    {
+        var newProject = new NewProject { Name = "ValidGame", Path = TestDirectory };
+        Assert(newProject.ValidateCreation() && newProject.IsProjectLocationValid, "Valid project inputs must pass.");
+        newProject.Name = "AnotherGame";
+        Assert(!newProject.IsProjectLocationValid && newProject.ValidationMessage == "", "Name changes must invalidate validation.");
+        Assert(newProject.ValidateCreation(), "Updated valid name must pass.");
+        newProject.Path = Path.Combine(TestDirectory, "AnotherParent");
+        Assert(!newProject.IsProjectLocationValid, "Parent folder changes must invalidate validation.");
+        Assert(newProject.ValidateCreation(), "Nonexistent parent under a writable ancestor must pass.");
+        newProject.SelectedTemplate = null;
+        Assert(!newProject.IsProjectLocationValid && !newProject.ValidateCreation(), "Template changes and missing selections must invalidate validation.");
+    }
+
+    private static void Templates_RejectMissingAssetsAndInvalidFolders()
+    {
+        var templateDirectory = Path.Combine(TestDirectory, "TemplateValidation");
+        Directory.CreateDirectory(templateDirectory);
+        var sourceDirectory = Path.Combine(AppContext.BaseDirectory, "ProjectTemplates", "EmptyProject");
+        foreach (var sourceFile in Directory.GetFiles(sourceDirectory))
+            File.Copy(sourceFile, Path.Combine(templateDirectory, Path.GetFileName(sourceFile)));
+        var descriptor = Path.Combine(templateDirectory, "template.xml");
+        var xml = File.ReadAllText(descriptor);
+        foreach (var invalidXml in new[] { xml.Replace("Version=\"1\"", "Version=\"2\""), xml.Replace("<Name>Empty Project</Name>", ""),
+            xml.Replace("<Icon>Icon.png.png</Icon>", "<Icon>missing.png</Icon>"), xml.Replace("<Folder>Content</Folder>", "<Folder>../Outside</Folder>"),
+            xml.Replace("<Folder>Content</Folder>", "<Folder>Content</Folder><Folder>content</Folder>"), xml.Replace("<Folder>GameCode</Folder>", ""),
+            xml.Replace("</Folders>", "<Folder>project.veris/Child</Folder></Folders>") })
+        {
+            File.WriteAllText(descriptor, invalidXml);
+            Reject<InvalidDataException>(() => ProjectTemplate.Load(descriptor));
+        }
+    }
+
 }

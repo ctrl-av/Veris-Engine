@@ -19,17 +19,21 @@ namespace VerisEditor.GameProject
 
         public static ProjectTemplate Load(string descriptorPath)
         {
-            using var reader = XmlReader.Create(descriptorPath, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null });
-            var root = XDocument.Load(reader).Root;
-            if (root?.Name != "Template" || (string?)root.Attribute("Version") != "1")
-                throw new InvalidDataException("Template must have a Template root with Version=1.");
+            var root = ReadRoot(descriptorPath);
+            var identity = ReadRequired(root, "Id");
+            if (identity.Any(character => !char.IsAsciiLetterOrDigit(character) && character != '-'))
+                throw new InvalidDataException("Template identity must contain ASCII letters, digits, or hyphens.");
             var templateDirectory = Path.GetDirectoryName(Path.GetFullPath(descriptorPath))!;
+            var projectFile = ReadProjectFile(root);
+            var folders = ReadFolders(root);
+            if (folders.Any(folder => folder.Split('/', '\\')[0].Equals(projectFile, StringComparison.OrdinalIgnoreCase)))
+                throw new InvalidDataException("Template folders cannot conflict with the project filename.");
             return new ProjectTemplate
             {
-                TemplateId = ReadIdentity(root), ProjectType = ReadRequired(root, "Name"),
-                Description = ReadRequired(root, "Description"), ProjectFile = ReadProjectFile(root),
+                TemplateId = identity, ProjectType = ReadRequired(root, "Name"),
+                Description = ReadRequired(root, "Description"), ProjectFile = projectFile,
                 IconPath = ReadAsset(root, "Icon", templateDirectory),
-                ScreenshotPath = ReadAsset(root, "Screenshot", templateDirectory), Folders = ReadFolders(root)
+                ScreenshotPath = ReadAsset(root, "Screenshot", templateDirectory), Folders = folders
             };
         }
 
@@ -53,12 +57,13 @@ namespace VerisEditor.GameProject
             return templates.AsReadOnly();
         }
 
-        private static string ReadIdentity(XElement root)
+        private static XElement ReadRoot(string descriptorPath)
         {
-            var identity = ReadRequired(root, "Id");
-            if (identity.Any(character => !char.IsAsciiLetterOrDigit(character) && character != '-'))
-                throw new InvalidDataException("Template identity must contain ASCII letters, digits, or hyphens.");
-            return identity;
+            using var reader = XmlReader.Create(descriptorPath, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null });
+            var root = XDocument.Load(reader).Root;
+            if (root?.Name != "Template" || (string?)root.Attribute("Version") != "1")
+                throw new InvalidDataException("Template must have a Template root with Version=1.");
+            return root;
         }
 
         private static string ReadProjectFile(XElement root)
@@ -88,7 +93,9 @@ namespace VerisEditor.GameProject
 
         private static string ReadAsset(XElement root, string elementName, string templateDirectory)
         {
-            var assetPath = ProjectPaths.Resolve(templateDirectory, ReadRequired(root, elementName));
+            var relativePath = ReadRequired(root, elementName);
+            ProjectPaths.ValidateRelative(relativePath);
+            var assetPath = Path.GetFullPath(Path.Combine(templateDirectory, relativePath));
             if (!File.Exists(assetPath)) throw new InvalidDataException($"Template {elementName} asset does not exist.");
             for (var directory = Path.GetDirectoryName(assetPath); directory != templateDirectory; directory = Path.GetDirectoryName(directory))
             {

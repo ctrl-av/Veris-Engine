@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -63,6 +64,13 @@ namespace VerisEditor.GameProject
 
     internal static class ProjectPaths
     {
+        private static readonly HashSet<string> ReservedNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "COM¹", "COM²", "COM³",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9", "LPT¹", "LPT²", "LPT³"
+        };
+
         public static void ValidateRelative(string relativePath)
         {
             if (string.IsNullOrWhiteSpace(relativePath) || Path.IsPathRooted(relativePath))
@@ -70,15 +78,10 @@ namespace VerisEditor.GameProject
             foreach (var segment in relativePath.Replace('\\', '/').Split('/'))
             {
                 if (segment is "" or "." or ".." || segment.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
-                    segment.EndsWith(' ') || segment.EndsWith('.'))
+                    segment.EndsWith(' ') || segment.EndsWith('.') || ReservedNames.Contains(segment.Split('.')[0]))
                     throw new InvalidDataException($"Invalid project-relative path: {relativePath}.");
             }
         }
 
-        public static string Resolve(string rootDirectory, string relativePath)
-        {
-            ValidateRelative(relativePath);
-            return Path.GetFullPath(Path.Combine(rootDirectory, relativePath));
-        }
     }
 }

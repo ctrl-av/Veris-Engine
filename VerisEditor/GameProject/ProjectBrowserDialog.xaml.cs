@@ -19,6 +19,7 @@ namespace VerisEditor.GameProject
     /// </summary>
     public partial class ProjectBrowserDialog : Window
     {
+        public string? SelectedProjectFile { get; set; }
         public ProjectBrowserDialog()
         {
             InitializeComponent();

@@ -19,6 +19,7 @@ internal static class Program
             VerifyBrowserSelection(view);
             VerifyLocationValidation(view);
             SavePreview(view);
+            VerifyProjectCreation(view);
             Console.WriteLine("PASS: Template browser selection, metadata, and preview bindings.");
             return 0;
         }
@@ -78,6 +79,24 @@ internal static class Program
         encoder.Frames.Add(BitmapFrame.Create(preview));
         using var screenshot = File.Create(Path.Combine(AppContext.BaseDirectory, "template-browser.png"));
         encoder.Save(screenshot);
+    }
+
+    private static void VerifyProjectCreation(NewProjectView view)
+    {
+        var parent = Path.Combine(AppContext.BaseDirectory, $"UiCreation-{Guid.NewGuid():N}");
+        try
+        {
+            ((TextBox)view.FindName("ProjectParentInput")).Text = parent;
+            ((TextBox)view.FindName("ProjectNameInput")).Text = "CreatedFromBrowser";
+            ((Button)view.FindName("CreateProjectButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var projectFile = Path.Combine(parent, "CreatedFromBrowser", "project.veris");
+            Assert(File.Exists(projectFile), "Create must generate a project from the current browser inputs.");
+            Assert(ProjectDocument.Parse(File.ReadAllText(projectFile)).Name == "CreatedFromBrowser", "Create must persist the entered name.");
+        }
+        finally
+        {
+            if (Directory.Exists(parent)) Directory.Delete(parent, true);
+        }
     }
 
     private static void Assert(bool condition, string message)

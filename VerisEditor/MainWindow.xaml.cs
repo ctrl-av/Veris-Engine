@@ -37,13 +37,13 @@ namespace VerisEditor
         private void OpenProjectBrowserDialog()
         {
             var projectBrowser = new ProjectBrowserDialog();
-            if (projectBrowser.ShowDialog() == false)
+            if (projectBrowser.ShowDialog() != true)
             {
                 Application.Current.Shutdown();
             }
             else
             {
-
+                Title = $"Veris Editor - {System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(projectBrowser.SelectedProjectFile))}";
             }
         }
     }

@@ -53,8 +53,18 @@
             </TextBlock.Style>
         </TextBlock>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
-            <Button x:Name="CheckLocationButton" Content="Check Location" Width="110" Margin="0,0,15,0" Click="OnCheckLocation_Click" IsDefault="True" />
-            <Button Content="Create" Width="96" IsEnabled="False" ToolTip="Project creation is not available."/>
+            <Button x:Name="CheckLocationButton" Content="Check Location" Width="110" Margin="0,0,15,0" Click="OnCheckLocation_Click" />
+            <Button x:Name="CreateProjectButton" Content="Create" Width="96" Click="OnCreate_Click" IsDefault="True">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedTemplate}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Button Content="Exit" Width="96" Margin="30,0,0,0" IsCancel="True"/>
         </StackPanel>
     </StackPanel>

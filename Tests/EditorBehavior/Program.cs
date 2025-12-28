@@ -1,7 +1,7 @@
 using VerisEditor;
 using VerisEditor.GameProject;
 
-internal static class Program
+internal static partial class Program
 {
     private static readonly string TestDirectory = Path.Combine(AppContext.BaseDirectory, "BehaviorChecks", Guid.NewGuid().ToString("N"));
     private static readonly Action[] Checks =
@@ -11,7 +11,9 @@ internal static class Program
         Templates_LoadSupportedDescriptors, Templates_RejectInvalidDescriptorsAndKeepValidOnes,
         Templates_RejectMissingAssetsAndInvalidFolders,
         ProjectCreation_RejectsInvalidNamesAndLocations, ProjectCreation_ValidatesWithoutCreatingDirectories,
-        ProjectCreation_InputChangesInvalidatePriorValidation
+        ProjectCreation_InputChangesInvalidatePriorValidation,
+        CreateProject_WritesProjectAndTemplateFolders, CreateProject_RejectsExistingDestination,
+        CreateProject_RemovesFailedStagingDirectory
     };
 
     private static int Main()

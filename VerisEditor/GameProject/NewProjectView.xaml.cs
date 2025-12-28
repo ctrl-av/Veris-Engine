@@ -36,6 +36,27 @@ namespace VerisEditor.GameProject
             ((NewProject)DataContext).ValidateCreation();
         }
 
+        private void OnCreate_Click(object sender, RoutedEventArgs e)
+        {
+            var newProject = (NewProject)DataContext;
+            if (!newProject.ValidateCreation()) return;
+            try
+            {
+                var projectFile = ProjectFiles.Create(newProject.Name, newProject.Path, newProject.SelectedTemplate!);
+                EditorLog.Info($"Created project: {projectFile}");
+                if (Window.GetWindow(this) is ProjectBrowserDialog browser)
+                {
+                    browser.SelectedProjectFile = projectFile;
+                    browser.DialogResult = true;
+                }
+            }
+            catch (Exception exception)
+            {
+                EditorLog.Error("Cannot create project.", exception);
+                newProject.ErrorMessage = $"Cannot create project: {exception.Message}";
+            }
+        }
+
         private void OnTemplateImageFailed(object sender, ExceptionRoutedEventArgs e)
         {
             EditorLog.Error("Cannot display a template image.", e.ErrorException);

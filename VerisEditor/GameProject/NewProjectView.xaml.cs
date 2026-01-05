@@ -46,8 +46,7 @@ namespace VerisEditor.GameProject
                 EditorLog.Info($"Created project: {projectFile}");
                 if (Window.GetWindow(this) is ProjectBrowserDialog browser)
                 {
-                    browser.SelectedProjectFile = projectFile;
-                    browser.DialogResult = true;
+                    browser.SelectProject(projectFile, ProjectFiles.Open(projectFile));
                 }
             }
             catch (Exception exception)

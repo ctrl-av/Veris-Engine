@@ -38,4 +38,35 @@ internal static partial class Program
             "Failed creation must remove its staging directory without publishing a partial project.");
         Assert(!Directory.Exists(Path.Combine(parent, "Outside")), "Template folders must not escape the staging directory.");
     }
+
+    private static void OpenProject_ReloadsCreatedAndMovedProjects()
+    {
+        var projectFile = ProjectFiles.Create("OpenGame", Path.Combine(TestDirectory, "Opening"), new NewProject().SelectedTemplate!);
+        var project = ProjectFiles.Open(projectFile);
+        var relocatedDirectory = Path.Combine(TestDirectory, "RelocatedGame");
+        Directory.Move(Path.GetDirectoryName(projectFile)!, relocatedDirectory);
+        var relocatedProject = ProjectFiles.Open(Path.Combine(relocatedDirectory, "project.veris"));
+        Assert(project.ProjectId == relocatedProject.ProjectId && relocatedProject.Name == "OpenGame",
+            "Opening after moving a project must preserve its identity and relative directories.");
+    }
+
+    private static void OpenProject_RejectsMalformedOrIncompleteProjects()
+    {
+        var projectFile = ProjectFiles.Create("IncompleteGame", TestDirectory, new NewProject().SelectedTemplate!);
+        Directory.Delete(Path.Combine(Path.GetDirectoryName(projectFile)!, "Content"));
+        Reject<FileNotFoundException>(() => ProjectFiles.Open(projectFile));
+        File.WriteAllText(projectFile, "invalid json");
+        Reject<InvalidDataException>(() => ProjectFiles.Open(projectFile));
+        Reject<InvalidDataException>(() => ProjectFiles.Open(Path.ChangeExtension(projectFile, ".txt")));
+    }
+
+    private static void OpenProject_FailureClearsLoadedState()
+    {
+        var projectFile = ProjectFiles.Create("StateGame", TestDirectory, new NewProject().SelectedTemplate!);
+        var openProject = new OpenProject { ProjectFile = projectFile };
+        Assert(openProject.Open() && openProject.OpenedProject != null, "A valid project must load into the browser.");
+        File.WriteAllText(projectFile, "{}");
+        Assert(!openProject.Open() && openProject.OpenedProject == null && openProject.ErrorMessage.Length > 0,
+            "An opening failure must clear stale loaded state and display an error.");
+    }
 }

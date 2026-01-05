@@ -11,6 +11,7 @@
     <Compile Include="..\..\VerisEditor\GameProject\ProjectTemplate.cs" Link="ProjectTemplate.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\ProjectCreationValidation.cs" Link="ProjectCreationValidation.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\ProjectFiles.cs" Link="ProjectFiles.cs" />
+    <Compile Include="..\..\VerisEditor\GameProject\OpenProject.cs" Link="OpenProject.cs" />
     <Compile Include="..\..\VerisEditor\GameProject\NewProject.cs" Link="NewProject.cs" />
     <Compile Include="..\..\VerisEditor\Common\ViewModelBase.cs" Link="ViewModelBase.cs" />
     <Content Include="..\..\VerisEditor\ProjectTemplates\**\*" Link="ProjectTemplates\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

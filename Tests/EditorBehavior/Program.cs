@@ -13,7 +13,8 @@ internal static partial class Program
         ProjectCreation_RejectsInvalidNamesAndLocations, ProjectCreation_ValidatesWithoutCreatingDirectories,
         ProjectCreation_InputChangesInvalidatePriorValidation,
         CreateProject_WritesProjectAndTemplateFolders, CreateProject_RejectsExistingDestination,
-        CreateProject_RemovesFailedStagingDirectory
+        CreateProject_RemovesFailedStagingDirectory, OpenProject_ReloadsCreatedAndMovedProjects,
+        OpenProject_RejectsMalformedOrIncompleteProjects, OpenProject_FailureClearsLoadedState
     };
 
     private static int Main()

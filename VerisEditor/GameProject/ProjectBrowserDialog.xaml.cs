@@ -19,10 +19,17 @@ namespace VerisEditor.GameProject
     /// </summary>
     public partial class ProjectBrowserDialog : Window
     {
-        public string? SelectedProjectFile { get; set; }
+        public string? SelectedProjectFile { get; private set; }
+        public ProjectDocument? SelectedProject { get; private set; }
         public ProjectBrowserDialog()
         {
             InitializeComponent();
+        }
+        public void SelectProject(string projectFile, ProjectDocument project)
+        {
+            SelectedProjectFile = projectFile;
+            SelectedProject = project;
+            DialogResult = true;
         }
         private void OnToggleButton_Click(object sender, RoutedEventArgs e)
         {

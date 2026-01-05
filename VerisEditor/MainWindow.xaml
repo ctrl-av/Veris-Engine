@@ -6,7 +6,12 @@
         xmlns:local="clr-namespace:VerisEditor"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" 
         Title="Veris Editor" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <StackPanel Margin="25">
+        <TextBlock Text="{Binding Name}" FontSize="24" FontWeight="SemiBold" />
+        <TextBlock x:Name="ProjectFileLocation" TextWrapping="Wrap" Margin="0,10,0,15" />
+        <TextBlock Text="{Binding ContentDirectory, StringFormat=Content directory: {0}}" />
+        <TextBlock Text="{Binding GameCodeDirectory, StringFormat=Game code directory: {0}}" />
+        <TextBlock Text="{Binding WindowWidth, StringFormat=Window width: {0}}" />
+        <TextBlock Text="{Binding WindowHeight, StringFormat=Window height: {0}}" />
+    </StackPanel>
 </Window>

@@ -43,7 +43,9 @@ namespace VerisEditor
             }
             else
             {
-                Title = $"Veris Editor - {System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(projectBrowser.SelectedProjectFile))}";
+                DataContext = projectBrowser.SelectedProject;
+                Title = $"Veris Editor - {projectBrowser.SelectedProject!.Name}";
+                ProjectFileLocation.Text = projectBrowser.SelectedProjectFile;
             }
         }
     }

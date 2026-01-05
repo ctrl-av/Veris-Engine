@@ -18,8 +18,9 @@ internal static class Program
             var view = new NewProjectView();
             VerifyBrowserSelection(view);
             VerifyLocationValidation(view);
-            SavePreview(view);
+            SavePreview(view, "template-browser.png");
             VerifyProjectCreation(view);
+            VerifyProjectOpening();
             Console.WriteLine("PASS: Template browser selection, metadata, and preview bindings.");
             return 0;
         }
@@ -43,7 +44,7 @@ internal static class Program
         Assert(preview.Source is BitmapSource bitmap && bitmap.PixelWidth > 0, "Selection must load a usable preview image.");
     }
 
-    private static void Arrange(NewProjectView view)
+    private static void Arrange(FrameworkElement view)
     {
         view.Measure(new Size(800, 450));
         view.Arrange(new Rect(0, 0, 800, 450));
@@ -71,13 +72,13 @@ internal static class Program
         Assert(!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "UiValidationGame")), "Checking a location must not create a project.");
     }
 
-    private static void SavePreview(NewProjectView view)
+    private static void SavePreview(FrameworkElement view, string filename)
     {
         var preview = new RenderTargetBitmap(800, 450, 96, 96, PixelFormats.Pbgra32);
         preview.Render(view);
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(preview));
-        using var screenshot = File.Create(Path.Combine(AppContext.BaseDirectory, "template-browser.png"));
+        using var screenshot = File.Create(Path.Combine(AppContext.BaseDirectory, filename));
         encoder.Save(screenshot);
     }
 
@@ -97,6 +98,37 @@ internal static class Program
         {
             if (Directory.Exists(parent)) Directory.Delete(parent, true);
         }
+    }
+
+    private static void VerifyProjectOpening()
+    {
+        var parent = Path.Combine(AppContext.BaseDirectory, $"UiOpening-{Guid.NewGuid():N}");
+        try
+        {
+            var template = ProjectTemplate.Load(Path.Combine(AppContext.BaseDirectory, "ProjectTemplates", "EmptyProject", "template.xml"));
+            var projectFile = ProjectFiles.Create("OpenedFromBrowser", parent, template);
+            var view = new OpenProjectView();
+            VerifyOpenViewState(view, projectFile);
+        }
+        finally
+        {
+            if (Directory.Exists(parent)) Directory.Delete(parent, true);
+        }
+    }
+
+    private static void VerifyOpenViewState(OpenProjectView view, string projectFile)
+    {
+        ((TextBox)view.FindName("OpenProjectFileInput")).Text = projectFile;
+        var open = (Button)view.FindName("OpenProjectButton");
+        open.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Arrange(view);
+        Assert(((TextBlock)view.FindName("OpenedProjectName")).Text == "OpenedFromBrowser", "Open must display the loaded project name.");
+        SavePreview(view, "open-project.png");
+        File.WriteAllText(projectFile, "{}");
+        open.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Arrange(view);
+        Assert(((TextBlock)view.FindName("OpenProjectError")).Text.Length > 0, "Invalid projects must produce visible errors.");
+        Assert(((TextBlock)view.FindName("OpenedProjectName")).Text == "", "Failed opening must clear stale project details.");
     }
 
     private static void Assert(bool condition, string message)

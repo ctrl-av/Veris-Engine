@@ -14,7 +14,9 @@ internal static partial class Program
         ProjectCreation_InputChangesInvalidatePriorValidation,
         CreateProject_WritesProjectAndTemplateFolders, CreateProject_RejectsExistingDestination,
         CreateProject_RemovesFailedStagingDirectory, OpenProject_ReloadsCreatedAndMovedProjects,
-        OpenProject_RejectsMalformedOrIncompleteProjects, OpenProject_FailureClearsLoadedState
+        OpenProject_RejectsMalformedOrIncompleteProjects, OpenProject_FailureClearsLoadedState,
+        RecentProjects_PersistsOrderAndDeduplicatesMovedProjects, RecentProjects_HandlesMissingFilesAndRemoval,
+        RecentProjects_LimitsHistoryAndPreservesCorruptHistory
     };
 
     private static int Main()

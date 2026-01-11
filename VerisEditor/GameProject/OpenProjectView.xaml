@@ -4,12 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VerisEditor.GameProject"
-             mc:Ignorable="d" Width="800"
+             mc:Ignorable="d" Width="800" Background="White"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <local:OpenProject />
     </UserControl.DataContext>
     <StackPanel Background="White" Margin="100,15">
+        <TextBlock Text="Recent projects" FontWeight="SemiBold" />
+        <ListBox x:Name="RecentProjectsList" Height="125" Margin="0,5,0,0" ItemsSource="{Binding RecentProjectEntries}" SelectedItem="{Binding SelectedRecentProject, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="3">
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding ProjectFile}" FontSize="11" TextTrimming="CharacterEllipsis" MaxWidth="550" />
+                        <TextBlock Text="Missing file - browse to its new location or remove this entry." Foreground="DarkRed">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button x:Name="RemoveRecentProjectButton" Content="Remove from recent projects" HorizontalAlignment="Right" Click="OnRemoveRecent_Click" Margin="0,3,0,8" />
         <TextBlock Text="Project file" FontWeight="SemiBold" />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBox x:Name="OpenProjectFileInput" Width="500" Text="{Binding ProjectFile, UpdateSourceTrigger=PropertyChanged}" />

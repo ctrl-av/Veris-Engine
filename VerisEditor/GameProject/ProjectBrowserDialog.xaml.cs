@@ -19,6 +19,8 @@ namespace VerisEditor.GameProject
     /// </summary>
     public partial class ProjectBrowserDialog : Window
     {
+        private readonly RecentProjects _recentProjects = new();
+        public string HistoryWarning { get; private set; } = string.Empty;
         public string? SelectedProjectFile { get; private set; }
         public ProjectDocument? SelectedProject { get; private set; }
         public ProjectBrowserDialog()
@@ -29,6 +31,15 @@ namespace VerisEditor.GameProject
         {
             SelectedProjectFile = projectFile;
             SelectedProject = project;
+            try
+            {
+                _recentProjects.Record(projectFile, project);
+            }
+            catch (Exception exception)
+            {
+                EditorLog.Error("Project opened, but recent project history could not be saved.", exception);
+                HistoryWarning = $"Project opened. Recent projects could not be saved: {exception.Message}";
+            }
             DialogResult = true;
         }
         private void OnToggleButton_Click(object sender, RoutedEventArgs e)

@@ -33,5 +33,10 @@ namespace VerisEditor.GameProject
             if (openProject.Open() && Window.GetWindow(this) is ProjectBrowserDialog browser)
                 browser.SelectProject(openProject.ProjectFile, openProject.OpenedProject!);
         }
+
+        private void OnRemoveRecent_Click(object sender, RoutedEventArgs e)
+        {
+            ((OpenProject)DataContext).RemoveSelectedRecentProject();
+        }
     }
 }

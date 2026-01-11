@@ -13,5 +13,6 @@
         <TextBlock Text="{Binding GameCodeDirectory, StringFormat=Game code directory: {0}}" />
         <TextBlock Text="{Binding WindowWidth, StringFormat=Window width: {0}}" />
         <TextBlock Text="{Binding WindowHeight, StringFormat=Window height: {0}}" />
+        <TextBlock x:Name="ProjectStatus" Foreground="DarkRed" TextWrapping="Wrap" Margin="0,15,0,0" />
     </StackPanel>
 </Window>

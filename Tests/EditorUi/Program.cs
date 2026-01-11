@@ -107,8 +107,19 @@ internal static class Program
         {
             var template = ProjectTemplate.Load(Path.Combine(AppContext.BaseDirectory, "ProjectTemplates", "EmptyProject", "template.xml"));
             var projectFile = ProjectFiles.Create("OpenedFromBrowser", parent, template);
-            var view = new OpenProjectView();
+            var history = new RecentProjects(Path.Combine(parent, "history.json"));
+            history.Record(projectFile, ProjectFiles.Open(projectFile));
+            var view = new OpenProjectView { DataContext = new OpenProject(history) };
+            Arrange(view);
+            var recentProjects = (ListBox)view.FindName("RecentProjectsList");
+            Assert(recentProjects.Items.Count == 1, "Persisted recent projects must populate the browser.");
+            recentProjects.SelectedIndex = 0;
+            Arrange(view);
+            Assert(((TextBox)view.FindName("OpenProjectFileInput")).Text == projectFile, "Selecting a recent project must populate its file path.");
             VerifyOpenViewState(view, projectFile);
+            ((Button)view.FindName("RemoveRecentProjectButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Arrange(view);
+            Assert(recentProjects.Items.Count == 0 && File.Exists(projectFile), "Removing history must refresh the browser without deleting the project.");
         }
         finally
         {

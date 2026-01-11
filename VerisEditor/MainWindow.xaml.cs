@@ -46,6 +46,7 @@ namespace VerisEditor
                 DataContext = projectBrowser.SelectedProject;
                 Title = $"Veris Editor - {projectBrowser.SelectedProject!.Name}";
                 ProjectFileLocation.Text = projectBrowser.SelectedProjectFile;
+                ProjectStatus.Text = projectBrowser.HistoryWarning;
             }
         }
     }

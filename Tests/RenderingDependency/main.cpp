@@ -1,20 +1,60 @@
+#include "../../Engine/Engine.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <stdexcept>
+
+void Require(bool condition, const char* message)
+{
+    if (!condition) throw std::runtime_error(message);
+}
+
+template<typename Exception, typename Operation>
+void Reject(Operation operation)
+{
+    try { operation(); }
+    catch (const Exception&) { return; }
+    throw std::runtime_error("Expected lifecycle operation to fail.");
+}
+
+void VerifyGraphicsDependency()
+{
+    const sf::RectangleShape rectangle({8.f, 4.f});
+    const sf::Image source({2, 2}, sf::Color::Red);
+    sf::Image destination({4, 4}, sf::Color::Black);
+    Require(destination.copy(source, {1, 1}) && destination.getPixel({1, 1}) == sf::Color::Red &&
+        destination.getPixel({0, 0}) == sf::Color::Black && rectangle.getLocalBounds().size == sf::Vector2f{8.f, 4.f},
+        "SFML graphics dependency check failed.");
+}
+
+void VerifyEngineLifecycle()
+{
+    Veris::Engine engine;
+    Reject<std::logic_error>([&] { engine.Update(); });
+    Reject<std::logic_error>([&] { engine.GetFrame(); });
+    Reject<std::invalid_argument>([&] { engine.Initialize({0, 8}); });
+    Require(!engine.IsInitialized(), "Failed initialization must leave the engine stopped.");
+    engine.Initialize({8, 8});
+    engine.Update();
+    Require(engine.CompletedFrames() == 1 && engine.GetFrame().getSize() == sf::Vector2u{8, 8}, "Update must produce a frame.");
+    Require(engine.GetFrame().copyToImage().getPixel({0, 0}) == Veris::Engine::BackgroundColor, "Update must clear the render target.");
+    Reject<std::logic_error>([&] { engine.Initialize({16, 16}); });
+    Require(engine.CompletedFrames() == 1, "Duplicate initialization must preserve the active session.");
+    engine.Shutdown();
+    engine.Shutdown();
+    Require(!engine.IsInitialized() && engine.CompletedFrames() == 0, "Shutdown must release state.");
+    Reject<std::logic_error>([&] { engine.Update(); });
+    engine.Initialize({4, 4});
+    engine.Update();
+    Require(engine.CompletedFrames() == 1, "Reinitialization must begin a new session.");
+}
 
 int main()
 {
     try
     {
-        const sf::RectangleShape rectangle({8.f, 4.f});
-        const sf::Image source({2, 2}, sf::Color::Red);
-        sf::Image destination({4, 4}, sf::Color::Black);
-        if (!destination.copy(source, {1, 1}) || destination.getPixel({1, 1}) != sf::Color::Red ||
-            destination.getPixel({0, 0}) != sf::Color::Black || rectangle.getLocalBounds().size != sf::Vector2f{8.f, 4.f})
-        {
-            throw std::runtime_error("SFML graphics dependency smoke check failed.");
-        }
-        std::cout << "PASS: SFML graphics headers, import libraries, and runtime DLLs work.\n";
+        VerifyGraphicsDependency();
+        VerifyEngineLifecycle();
+        std::cout << "PASS: Graphics dependency and engine lifecycle checks.\n";
         return 0;
     }
     catch (const std::exception& exception)

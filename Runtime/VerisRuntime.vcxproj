@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C16A0A77-443C-4D29-AB6A-7E67D576C641}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseDebugLibraries Condition="'$(Configuration)' == 'Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="..\Engine\SFML.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\.dependencies\json-3.12.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>ole32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Project.cpp" />
+    <ClInclude Include="Project.h" />
+    <ProjectReference Include="..\Engine\Engine.vcxproj"><Project>{0EEAB40B-D677-42C8-880D-57FAA02EA4E8}</Project></ProjectReference>
+  </ItemGroup>
+  <Target Name="ValidateJsonDependency" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\.dependencies\json-3.12.0\include\nlohmann\json.hpp')" Text="JSON dependency is missing. Run powershell -File scripts/InitializeDependencies.ps1." />
+  </Target>
+  <Target Name="CopyDependencyLicenses" AfterTargets="Build">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\.dependencies\json-3.12.0\LICENSE.MIT" DestinationFiles="$(OutDir)licenses\nlohmann-json.txt" />
+    <Copy SourceFiles="$(SfmlRoot)license.md" DestinationFiles="$(OutDir)licenses\SFML.md" />
+  </Target>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -20,6 +20,20 @@ try {
     }
 
     Write-Output 'SFML 3.0.1 (MSVC v143, x64) is ready.'
+    $jsonDirectory = Join-Path $dependencyDirectory 'json-3.12.0'
+    $jsonFiles = @(
+        @{ Path = 'include\nlohmann\json.hpp'; Url = 'https://raw.githubusercontent.com/nlohmann/json/v3.12.0/single_include/nlohmann/json.hpp'; Hash = 'AAF127C04CB31C406E5B04A63F1AE89369FCCDE6D8FA7CDDA1ED4F32DFC5DE63' },
+        @{ Path = 'LICENSE.MIT'; Url = 'https://raw.githubusercontent.com/nlohmann/json/v3.12.0/LICENSE.MIT'; Hash = '46A65CFFD1EA955132D95A8DD921640714A8D6B537D2E4E482D31145AE95B603' }
+    )
+    foreach ($jsonFile in $jsonFiles) {
+        $destination = Join-Path $jsonDirectory $jsonFile.Path
+        New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
+        if (!(Test-Path -LiteralPath $destination)) { Invoke-WebRequest -Uri $jsonFile.Url -OutFile $destination }
+        if ((Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash -ne $jsonFile.Hash) {
+            throw "JSON dependency checksum mismatch: $destination. Remove this file and run setup again."
+        }
+    }
+    Write-Output 'nlohmann/json 3.12.0 is ready.'
 }
 catch {
     Write-Error "Native dependency setup failed: $_"

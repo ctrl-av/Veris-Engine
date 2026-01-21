@@ -1,9 +1,9 @@
-﻿- [x] Visual Studio solution with C++ engine and C# editor projects.
-- [x] C++ static-library scaffold with precompiled headers (no runtime functionality yet).
+- [x] Visual Studio solution with C++ engine, standalone runtime, and C# editor projects.
+- [x] C++ static library with an owned render target and initialization, update, shutdown, and reinitialization.
 - [x] .NET 8 WPF editor shell.
 - [x] Project-browser dialog shown on editor startup.
 - [x] Switching between Open Project and Create Project views.
-- [x] Project-browser UI layouts with project lists, preview areas, and action buttons (Open and Create are not wired up).
+- [x] Project-browser UI with working Create, Open, Browse, and recent-project actions.
 - [x] Bindable new-project name and destination path fields.
 - [x] Shared property-change notification base for view models.
 - [x] Validated Empty and Top-Down template loading with application-relative resource discovery.
@@ -16,4 +16,8 @@
 - [x] Persistent editor logging and visible template and application error reporting.
 - [x] Versioned .veris JSON format with validated identity, paths, and window settings.
 - [x] Template browser with icons, descriptions, previews, selection, and folder browsing.
-- [x] Project location validation for names, destination conflicts, parent paths, and write access (project creation remains unimplemented).
+- [x] Project location validation for names, destination conflicts, parent paths, and write access.
+- [x] Atomic project creation with template folders, project identity, and failure cleanup.
+- [x] Existing-project opening with document and directory validation.
+- [x] Persisted recent projects with ordering, deduplication, moved-project updates, and missing-file handling.
+- [x] Standalone native executable that loads a project and presents empty engine frames (scenes and gameplay remain unimplemented).

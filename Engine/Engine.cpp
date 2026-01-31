@@ -27,6 +27,17 @@ namespace Veris
         ++_completedFrames;
     }
 
+    void Engine::Resize(sf::Vector2u viewportSize)
+    {
+        if (!IsInitialized()) throw std::logic_error("Initialize the engine before resizing it.");
+        if (viewportSize.x == 0 || viewportSize.y == 0) throw std::invalid_argument("Viewport dimensions must be positive.");
+        if (_renderTarget->getSize() == viewportSize) return;
+        auto renderTarget = std::make_unique<sf::RenderTexture>(viewportSize);
+        renderTarget->clear(BackgroundColor);
+        renderTarget->display();
+        _renderTarget = std::move(renderTarget);
+    }
+
     void Engine::Shutdown() noexcept
     {
         _renderTarget.reset();

@@ -17,6 +17,7 @@ namespace Veris
 
         void Initialize(sf::Vector2u viewportSize);
         void Update();
+        void Resize(sf::Vector2u viewportSize);
         void Shutdown() noexcept;
         bool IsInitialized() const noexcept { return _renderTarget != nullptr; }
         std::uint64_t CompletedFrames() const noexcept { return _completedFrames; }

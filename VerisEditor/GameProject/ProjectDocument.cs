@@ -24,6 +24,9 @@ namespace VerisEditor.GameProject
         public string? StartupScene { get; init; }
         public int WindowWidth { get; init; } = 1280;
         public int WindowHeight { get; init; } = 720;
+        public string WindowMode { get; init; } = "windowed";
+        public bool WindowResizable { get; init; } = true;
+        public bool VerticalSync { get; init; } = true;
 
         public static ProjectDocument Parse(string projectJson)
         {
@@ -59,6 +62,8 @@ namespace VerisEditor.GameProject
             if (StartupScene != null) ProjectPaths.ValidateRelative(StartupScene);
             if (WindowWidth < 1 || WindowHeight < 1)
                 throw new InvalidDataException("Window dimensions must be positive.");
+            if (WindowMode is not ("windowed" or "fullscreen"))
+                throw new InvalidDataException("Window mode must be windowed or fullscreen.");
         }
     }
 

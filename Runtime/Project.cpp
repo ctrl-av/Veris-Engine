@@ -12,7 +12,7 @@
 
 namespace
 {
-    const std::unordered_set<std::string> ProjectKeys{"formatVersion", "projectId", "name", "templateId", "contentDirectory", "gameCodeDirectory", "startupScene", "windowWidth", "windowHeight"};
+    const std::unordered_set<std::string> ProjectKeys{"formatVersion", "projectId", "name", "templateId", "contentDirectory", "gameCodeDirectory", "startupScene", "windowWidth", "windowHeight", "windowMode", "windowResizable", "verticalSync"};
     const std::wstring Whitespace = L" \t\n\v\f\r\u0085\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000";
     const std::unordered_set<std::wstring> ReservedNames{
         L"CON", L"PRN", L"AUX", L"NUL", L"CONIN$", L"CONOUT$",
@@ -24,6 +24,8 @@ namespace
     std::filesystem::path ReadRelativePath(const nlohmann::json& document, const char* key);
     std::filesystem::path ResolveDirectory(const std::filesystem::path& root, const std::filesystem::path& relativePath);
     unsigned int ReadDimension(const nlohmann::json& document, const char* key, unsigned int defaultDimension);
+    bool ReadBoolean(const nlohmann::json& document, const char* key);
+    Veris::WindowMode ReadWindowMode(const nlohmann::json& document);
 }
 
 Veris::RuntimeProject Veris::LoadProject(const std::filesystem::path& projectFile)
@@ -39,7 +41,8 @@ Veris::RuntimeProject Veris::LoadProject(const std::filesystem::path& projectFil
     const auto gameCode = ResolveDirectory(root, ReadRelativePath(document, "gameCodeDirectory"));
     if (_wcsicmp(content.c_str(), gameCode.c_str()) == 0) throw std::runtime_error("Content and game code directories must be distinct.");
     return {fullProjectFile, ReadText(document, "name"), content, gameCode,
-        {ReadDimension(document, "windowWidth", 1280), ReadDimension(document, "windowHeight", 720)}};
+        {{ReadDimension(document, "windowWidth", 1280), ReadDimension(document, "windowHeight", 720)},
+            ReadWindowMode(document), ReadBoolean(document, "windowResizable"), ReadBoolean(document, "verticalSync")}};
 }
 
 namespace
@@ -124,5 +127,20 @@ namespace
         if (!dimension.is_number_integer() || dimension < 1 || dimension > std::numeric_limits<int>::max())
             throw std::runtime_error(std::string("Window dimension must be a positive 32-bit integer: ") + key);
         return dimension.get<unsigned int>();
+    }
+
+    bool ReadBoolean(const nlohmann::json& document, const char* key)
+    {
+        if (!document.contains(key)) return true;
+        if (!document.at(key).is_boolean()) throw std::runtime_error(std::string("Window setting must be a boolean: ") + key);
+        return document.at(key).get<bool>();
+    }
+
+    Veris::WindowMode ReadWindowMode(const nlohmann::json& document)
+    {
+        const auto mode = document.contains("windowMode") ? ReadText(document, "windowMode") : "windowed";
+        if (mode == "windowed") return Veris::WindowMode::Windowed;
+        if (mode == "fullscreen") return Veris::WindowMode::Fullscreen;
+        throw std::runtime_error("Window mode must be windowed or fullscreen.");
     }
 }

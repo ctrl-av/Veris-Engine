@@ -1,3 +1,4 @@
+#include "Checks.h"
 #include "../../Engine/Engine.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -6,14 +7,6 @@
 void Require(bool condition, const char* message)
 {
     if (!condition) throw std::runtime_error(message);
-}
-
-template<typename Exception, typename Operation>
-void Reject(Operation operation)
-{
-    try { operation(); }
-    catch (const Exception&) { return; }
-    throw std::runtime_error("Expected lifecycle operation to fail.");
 }
 
 void VerifyGraphicsDependency()
@@ -54,6 +47,7 @@ int main()
     {
         VerifyGraphicsDependency();
         VerifyEngineLifecycle();
+        VerifyWindowManagement();
         std::cout << "PASS: Graphics dependency and engine lifecycle checks.\n";
         return 0;
     }

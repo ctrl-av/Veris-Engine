@@ -72,7 +72,7 @@ internal static partial class Program
         Assert(reopenedProject.ProjectId == project.ProjectId && reopenedProject.Name == project.Name,
             "Project identity must survive serialization.");
         Assert(reopenedProject.ContentDirectory == "Content" && reopenedProject.GameCodeDirectory == "GameCode" &&
-            reopenedProject.StartupScene == "Content/Scenes/Main.scene" && reopenedProject.WindowWidth == 1280,
+            reopenedProject.StartupScene == "Content/Scenes/Main.scene" && reopenedProject.WindowWidth == 1280 && reopenedProject.WindowMode == "fullscreen" && !reopenedProject.VerticalSync && !reopenedProject.WindowResizable,
             "Project paths and settings must survive serialization.");
     }
 
@@ -85,6 +85,8 @@ internal static partial class Program
         Reject<InvalidDataException>(() => ProjectDocument.Parse("{}"));
         Reject<InvalidDataException>(() => ProjectDocument.Parse("null"));
         Reject<InvalidDataException>(() => ProjectDocument.Parse("invalid json"));
+        Reject<InvalidDataException>(() => ProjectDocument.Parse(json.Replace("\"fullscreen\"", "\"invalid\"")));
+        Reject<InvalidDataException>(() => ProjectDocument.Parse(json.Replace("\"verticalSync\": false", "\"verticalSync\": 1")));
     }
 
     private static ProjectDocument CreateProjectDocument() => new()
@@ -95,7 +97,8 @@ internal static partial class Program
         TemplateId = "empty",
         ContentDirectory = "Content",
         GameCodeDirectory = "GameCode",
-        StartupScene = "Content/Scenes/Main.scene"
+        StartupScene = "Content/Scenes/Main.scene",
+        WindowMode = "fullscreen", WindowResizable = false, VerticalSync = false
     };
 
     private static void Templates_LoadSupportedDescriptors()

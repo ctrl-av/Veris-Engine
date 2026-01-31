@@ -11,7 +11,7 @@ namespace
 {
     std::pair<std::filesystem::path, std::uint64_t> ReadArguments(int count, wchar_t* arguments[]);
     int RunProject(const Veris::RuntimeProject& project, std::uint64_t frameLimit);
-    void RunFrames(sf::RenderWindow& window, Veris::Engine& engine, std::uint64_t frameLimit);
+    void RunFrames(Veris::GameWindow& window, Veris::Engine& engine, std::uint64_t frameLimit);
 }
 
 int wmain(int count, wchar_t* arguments[])
@@ -51,9 +51,8 @@ namespace
     int RunProject(const Veris::RuntimeProject& project, std::uint64_t frameLimit)
     {
         Veris::Engine engine;
-        engine.Initialize(project.WindowSize);
-        sf::RenderWindow window(sf::VideoMode(project.WindowSize), sf::String::fromUtf8(project.Name.begin(), project.Name.end()), sf::Style::Titlebar | sf::Style::Close);
-        window.setVerticalSyncEnabled(true);
+        engine.Initialize(project.Window.Size);
+        Veris::GameWindow window(project.Window, project.Name);
         std::cout << "Loaded " << project.Name << " from " << project.ProjectFile.u8string() << '\n';
         RunFrames(window, engine, frameLimit);
         std::cout << "Completed " << engine.CompletedFrames() << " frames.\n";
@@ -61,17 +60,16 @@ namespace
         return 0;
     }
 
-    void RunFrames(sf::RenderWindow& window, Veris::Engine& engine, std::uint64_t frameLimit)
+    void RunFrames(Veris::GameWindow& window, Veris::Engine& engine, std::uint64_t frameLimit)
     {
-        while (window.isOpen() && (frameLimit == 0 || engine.CompletedFrames() < frameLimit))
+        while (window.IsOpen() && (frameLimit == 0 || engine.CompletedFrames() < frameLimit))
         {
-            while (const auto event = window.pollEvent())
-                if (event->is<sf::Event::Closed>()) window.close();
-            if (!window.isOpen()) break;
+            while (window.PollEvent()) { }
+            if (!window.IsOpen()) break;
+            if (!window.CanRender()) { sf::sleep(sf::milliseconds(10)); continue; }
+            engine.Resize(window.ViewportSize());
             engine.Update();
-            window.clear(Veris::Engine::BackgroundColor);
-            window.draw(sf::Sprite(engine.GetFrame()));
-            window.display();
+            window.Present(engine.GetFrame());
         }
     }
 }

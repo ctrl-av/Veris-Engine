@@ -4,6 +4,7 @@
 
 void Require(bool condition, const char* message);
 void VerifyWindowManagement();
+void VerifyFrameTiming();
 
 template<typename Exception, typename Operation>
 void Reject(Operation operation)

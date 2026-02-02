@@ -48,6 +48,7 @@ int main()
         VerifyGraphicsDependency();
         VerifyEngineLifecycle();
         VerifyWindowManagement();
+        VerifyFrameTiming();
         std::cout << "PASS: Graphics dependency and engine lifecycle checks.\n";
         return 0;
     }

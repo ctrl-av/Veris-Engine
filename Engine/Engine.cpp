@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include <SFML/Config.hpp>
 #include <stdexcept>
+#include <cmath>
 
 static_assert(SFML_VERSION_MAJOR == 3 && SFML_VERSION_MINOR == 0 && SFML_VERSION_PATCH == 1,
     "Veris requires the pinned SFML 3.0.1 backend.");
@@ -27,6 +28,14 @@ namespace Veris
         ++_completedFrames;
     }
 
+    void Engine::FixedUpdate(double stepSeconds)
+    {
+        if (!IsInitialized()) throw std::logic_error("Initialize the engine before simulating it.");
+        if (!std::isfinite(stepSeconds) || stepSeconds <= 0) throw std::invalid_argument("Simulation step must be finite and positive.");
+        _simulationSeconds += stepSeconds;
+        ++_completedFixedUpdates;
+    }
+
     void Engine::Resize(sf::Vector2u viewportSize)
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before resizing it.");
@@ -42,6 +51,8 @@ namespace Veris
     {
         _renderTarget.reset();
         _completedFrames = 0;
+        _completedFixedUpdates = 0;
+        _simulationSeconds = 0;
     }
 
     const sf::Texture& Engine::GetFrame() const

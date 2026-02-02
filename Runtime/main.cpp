@@ -1,4 +1,5 @@
 #include "../Engine/Engine.h"
+#include "../Engine/FrameClock.h"
 #include "Project.h"
 #include <SFML/Graphics.hpp>
 #include <algorithm>
@@ -62,11 +63,15 @@ namespace
 
     void RunFrames(Veris::GameWindow& window, Veris::Engine& engine, std::uint64_t frameLimit)
     {
+        Veris::FrameClock clock;
+        const auto fixedUpdate = [&engine](double step) { engine.FixedUpdate(step); };
         while (window.IsOpen() && (frameLimit == 0 || engine.CompletedFrames() < frameLimit))
         {
             while (window.PollEvent()) { }
             if (!window.IsOpen()) break;
+            if (!window.HasFocus() || !window.CanRender()) clock.Pause(); else clock.Resume();
             if (!window.CanRender()) { sf::sleep(sf::milliseconds(10)); continue; }
+            clock.Tick(fixedUpdate);
             engine.Resize(window.ViewportSize());
             engine.Update();
             window.Present(engine.GetFrame());

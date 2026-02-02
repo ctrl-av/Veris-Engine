@@ -17,14 +17,19 @@ namespace Veris
 
         void Initialize(sf::Vector2u viewportSize);
         void Update();
+        void FixedUpdate(double stepSeconds);
         void Resize(sf::Vector2u viewportSize);
         void Shutdown() noexcept;
         bool IsInitialized() const noexcept { return _renderTarget != nullptr; }
         std::uint64_t CompletedFrames() const noexcept { return _completedFrames; }
+        std::uint64_t CompletedFixedUpdates() const noexcept { return _completedFixedUpdates; }
+        double SimulationSeconds() const noexcept { return _simulationSeconds; }
         const sf::Texture& GetFrame() const;
 
     private:
         std::unique_ptr<sf::RenderTexture> _renderTarget;
         std::uint64_t _completedFrames = 0;
+        std::uint64_t _completedFixedUpdates = 0;
+        double _simulationSeconds = 0;
     };
 }

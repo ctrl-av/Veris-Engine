@@ -5,6 +5,9 @@
 void Require(bool condition, const char* message);
 void VerifyWindowManagement();
 void VerifyFrameTiming();
+void VerifyKeyboardTransitions();
+void VerifyMouseAndFocus();
+void VerifyInputFocusLoss();
 
 template<typename Exception, typename Operation>
 void Reject(Operation operation)

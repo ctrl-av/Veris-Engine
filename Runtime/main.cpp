@@ -65,9 +65,11 @@ namespace
     {
         Veris::FrameClock clock;
         const auto fixedUpdate = [&engine](double step) { engine.FixedUpdate(step); };
+        if (!window.HasFocus()) engine.Input().HandleEvent(sf::Event::FocusLost{});
         while (window.IsOpen() && (frameLimit == 0 || engine.CompletedFrames() < frameLimit))
         {
-            while (window.PollEvent()) { }
+            engine.Input().BeginFrame();
+            while (const auto event = window.PollEvent()) engine.Input().HandleEvent(*event);
             if (!window.IsOpen()) break;
             if (!window.HasFocus() || !window.CanRender()) clock.Pause(); else clock.Resume();
             if (!window.CanRender()) { sf::sleep(sf::milliseconds(10)); continue; }

@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <cstdint>
 #include <memory>
+#include "Input.h"
 
 namespace Veris
 {
@@ -24,6 +25,7 @@ namespace Veris
         std::uint64_t CompletedFrames() const noexcept { return _completedFrames; }
         std::uint64_t CompletedFixedUpdates() const noexcept { return _completedFixedUpdates; }
         double SimulationSeconds() const noexcept { return _simulationSeconds; }
+        InputState& Input() { return _input; }
         const sf::Texture& GetFrame() const;
 
     private:
@@ -31,5 +33,6 @@ namespace Veris
         std::uint64_t _completedFrames = 0;
         std::uint64_t _completedFixedUpdates = 0;
         double _simulationSeconds = 0;
+        InputState _input;
     };
 }

@@ -49,6 +49,9 @@ int main()
         VerifyEngineLifecycle();
         VerifyWindowManagement();
         VerifyFrameTiming();
+        VerifyKeyboardTransitions();
+        VerifyMouseAndFocus();
+        VerifyInputFocusLoss();
         std::cout << "PASS: Graphics dependency and engine lifecycle checks.\n";
         return 0;
     }

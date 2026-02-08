@@ -52,6 +52,8 @@ int main()
         VerifyKeyboardTransitions();
         VerifyMouseAndFocus();
         VerifyInputFocusLoss();
+        VerifyActionAggregation();
+        VerifyActionRebindingAndQuickTaps();
         std::cout << "PASS: Graphics dependency and engine lifecycle checks.\n";
         return 0;
     }

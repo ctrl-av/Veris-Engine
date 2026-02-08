@@ -77,4 +77,24 @@ Invoke-RuntimeCheck 'trailing-json' 1
 [IO.File]::WriteAllText($projectFile, 'invalid json')
 Invoke-RuntimeCheck 'malformed-json' 1
 [IO.File]::WriteAllText($projectFile, ($projectSettings | ConvertTo-Json))
+$metadataDirectory = Join-Path $fixtureDirectory '.Veris'
+New-Item -ItemType Directory -Path $metadataDirectory -Force | Out-Null
+$inputConfigurationFile = Join-Path $metadataDirectory 'input-actions.json'
+$validInputConfiguration = '{"formatVersion":1,"actions":{"Quit":["Key:Escape"],"Fire":["Mouse:Left","Key:Space"]}}'
+[IO.File]::WriteAllText($inputConfigurationFile, $validInputConfiguration)
+Invoke-RuntimeCheck 'valid-action-configuration' 0
+$invalidInputConfigurations = @(
+    @{ Name = 'unknown-input-key'; Json = '{"formatVersion":1,"actions":{"Fire":["Key:NotAKey"]}}' },
+    @{ Name = 'duplicate-input-binding'; Json = '{"formatVersion":1,"actions":{"Fire":["Key:A","Key:A"]}}' },
+    @{ Name = 'empty-input-binding'; Json = '{"formatVersion":1,"actions":{"Fire":[]}}' },
+    @{ Name = 'invalid-action-name'; Json = '{"formatVersion":1,"actions":{"Bad Name":["Key:A"]}}' },
+    @{ Name = 'invalid-input-version'; Json = '{"formatVersion":2,"actions":{}}' },
+    @{ Name = 'invalid-input-type'; Json = '{"formatVersion":1,"actions":{"Fire":[1]}}' },
+    @{ Name = 'malformed-input-configuration'; Json = 'invalid json' }
+)
+foreach ($invalidInputConfiguration in $invalidInputConfigurations) {
+    [IO.File]::WriteAllText($inputConfigurationFile, $invalidInputConfiguration.Json)
+    Invoke-RuntimeCheck $invalidInputConfiguration.Name 1
+}
+[IO.File]::WriteAllText($inputConfigurationFile, $validInputConfiguration)
 Write-Output "Runtime check fixtures and diagnostics: $fixtureDirectory"

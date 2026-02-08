@@ -5,6 +5,19 @@ namespace VerisEditor.GameProject
 {
     public static class ProjectFiles
     {
+        private const string DefaultInputActions = """
+            {
+              "formatVersion": 1,
+              "actions": {
+                "Quit": ["Key:Escape"],
+                "MoveUp": ["Key:W", "Key:Up"],
+                "MoveDown": ["Key:S", "Key:Down"],
+                "MoveLeft": ["Key:A", "Key:Left"],
+                "MoveRight": ["Key:D", "Key:Right"],
+                "Fire": ["Mouse:Left"]
+              }
+            }
+            """;
         public static ProjectDocument Open(string projectFile)
         {
             var fullProjectFile = Path.GetFullPath(projectFile);
@@ -62,6 +75,9 @@ namespace VerisEditor.GameProject
                 TemplateId = template.TemplateId, ContentDirectory = "Content", GameCodeDirectory = "GameCode"
             };
             File.WriteAllText(Path.Combine(stagingDirectory, template.ProjectFile), project.Serialize());
+            var metadataDirectory = Path.Combine(stagingDirectory, ".Veris");
+            Directory.CreateDirectory(metadataDirectory);
+            File.WriteAllText(Path.Combine(metadataDirectory, "input-actions.json"), DefaultInputActions);
         }
     }
 }

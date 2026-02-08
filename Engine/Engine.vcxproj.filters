@@ -18,6 +18,7 @@
     <ClInclude Include="Window.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="FrameClock.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="Input.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="InputActions.h"><Filter>Header Files</Filter></ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -32,6 +33,7 @@
     <ClCompile Include="Window.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="FrameClock.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="Input.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="InputActions.cpp"><Filter>Source Files</Filter></ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

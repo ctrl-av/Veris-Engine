@@ -8,6 +8,8 @@ void VerifyFrameTiming();
 void VerifyKeyboardTransitions();
 void VerifyMouseAndFocus();
 void VerifyInputFocusLoss();
+void VerifyActionAggregation();
+void VerifyActionRebindingAndQuickTaps();
 
 template<typename Exception, typename Operation>
 void Reject(Operation operation)

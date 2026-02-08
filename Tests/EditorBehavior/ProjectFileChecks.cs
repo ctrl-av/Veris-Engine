@@ -11,6 +11,9 @@ internal static partial class Program
             "Creation must generate a valid new project from its selected template.");
         foreach (var folder in template.Folders)
             Assert(Directory.Exists(Path.Combine(Path.GetDirectoryName(projectFile)!, folder)), "Creation must generate template folders.");
+        using var inputActions = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(Path.GetDirectoryName(projectFile)!, ".Veris", "input-actions.json")));
+        Assert(inputActions.RootElement.GetProperty("formatVersion").GetInt32() == 1 &&
+            inputActions.RootElement.GetProperty("actions").GetProperty("Quit")[0].GetString() == "Key:Escape", "Creation must write usable default action bindings.");
         Assert(!Directory.GetDirectories(Path.GetDirectoryName(Path.GetDirectoryName(projectFile))!, ".veris-create-*").Any(),
             "Successful creation must not leave staging directories.");
     }

@@ -37,6 +37,7 @@
     <ClCompile Include="WindowChecks.cpp" />
     <ClCompile Include="TimingChecks.cpp" />
     <ClCompile Include="InputChecks.cpp" />
+    <ClCompile Include="ActionChecks.cpp" />
     <ClInclude Include="Checks.h" />
     <ProjectReference Include="..\..\Engine\Engine.vcxproj">
       <Project>{0EEAB40B-D677-42C8-880D-57FAA02EA4E8}</Project>

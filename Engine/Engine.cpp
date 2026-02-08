@@ -54,6 +54,7 @@ namespace Veris
         _completedFixedUpdates = 0;
         _simulationSeconds = 0;
         _input = InputState{};
+        _actions = InputActions{};
     }
 
     const sf::Texture& Engine::GetFrame() const

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 #include "Input.h"
+#include "InputActions.h"
 
 namespace Veris
 {
@@ -26,6 +27,7 @@ namespace Veris
         std::uint64_t CompletedFixedUpdates() const noexcept { return _completedFixedUpdates; }
         double SimulationSeconds() const noexcept { return _simulationSeconds; }
         InputState& Input() { return _input; }
+        InputActions& Actions() { return _actions; }
         const sf::Texture& GetFrame() const;
 
     private:
@@ -34,5 +36,6 @@ namespace Veris
         std::uint64_t _completedFixedUpdates = 0;
         double _simulationSeconds = 0;
         InputState _input;
+        InputActions _actions;
     };
 }

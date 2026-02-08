@@ -1,6 +1,7 @@
 #include "../Engine/Engine.h"
 #include "../Engine/FrameClock.h"
 #include "Project.h"
+#include "InputConfiguration.h"
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <iostream>
@@ -53,6 +54,7 @@ namespace
     {
         Veris::Engine engine;
         engine.Initialize(project.Window.Size);
+        Veris::LoadInputConfiguration(project.ProjectFile.parent_path(), engine.Actions());
         Veris::GameWindow window(project.Window, project.Name);
         std::cout << "Loaded " << project.Name << " from " << project.ProjectFile.u8string() << '\n';
         RunFrames(window, engine, frameLimit);
@@ -70,6 +72,8 @@ namespace
         {
             engine.Input().BeginFrame();
             while (const auto event = window.PollEvent()) engine.Input().HandleEvent(*event);
+            engine.Actions().Update(engine.Input());
+            if (engine.Actions().Contains("Quit") && engine.Actions().Get("Quit").Pressed) window.Close();
             if (!window.IsOpen()) break;
             if (!window.HasFocus() || !window.CanRender()) clock.Pause(); else clock.Resume();
             if (!window.CanRender()) { sf::sleep(sf::milliseconds(10)); continue; }

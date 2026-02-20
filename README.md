@@ -20,4 +20,9 @@
 - [x] Atomic project creation with template folders, project identity, and failure cleanup.
 - [x] Existing-project opening with document and directory validation.
 - [x] Persisted recent projects with ordering, deduplication, moved-project updates, and missing-file handling.
-- [x] Standalone native executable that loads a project and presents empty engine frames (scenes and gameplay remain unimplemented).
+- [x] Standalone native executable with configured windows, timing, input actions, and frame presentation (scene loading and gameplay remain unimplemented).
+- [x] Runtime window resizing, focus handling, fullscreen validation, and presentation suspension.
+- [x] Monotonic frame timing, fixed 60 Hz updates, pause/resume, and bounded catch-up.
+- [x] Keyboard and mouse pressed, held, and released states with movement, wheel, and focus handling.
+- [x] Configurable named input actions with project-local bindings and default controls.
+- [x] Textured sprite submissions with transforms, tint, alpha blending, atlas regions, and stable layer ordering.

@@ -41,7 +41,7 @@ void VerifyEngineLifecycle()
     Require(engine.CompletedFrames() == 1, "Reinitialization must begin a new session.");
 }
 
-int main()
+int wmain(int, wchar_t* arguments[])
 {
     try
     {
@@ -54,7 +54,8 @@ int main()
         VerifyInputFocusLoss();
         VerifyActionAggregation();
         VerifyActionRebindingAndQuickTaps();
-        std::cout << "PASS: Graphics dependency and engine lifecycle checks.\n";
+        VerifySpriteRendering(std::filesystem::absolute(arguments[0]).parent_path() / "sprite-rendering.png");
+        std::cout << "PASS: Native lifecycle, window, timing, input, action, and sprite checks.\n";
         return 0;
     }
     catch (const std::exception& exception)

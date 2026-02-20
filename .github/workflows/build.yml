@@ -35,7 +35,7 @@ jobs:
         run: msbuild Veris.sln /restore /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /verbosity:minimal /nologo
       - name: Verify template discovery from another working directory
         run: dotnet run --project Tests/ResourceDiscovery/ResourceDiscovery.csproj --configuration ${{ matrix.configuration }}
-      - name: Verify engine lifecycle and graphics dependency
+      - name: Verify native window timing input and sprite behavior
         run: ./artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/RenderingDependency.exe
       - name: Verify standalone runtime
         run: ./scripts/VerifyRuntime.ps1 -Configuration ${{ matrix.configuration }}

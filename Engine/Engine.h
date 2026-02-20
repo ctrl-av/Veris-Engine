@@ -5,6 +5,9 @@
 #include <memory>
 #include "Input.h"
 #include "InputActions.h"
+#include <SFML/Graphics/Sprite.hpp>
+#include <utility>
+#include <vector>
 
 namespace Veris
 {
@@ -20,6 +23,7 @@ namespace Veris
         void Initialize(sf::Vector2u viewportSize);
         void Update();
         void FixedUpdate(double stepSeconds);
+        void SubmitSprite(const sf::Sprite& sprite, int layer = 0);
         void Resize(sf::Vector2u viewportSize);
         void Shutdown() noexcept;
         bool IsInitialized() const noexcept { return _renderTarget != nullptr; }
@@ -37,5 +41,6 @@ namespace Veris
         double _simulationSeconds = 0;
         InputState _input;
         InputActions _actions;
+        std::vector<std::pair<int, sf::Sprite>> _sprites;
     };
 }

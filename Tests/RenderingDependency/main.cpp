@@ -45,6 +45,7 @@ int wmain(int, wchar_t* arguments[])
 {
     try
     {
+        VerifyCameras();
         VerifyGraphicsDependency();
         VerifyEngineLifecycle();
         VerifyWindowManagement();

@@ -5,6 +5,7 @@
 #include <memory>
 #include "Input.h"
 #include "InputActions.h"
+#include "Camera.h"
 #include <SFML/Graphics/Sprite.hpp>
 #include <utility>
 #include <vector>
@@ -32,6 +33,9 @@ namespace Veris
         double SimulationSeconds() const noexcept { return _simulationSeconds; }
         InputState& Input() { return _input; }
         InputActions& Actions() { return _actions; }
+        Camera& ActiveCamera() { return _camera; }
+        sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
+        sf::Vector2i WorldToPixel(sf::Vector2f world) const;
         const sf::Texture& GetFrame() const;
 
     private:
@@ -41,6 +45,7 @@ namespace Veris
         double _simulationSeconds = 0;
         InputState _input;
         InputActions _actions;
+        Camera _camera;
         std::vector<std::pair<int, sf::Sprite>> _sprites;
     };
 }

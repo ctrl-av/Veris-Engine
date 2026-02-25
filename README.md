@@ -26,3 +26,4 @@
 - [x] Keyboard and mouse pressed, held, and released states with movement, wheel, and focus handling.
 - [x] Configurable named input actions with project-local bindings and default controls.
 - [x] Textured sprite submissions with transforms, tint, alpha blending, atlas regions, and stable layer ordering.
+- [x] Active 2D cameras with pan, zoom, rotation, resize handling, and world/pixel coordinate mapping.

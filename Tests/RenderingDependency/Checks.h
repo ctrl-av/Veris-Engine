@@ -20,3 +20,4 @@ void Reject(Operation operation)
     catch (const Exception&) { return; }
     throw std::runtime_error("Expected operation to fail.");
 }
+void VerifyCameras();

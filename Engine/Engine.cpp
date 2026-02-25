@@ -18,6 +18,8 @@ namespace Veris
         renderTarget->clear(BackgroundColor);
         renderTarget->display();
         _renderTarget = std::move(renderTarget);
+        _camera = Camera{};
+        _camera.Resize(viewportSize);
         _completedFrames = 0;
     }
 
@@ -25,6 +27,7 @@ namespace Veris
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before updating it.");
         _renderTarget->clear(BackgroundColor);
+        _renderTarget->setView(_camera.View());
         std::stable_sort(_sprites.begin(), _sprites.end(), [](const auto& left, const auto& right) { return left.first < right.first; });
         for (const auto& sprite : _sprites) _renderTarget->draw(sprite.second);
         _renderTarget->display();
@@ -57,6 +60,7 @@ namespace Veris
         renderTarget->clear(BackgroundColor);
         renderTarget->display();
         _renderTarget = std::move(renderTarget);
+        _camera.Resize(viewportSize);
     }
 
     void Engine::Shutdown() noexcept
@@ -68,11 +72,24 @@ namespace Veris
         _simulationSeconds = 0;
         _input = InputState{};
         _actions = InputActions{};
+        _camera = Camera{};
     }
 
     const sf::Texture& Engine::GetFrame() const
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before accessing its frame.");
         return _renderTarget->getTexture();
+    }
+
+    sf::Vector2f Engine::PixelToWorld(sf::Vector2i pixel) const
+    {
+        if (!IsInitialized()) throw std::logic_error("Initialize the engine before mapping coordinates.");
+        return _renderTarget->mapPixelToCoords(pixel, _camera.View());
+    }
+
+    sf::Vector2i Engine::WorldToPixel(sf::Vector2f world) const
+    {
+        if (!IsInitialized()) throw std::logic_error("Initialize the engine before mapping coordinates.");
+        return _renderTarget->mapCoordsToPixel(world, _camera.View());
     }
 }

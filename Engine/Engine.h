@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "InputActions.h"
 #include "Camera.h"
+#include "Scene.h"
 #include <SFML/Graphics/Sprite.hpp>
 #include <utility>
 #include <vector>
@@ -24,7 +25,7 @@ namespace Veris
         void Initialize(sf::Vector2u viewportSize);
         void Update();
         void FixedUpdate(double stepSeconds);
-        void SubmitSprite(const sf::Sprite& sprite, int layer = 0);
+        void SubmitSprite(const sf::Sprite& sprite, int layer = 0, const sf::Transform& transform = sf::Transform::Identity);
         void Resize(sf::Vector2u viewportSize);
         void Shutdown() noexcept;
         bool IsInitialized() const noexcept { return _renderTarget != nullptr; }
@@ -34,6 +35,7 @@ namespace Veris
         InputState& Input() { return _input; }
         InputActions& Actions() { return _actions; }
         Camera& ActiveCamera() { return _camera; }
+        Scene& ActiveScene() { return _scene; }
         sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
         sf::Vector2i WorldToPixel(sf::Vector2f world) const;
         const sf::Texture& GetFrame() const;
@@ -46,6 +48,13 @@ namespace Veris
         InputState _input;
         InputActions _actions;
         Camera _camera;
-        std::vector<std::pair<int, sf::Sprite>> _sprites;
+        Scene _scene;
+        struct SpriteSubmission
+        {
+            int Layer;
+            sf::Sprite Sprite;
+            sf::Transform Transform;
+        };
+        std::vector<SpriteSubmission> _sprites;
     };
 }

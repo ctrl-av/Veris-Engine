@@ -26,21 +26,23 @@ namespace Veris
     void Engine::Update()
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before updating it.");
+        try { _scene.Submit(*this); }
+        catch (...) { _sprites.clear(); throw; }
         _renderTarget->clear(BackgroundColor);
         _renderTarget->setView(_camera.View());
-        std::stable_sort(_sprites.begin(), _sprites.end(), [](const auto& left, const auto& right) { return left.first < right.first; });
-        for (const auto& sprite : _sprites) _renderTarget->draw(sprite.second);
+        std::stable_sort(_sprites.begin(), _sprites.end(), [](const auto& left, const auto& right) { return left.Layer < right.Layer; });
+        for (const auto& sprite : _sprites) _renderTarget->draw(sprite.Sprite, sprite.Transform);
         _renderTarget->display();
         _sprites.clear();
         ++_completedFrames;
     }
 
-    void Engine::SubmitSprite(const sf::Sprite& sprite, int layer)
+    void Engine::SubmitSprite(const sf::Sprite& sprite, int layer, const sf::Transform& transform)
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before submitting sprites.");
         if (sprite.getTexture().getSize().x == 0 || sprite.getTexture().getSize().y == 0)
             throw std::invalid_argument("Sprites require a loaded, nonempty texture.");
-        _sprites.emplace_back(layer, sprite);
+        _sprites.push_back({layer, sprite, transform});
     }
 
     void Engine::FixedUpdate(double stepSeconds)
@@ -66,6 +68,7 @@ namespace Veris
     void Engine::Shutdown() noexcept
     {
         _sprites.clear();
+        _scene.Clear();
         _renderTarget.reset();
         _completedFrames = 0;
         _completedFixedUpdates = 0;

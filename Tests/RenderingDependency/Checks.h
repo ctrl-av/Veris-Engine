@@ -21,3 +21,5 @@ void Reject(Operation operation)
     throw std::runtime_error("Expected operation to fail.");
 }
 void VerifyCameras();
+void VerifySceneHierarchy();
+void VerifySceneRendering();

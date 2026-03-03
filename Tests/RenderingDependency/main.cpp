@@ -45,6 +45,8 @@ int wmain(int, wchar_t* arguments[])
 {
     try
     {
+        VerifySceneHierarchy();
+        VerifySceneRendering();
         VerifyCameras();
         VerifyGraphicsDependency();
         VerifyEngineLifecycle();

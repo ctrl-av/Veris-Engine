@@ -69,6 +69,7 @@ namespace Veris
     {
         _sprites.clear();
         _scene.Clear();
+        _textures.Reset();
         _renderTarget.reset();
         _completedFrames = 0;
         _completedFixedUpdates = 0;

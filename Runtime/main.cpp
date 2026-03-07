@@ -54,6 +54,7 @@ namespace
     {
         Veris::Engine engine;
         engine.Initialize(project.Window.Size);
+        engine.Textures().SetRoot(project.ContentDirectory);
         Veris::LoadInputConfiguration(project.ProjectFile.parent_path(), engine.Actions());
         Veris::GameWindow window(project.Window, project.Name);
         std::cout << "Loaded " << project.Name << " from " << project.ProjectFile.u8string() << '\n';

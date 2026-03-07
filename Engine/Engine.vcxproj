@@ -141,6 +141,7 @@
     <ClInclude Include="FrameClock.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputActions.h" />
+    <ClInclude Include="TextureResources.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="FrameClock.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputActions.cpp" />
+    <ClCompile Include="TextureResources.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />

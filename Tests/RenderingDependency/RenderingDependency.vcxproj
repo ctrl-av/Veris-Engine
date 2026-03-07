@@ -38,6 +38,7 @@
     <ClCompile Include="TimingChecks.cpp" />
     <ClCompile Include="InputChecks.cpp" />
     <ClCompile Include="ActionChecks.cpp" />
+    <ClCompile Include="ResourceChecks.cpp" />
     <ClCompile Include="SceneChecks.cpp" />
     <ClCompile Include="CameraChecks.cpp" />
     <ClCompile Include="SpriteChecks.cpp" />

@@ -7,6 +7,7 @@
 #include "InputActions.h"
 #include "Camera.h"
 #include "Scene.h"
+#include "TextureResources.h"
 #include <SFML/Graphics/Sprite.hpp>
 #include <utility>
 #include <vector>
@@ -36,6 +37,7 @@ namespace Veris
         InputActions& Actions() { return _actions; }
         Camera& ActiveCamera() { return _camera; }
         Scene& ActiveScene() { return _scene; }
+        TextureResources& Textures() { return _textures; }
         sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
         sf::Vector2i WorldToPixel(sf::Vector2f world) const;
         const sf::Texture& GetFrame() const;
@@ -49,6 +51,7 @@ namespace Veris
         InputActions _actions;
         Camera _camera;
         Scene _scene;
+        TextureResources _textures;
         struct SpriteSubmission
         {
             int Layer;

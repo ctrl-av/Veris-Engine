@@ -29,3 +29,4 @@
 - [x] Active 2D cameras with pan, zoom, rotation, resize handling, and world/pixel coordinate mapping.
 - [x] Scene entities with stable IDs, parent/child transforms, optional sprite components, and recursive deletion.
 - [x] Content-relative texture caching, shared resource ownership, eviction, and transactional reload.
+- [x] C ABI and C# SafeHandle bridge with explicit ownership, UTF-8 diagnostics, entity access, and caller-owned frame copies.

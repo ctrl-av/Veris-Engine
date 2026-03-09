@@ -41,6 +41,8 @@ jobs:
         run: ./scripts/VerifyRuntime.ps1 -Configuration ${{ matrix.configuration }}
       - name: Verify editor business rules
         run: dotnet run --project Tests/EditorBehavior/EditorBehavior.csproj --configuration ${{ matrix.configuration }}
+      - name: Verify managed native interop
+        run: dotnet run --project Tests/InteropBehavior/InteropBehavior.csproj --configuration ${{ matrix.configuration }}
       - name: Verify template browser bindings
         run: dotnet run --project Tests/EditorUi/EditorUi.csproj --configuration ${{ matrix.configuration }}
       - name: Publish editor prototype
@@ -61,4 +63,5 @@ jobs:
             artifacts/bin/Engine/x64/${{ matrix.configuration }}/
             artifacts/bin/RenderingDependency/x64/${{ matrix.configuration }}/
             artifacts/bin/VerisRuntime/x64/${{ matrix.configuration }}/
+            artifacts/bin/VerisInterop/x64/${{ matrix.configuration }}/
             artifacts/bin/EditorUi/${{ matrix.configuration }}/net8.0-windows/*.png

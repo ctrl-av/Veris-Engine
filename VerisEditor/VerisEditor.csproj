@@ -7,9 +7,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <PlatformTarget>x64</PlatformTarget>
+    <NativeDebugSuffix Condition="'$(Configuration)' == 'Debug'">-d</NativeDebugSuffix>
+    <NativeInteropDirectory>$(MSBuildThisFileDirectory)..\artifacts\bin\VerisInterop\x64\$(Configuration)\</NativeInteropDirectory>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="$(NativeInteropDirectory)VerisInterop.dll;$(NativeInteropDirectory)sfml-graphics$(NativeDebugSuffix)-3.dll;$(NativeInteropDirectory)sfml-window$(NativeDebugSuffix)-3.dll;$(NativeInteropDirectory)sfml-system$(NativeDebugSuffix)-3.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="ProjectTemplates\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

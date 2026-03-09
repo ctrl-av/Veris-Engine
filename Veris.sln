@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36518.9
@@ -6,10 +6,15 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{0EEAB40B-D677-42C8-880D-57FAA02EA4E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerisEditor", "VerisEditor\VerisEditor.csproj", "{587ED05E-32F8-41CC-9DA3-CDB1BD9BF039}"
+	ProjectSection(ProjectDependencies) = postProject
+		{32858C80-5288-4A4C-A029-71BE1EF16662} = {32858C80-5288-4A4C-A029-71BE1EF16662}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderingDependency", "Tests\RenderingDependency\RenderingDependency.vcxproj", "{2268DD6B-4B3B-44D0-850C-E4465B85F13D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VerisRuntime", "Runtime\VerisRuntime.vcxproj", "{C16A0A77-443C-4D29-AB6A-7E67D576C641}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VerisInterop", "Interop\VerisInterop.vcxproj", "{32858C80-5288-4A4C-A029-71BE1EF16662}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +24,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Debug|Any CPU.Build.0 = Debug|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Debug|x64.ActiveCfg = Debug|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Debug|x64.Build.0 = Debug|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Release|Any CPU.ActiveCfg = Release|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Release|Any CPU.Build.0 = Release|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Release|x64.ActiveCfg = Release|x64
+		{32858C80-5288-4A4C-A029-71BE1EF16662}.Release|x64.Build.0 = Release|x64
 		{C16A0A77-443C-4D29-AB6A-7E67D576C641}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{C16A0A77-443C-4D29-AB6A-7E67D576C641}.Debug|Any CPU.Build.0 = Debug|x64
 		{C16A0A77-443C-4D29-AB6A-7E67D576C641}.Debug|x64.ActiveCfg = Debug|x64

@@ -1,31 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using VerisEditor.GameProject;
+using VerisEditor.Workspace;
 
 namespace VerisEditor
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private EditorWorkspace? _workspace;
+
         public MainWindow()
         {
             InitializeComponent();
             Loaded += OnMainWindowLoaded;
+        }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            _workspace?.Dispose();
+            base.OnClosed(e);
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
@@ -34,20 +26,39 @@ namespace VerisEditor
             OpenProjectBrowserDialog();
         }
 
+        private void OpenProject(object sender, RoutedEventArgs e) => OpenProjectBrowserDialog();
+        private void ExitEditor(object sender, RoutedEventArgs e) => Close();
+
         private void OpenProjectBrowserDialog()
         {
-            var projectBrowser = new ProjectBrowserDialog();
-            if (projectBrowser.ShowDialog() != true)
+            while (true)
             {
-                Application.Current.Shutdown();
+                var browser = new ProjectBrowserDialog { Owner = this };
+                if (browser.ShowDialog() != true) { if (_workspace == null) Close(); return; }
+                try
+                {
+                    LoadWorkspace(browser.SelectedProject!, browser.SelectedProjectFile!, browser.HistoryWarning);
+                    return;
+                }
+                catch (Exception exception)
+                {
+                    EditorLog.Error("Cannot open editor workspace.", exception);
+                    MessageBox.Show(this, exception.Message, "Cannot open workspace", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
-            {
-                DataContext = projectBrowser.SelectedProject;
-                Title = $"Veris Editor - {projectBrowser.SelectedProject!.Name}";
-                ProjectFileLocation.Text = projectBrowser.SelectedProjectFile;
-                ProjectStatus.Text = projectBrowser.HistoryWarning;
-            }
+        }
+
+        private void LoadWorkspace(ProjectDocument project, string projectFile, string historyWarning)
+        {
+            var workspace = new EditorWorkspace(project, projectFile, historyWarning);
+            WorkspaceView view;
+            try { view = new WorkspaceView(workspace); }
+            catch { workspace.Dispose(); throw; }
+            var previous = _workspace;
+            WorkspaceContent.Content = view;
+            _workspace = workspace;
+            Title = $"Veris Editor - {project.Name}";
+            previous?.Dispose();
         }
     }
 }

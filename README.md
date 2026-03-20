@@ -30,3 +30,4 @@
 - [x] Scene entities with stable IDs, parent/child transforms, optional sprite components, and recursive deletion.
 - [x] Content-relative texture caching, shared resource ownership, eviction, and transactional reload.
 - [x] C ABI and C# SafeHandle bridge with explicit ownership, UTF-8 diagnostics, entity access, and caller-owned frame copies.
+- [x] Resizable editor workspace with hierarchy, scene summary, project inspector, content navigation, and log output.

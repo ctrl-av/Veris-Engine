@@ -21,7 +21,8 @@ internal static class Program
             SavePreview(view, "template-browser.png");
             VerifyProjectCreation(view);
             VerifyProjectOpening();
-            Console.WriteLine("PASS: Template browser selection, metadata, and preview bindings.");
+            WorkspaceChecks.Run();
+            Console.WriteLine("PASS: Project browser and editor workspace bindings, navigation, refresh, and ownership.");
             return 0;
         }
         catch (Exception exception)
@@ -44,10 +45,10 @@ internal static class Program
         Assert(preview.Source is BitmapSource bitmap && bitmap.PixelWidth > 0, "Selection must load a usable preview image.");
     }
 
-    private static void Arrange(FrameworkElement view)
+    internal static void Arrange(FrameworkElement view, int width = 800, int height = 450)
     {
-        view.Measure(new Size(800, 450));
-        view.Arrange(new Rect(0, 0, 800, 450));
+        view.Measure(new Size(width, height));
+        view.Arrange(new Rect(0, 0, width, height));
         view.UpdateLayout();
         Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
     }
@@ -72,9 +73,9 @@ internal static class Program
         Assert(!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "UiValidationGame")), "Checking a location must not create a project.");
     }
 
-    private static void SavePreview(FrameworkElement view, string filename)
+    internal static void SavePreview(FrameworkElement view, string filename)
     {
-        var preview = new RenderTargetBitmap(800, 450, 96, 96, PixelFormats.Pbgra32);
+        var preview = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32);
         preview.Render(view);
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(preview));
@@ -142,7 +143,7 @@ internal static class Program
         Assert(((TextBlock)view.FindName("OpenedProjectName")).Text == "", "Failed opening must clear stale project details.");
     }
 
-    private static void Assert(bool condition, string message)
+    internal static void Assert(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
     }

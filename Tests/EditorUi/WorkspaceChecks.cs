@@ -21,9 +21,11 @@ internal static class WorkspaceChecks
             var view = new WorkspaceView(workspace);
             VerifyPanels(view, workspace);
             VerifyContentNavigation(view, workspace);
+            VerifyViewport(view);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();
+            ((EngineViewport)view.FindName("SceneViewport")).RenderFrame();
             try { workspace.Refresh(); throw new InvalidOperationException("Disposed workspace must reject native operations."); }
             catch (ObjectDisposedException) { }
         }
@@ -61,5 +63,20 @@ internal static class WorkspaceChecks
         File.WriteAllText(Path.Combine(workspace.ContentRoot, "new-file.txt"), "Refresh fixture");
         ((Button)view.FindName("RefreshWorkspaceButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Program.Assert(files.Items.Count == 3, "Refresh must update existing content bindings.");
+    }
+
+    private static void VerifyViewport(WorkspaceView view)
+    {
+        var viewport = (EngineViewport)view.FindName("SceneViewport");
+        viewport.RenderFrame();
+        var frame = viewport.Frame ?? throw new InvalidOperationException("Viewport must present a native frame.");
+        var pixel = new byte[4];
+        frame.CopyPixels(new Int32Rect(0, 0, 1, 1), pixel, 4, 0);
+        Program.Assert(pixel[0] == 32 && pixel[1] == 26 && pixel[2] == 24 && pixel[3] == 255,
+            "Viewport must convert native RGBA pixels to WPF BGRA without swapping channels incorrectly.");
+        Program.Arrange(view, 1400, 800);
+        viewport.RenderFrame();
+        Program.Assert(viewport.Frame!.PixelWidth > frame.PixelWidth && viewport.Frame.PixelHeight > frame.PixelHeight,
+            "Panel resize must update the native target and the WPF frame dimensions.");
     }
 }

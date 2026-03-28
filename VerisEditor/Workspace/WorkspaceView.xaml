@@ -1,6 +1,7 @@
 <UserControl x:Class="VerisEditor.Workspace.WorkspaceView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:workspace="clr-namespace:VerisEditor.Workspace">
     <UserControl.Resources>
         <SolidColorBrush x:Key="PanelBackground" Color="#22252C" />
         <Style TargetType="TextBlock">
@@ -73,10 +74,7 @@
                             <TextBlock Text="{Binding WindowSummary}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#8F9BAC" Margin="12,0" FontSize="11" />
                         </DockPanel>
                     </Border>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="Active scene" FontSize="22" HorizontalAlignment="Center" />
-                        <TextBlock Text="{Binding SceneSummary}" Foreground="#8F9BAC" Margin="0,10" HorizontalAlignment="Center" />
-                    </StackPanel>
+                    <workspace:EngineViewport x:Name="SceneViewport" />
                 </DockPanel>
             </Border>
             <GridSplitter Grid.Column="3" ResizeDirection="Columns" />

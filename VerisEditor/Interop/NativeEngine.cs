@@ -55,6 +55,7 @@ namespace VerisEditor.Interop
         public void Update() => Check(NativeMethods.Update(_handle));
         public void SetTransform(ulong entity, EntityTransform transform) => Check(NativeMethods.SetTransform(_handle, entity, in transform));
         public void Dispose() => _handle.Dispose();
+        public void CopyFrame(byte[] rgba) => Check(NativeMethods.CopyFrame(_handle, rgba, (ulong)rgba.Length, out _));
 
         public byte[] CopyFrame()
         {

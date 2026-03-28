@@ -17,6 +17,7 @@ namespace VerisEditor.Workspace
         public string ContentRoot { get; }
         public ObservableCollection<FileSystemInfo> ContentEntries { get; } = new();
         public ObservableCollection<WorkspaceEntity> Entities { get; } = new();
+        public bool IsDisposed { get; private set; }
         public string CurrentDirectory => _currentDirectory;
         public string SceneSummary => $"{Entities.Count} entities in the active scene";
         public string WindowSummary => $"{Project.WindowWidth} × {Project.WindowHeight} · {Project.WindowMode}";
@@ -50,7 +51,24 @@ namespace VerisEditor.Workspace
         }
 
         public void Refresh() => Run(() => { ReadContentDirectory(CurrentDirectory); RefreshScene(); RefreshOutput(); });
-        public void Dispose() => _engine.Dispose();
+        public void DrawViewport(uint width, uint height, byte[] rgba)
+        {
+            _engine.Resize(width, height);
+            _engine.Update();
+            _engine.CopyFrame(rgba);
+        }
+
+        public void ReportViewportError(Exception exception)
+        {
+            Status = exception.Message;
+            EditorLog.Error("Cannot render editor viewport.", exception);
+        }
+
+        public void Dispose()
+        {
+            IsDisposed = true;
+            _engine.Dispose();
+        }
 
         private void Run(Action operation)
         {

@@ -32,3 +32,4 @@
 - [x] C ABI and C# SafeHandle bridge with explicit ownership, UTF-8 diagnostics, entity access, and caller-owned frame copies.
 - [x] Resizable editor workspace with hierarchy, scene summary, project inspector, content navigation, and log output.
 - [x] Live embedded WPF viewport with native frame transfer, DPI-aware resizing, and deterministic rendering cleanup.
+- [x] Editable entity hierarchy with creation, rename, subtree duplication, parenting, cycle rejection, and recursive deletion.

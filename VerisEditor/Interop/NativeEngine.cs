@@ -21,11 +21,28 @@ namespace VerisEditor.Interop
 
         public ulong CreateEntity(string name)
         {
+            ValidateEntityName(name);
             Check(NativeMethods.CreateEntity(_handle, name, out var entity));
             return entity;
         }
 
         public void DestroyEntity(ulong entity) => Check(NativeMethods.DestroyEntity(_handle, entity));
+        public ulong DuplicateEntity(ulong entity)
+        {
+            Check(NativeMethods.DuplicateEntity(_handle, entity, out var duplicate));
+            return duplicate;
+        }
+        public void RenameEntity(ulong entity, string name)
+        {
+            ValidateEntityName(name);
+            Check(NativeMethods.RenameEntity(_handle, entity, name));
+        }
+        public void SetParent(ulong entity, ulong parent) => Check(NativeMethods.SetParent(_handle, entity, parent));
+        public ulong EntityParent(ulong entity)
+        {
+            Check(NativeMethods.EntityParent(_handle, entity, out var parent));
+            return parent;
+        }
         public IReadOnlyList<ulong> EntityIds()
         {
             var count = EntityCount;
@@ -64,6 +81,11 @@ namespace VerisEditor.Interop
             var rgba = new byte[(int)required];
             Check(NativeMethods.CopyFrame(_handle, rgba, (ulong)rgba.Length, out _));
             return rgba;
+        }
+
+        private static void ValidateEntityName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name) || name.Contains('\0')) throw new ArgumentException("Entity names require visible text and no null characters.", nameof(name));
         }
 
         private static void Check(int status)
@@ -115,6 +137,14 @@ namespace VerisEditor.Interop
         internal static extern int CreateEntity(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, out ulong entity);
         [DllImport(Library, EntryPoint = "veris_destroy_entity", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DestroyEntity(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_duplicate_entity", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int DuplicateEntity(EngineHandle engine, ulong entity, out ulong duplicate);
+        [DllImport(Library, EntryPoint = "veris_rename_entity", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int RenameEntity(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string name);
+        [DllImport(Library, EntryPoint = "veris_entity_parent", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int EntityParent(EngineHandle engine, ulong entity, out ulong parent);
+        [DllImport(Library, EntryPoint = "veris_set_parent", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetParent(EngineHandle engine, ulong entity, ulong parent);
         [DllImport(Library, EntryPoint = "veris_entity_count", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int EntityCount(EngineHandle engine, out ulong count);
         [DllImport(Library, EntryPoint = "veris_entity_at", CallingConvention = CallingConvention.Cdecl)]

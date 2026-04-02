@@ -11,12 +11,21 @@ namespace VerisEditor.Workspace
         private string _currentDirectory;
         private string _status = "";
         private string _output = "";
+        private bool _refreshingHierarchy;
+        private WorkspaceEntity? _selectedEntity;
 
         public ProjectDocument Project { get; }
         public string ProjectFile { get; }
         public string ContentRoot { get; }
         public ObservableCollection<FileSystemInfo> ContentEntries { get; } = new();
         public ObservableCollection<WorkspaceEntity> Entities { get; } = new();
+        public ObservableCollection<WorkspaceEntity> RootEntities { get; } = new();
+        public ObservableCollection<WorkspaceEntity> ParentCandidates { get; } = new();
+        public WorkspaceEntity? SelectedEntity => _selectedEntity;
+        public ulong SelectedEntityId => _selectedEntity?.Id ?? 0;
+        public bool HasSelection => _selectedEntity != null;
+        public string EntityName { get; set; } = "Entity";
+        public ulong SelectedParentId { get; set; }
         public bool IsDisposed { get; private set; }
         public string CurrentDirectory => _currentDirectory;
         public string SceneSummary => $"{Entities.Count} entities in the active scene";
@@ -51,6 +60,42 @@ namespace VerisEditor.Workspace
         }
 
         public void Refresh() => Run(() => { ReadContentDirectory(CurrentDirectory); RefreshScene(); RefreshOutput(); });
+        public void CreateEntity(string name, ulong parent = 0) => Run(() =>
+        {
+            var entity = _engine.CreateEntity(name);
+            try { _engine.SetParent(entity, parent); }
+            catch { _engine.DestroyEntity(entity); throw; }
+            RefreshScene();
+            SelectEntity(entity);
+        });
+
+        public void RenameSelected(string name) => Run(() => { _engine.RenameEntity(SelectedEntityId, name); RefreshScene(); });
+        public void ReparentSelected(ulong parent) => Run(() => { _engine.SetParent(SelectedEntityId, parent); RefreshScene(); });
+        public void DeleteSelected() => Run(() => { _engine.DestroyEntity(SelectedEntityId); RefreshScene(); });
+        public void DuplicateSelected() => Run(() =>
+        {
+            var duplicate = _engine.DuplicateEntity(SelectedEntityId);
+            RefreshScene();
+            SelectEntity(duplicate);
+        });
+
+        public void SelectEntity(ulong entityId)
+        {
+            if (_refreshingHierarchy) return;
+            WorkspaceEntity? selected = null;
+            foreach (var entity in Entities) if (entity.Id == entityId) selected = entity;
+            if (entityId != 0 && selected == null) throw new ArgumentOutOfRangeException(nameof(entityId), "Entity is not in the active scene.");
+            if (ReferenceEquals(_selectedEntity, selected)) return;
+            _selectedEntity = selected;
+            foreach (var entity in Entities) entity.IsSelected = entity.Id == entityId;
+            EntityName = selected?.Name ?? "Entity";
+            SelectedParentId = selected?.ParentId ?? 0;
+            OnPropertyChanged(nameof(SelectedEntity));
+            OnPropertyChanged(nameof(SelectedEntityId));
+            OnPropertyChanged(nameof(HasSelection));
+            OnPropertyChanged(nameof(EntityName));
+            OnPropertyChanged(nameof(SelectedParentId));
+        }
         public void DrawViewport(uint width, uint height, byte[] rgba)
         {
             _engine.Resize(width, height);
@@ -108,11 +153,29 @@ namespace VerisEditor.Workspace
 
         private void RefreshScene()
         {
-            var entities = new List<WorkspaceEntity>();
-            foreach (var entity in _engine.EntityIds()) entities.Add(new WorkspaceEntity(entity, _engine.EntityName(entity)));
-            Entities.Clear();
-            foreach (var entity in entities) Entities.Add(entity);
+            var selectedId = SelectedEntityId;
+            var entities = new Dictionary<ulong, WorkspaceEntity>();
+            foreach (var id in _engine.EntityIds()) entities.Add(id, new WorkspaceEntity(id, _engine.EntityName(id), _engine.EntityParent(id)));
+            _refreshingHierarchy = true;
+            try { PublishHierarchy(entities); }
+            finally { _refreshingHierarchy = false; }
+            SelectEntity(entities.ContainsKey(selectedId) ? selectedId : 0);
             OnPropertyChanged(nameof(SceneSummary));
+        }
+
+        private void PublishHierarchy(Dictionary<ulong, WorkspaceEntity> entities)
+        {
+            Entities.Clear();
+            RootEntities.Clear();
+            ParentCandidates.Clear();
+            ParentCandidates.Add(new WorkspaceEntity(0, "Scene root", 0));
+            foreach (var entity in entities.Values)
+            {
+                Entities.Add(entity);
+                ParentCandidates.Add(entity);
+                if (entity.ParentId == 0) RootEntities.Add(entity);
+                else entities[entity.ParentId].Children.Add(entity);
+            }
         }
 
         private void RefreshOutput()
@@ -128,5 +191,13 @@ namespace VerisEditor.Workspace
         }
     }
 
-    public sealed record WorkspaceEntity(ulong Id, string Name);
+    public sealed class WorkspaceEntity(ulong id, string name, ulong parentId) : ViewModelBase
+    {
+        private bool _isSelected;
+        public ulong Id { get; } = id;
+        public string Name { get; } = name;
+        public ulong ParentId { get; } = parentId;
+        public ObservableCollection<WorkspaceEntity> Children { get; } = new();
+        public bool IsSelected { get => _isSelected; set { _isSelected = value; OnPropertyChanged(nameof(IsSelected)); } }
+    }
 }

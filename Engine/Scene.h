@@ -8,6 +8,7 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace Veris
 {
@@ -51,6 +52,8 @@ namespace Veris
     public:
         EntityId CreateEntity(std::string name);
         void DestroyEntity(EntityId id);
+        EntityId DuplicateEntity(EntityId id);
+        void RenameEntity(EntityId id, std::string name);
         void SetParent(EntityId child, EntityId parent);
         Entity& Get(EntityId id) { return _entities.at(id); }
         const Entity& Get(EntityId id) const { return _entities.at(id); }
@@ -61,6 +64,7 @@ namespace Veris
         void Clear() { _entities.clear(); }
 
     private:
+        std::vector<EntityId> Subtree(EntityId id) const;
         EntityId _nextId = 1;
         std::map<EntityId, Entity> _entities;
     };

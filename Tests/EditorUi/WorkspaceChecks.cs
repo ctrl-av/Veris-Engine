@@ -22,6 +22,7 @@ internal static class WorkspaceChecks
             VerifyPanels(view, workspace);
             VerifyContentNavigation(view, workspace);
             VerifyViewport(view);
+            HierarchyChecks.Run(view, workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();
@@ -41,7 +42,7 @@ internal static class WorkspaceChecks
             var panel = (FrameworkElement)view.FindName(name);
             Program.Assert(panel.ActualWidth > 100 && panel.ActualHeight > 100, "Workspace panels must receive usable layout space.");
         }
-        Program.Assert(((ListBox)view.FindName("SceneEntities")).Items.Count == 0, "A new project's hierarchy must reflect its empty native scene.");
+        Program.Assert(((TreeView)view.FindName("SceneEntities")).Items.Count == 0, "A new project's hierarchy must reflect its empty native scene.");
         Program.Assert(((TextBox)view.FindName("OutputLog")).Text.Contains("Workspace opened:"), "Output must show actual editor log entries.");
         Program.Assert(((ListBox)view.FindName("ContentFiles")).Items.Count == 2, "Refresh must discover newly created content.");
         Program.Assert(workspace.SceneSummary.StartsWith("0 entities"), "Scene summary must reflect the native scene.");

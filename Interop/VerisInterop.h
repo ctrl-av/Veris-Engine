@@ -36,6 +36,10 @@ VERIS_API int32_t __cdecl veris_resize(uint64_t engine, uint32_t width, uint32_t
 VERIS_API int32_t __cdecl veris_update(uint64_t engine);
 VERIS_API int32_t __cdecl veris_create_entity(uint64_t engine, const char* name, uint64_t* entity);
 VERIS_API int32_t __cdecl veris_destroy_entity(uint64_t engine, uint64_t entity);
+VERIS_API int32_t __cdecl veris_duplicate_entity(uint64_t engine, uint64_t entity, uint64_t* duplicate);
+VERIS_API int32_t __cdecl veris_rename_entity(uint64_t engine, uint64_t entity, const char* name);
+VERIS_API int32_t __cdecl veris_entity_parent(uint64_t engine, uint64_t entity, uint64_t* parent);
+VERIS_API int32_t __cdecl veris_set_parent(uint64_t engine, uint64_t entity, uint64_t parent);
 VERIS_API int32_t __cdecl veris_entity_count(uint64_t engine, uint64_t* count);
 VERIS_API int32_t __cdecl veris_entity_at(uint64_t engine, uint64_t index, uint64_t* entity);
 VERIS_API int32_t __cdecl veris_entity_name(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required);

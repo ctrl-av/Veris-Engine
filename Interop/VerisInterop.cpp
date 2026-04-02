@@ -107,6 +107,38 @@ int32_t veris_entity_count(uint64_t engine, uint64_t* count)
     });
 }
 
+int32_t veris_duplicate_entity(uint64_t engine, uint64_t entity, uint64_t* duplicate)
+{
+    return Boundary([&]
+    {
+        if (!duplicate) throw std::invalid_argument("Duplicate entity output pointer is required.");
+        *duplicate = FindEngine(engine).ActiveScene().DuplicateEntity(entity);
+    });
+}
+
+int32_t veris_rename_entity(uint64_t engine, uint64_t entity, const char* name)
+{
+    return Boundary([&]
+    {
+        if (!name) throw std::invalid_argument("Entity name is required.");
+        FindEngine(engine).ActiveScene().RenameEntity(entity, name);
+    });
+}
+
+int32_t veris_entity_parent(uint64_t engine, uint64_t entity, uint64_t* parent)
+{
+    return Boundary([&]
+    {
+        if (!parent) throw std::invalid_argument("Parent output pointer is required.");
+        *parent = FindEngine(engine).ActiveScene().Get(entity).Parent();
+    });
+}
+
+int32_t veris_set_parent(uint64_t engine, uint64_t entity, uint64_t parent)
+{
+    return Boundary([&] { FindEngine(engine).ActiveScene().SetParent(entity, parent); });
+}
+
 int32_t veris_set_transform(uint64_t engine, uint64_t entity, const VerisTransform* transform)
 {
     return Boundary([&]

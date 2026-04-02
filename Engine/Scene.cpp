@@ -6,11 +6,20 @@
 #include <stdexcept>
 #include <vector>
 
+namespace
+{
+    void ValidateEntityName(const std::string& name)
+    {
+        if (name.find_first_not_of(" \t\r\n") == std::string::npos || name.find('\0') != std::string::npos)
+            throw std::invalid_argument("Entity names must contain visible text and no null characters.");
+    }
+}
+
 namespace Veris
 {
     EntityId Scene::CreateEntity(std::string name)
     {
-        if (name.empty()) throw std::invalid_argument("Entity names cannot be empty.");
+        ValidateEntityName(name);
         if (_nextId == std::numeric_limits<EntityId>::max()) throw std::overflow_error("Entity identifiers exhausted.");
         const auto id = _nextId;
         _entities.emplace(id, Entity(id, std::move(name)));
@@ -20,12 +29,46 @@ namespace Veris
 
     void Scene::DestroyEntity(EntityId id)
     {
+        for (const auto descendant : Subtree(id)) _entities.erase(descendant);
+    }
+
+    std::vector<EntityId> Scene::Subtree(EntityId id) const
+    {
         Get(id);
         std::vector<EntityId> subtree{id};
         for (std::size_t index = 0; index < subtree.size(); ++index)
             for (const auto& entry : _entities)
                 if (entry.second.Parent() == subtree[index]) subtree.push_back(entry.first);
-        for (const auto descendant : subtree) _entities.erase(descendant);
+        return subtree;
+    }
+
+    EntityId Scene::DuplicateEntity(EntityId id)
+    {
+        const auto subtree = Subtree(id);
+        std::map<EntityId, EntityId> copies;
+        EntityId root = 0;
+        try
+        {
+            for (const auto sourceId : subtree)
+            {
+                const auto& source = Get(sourceId);
+                const auto copyId = CreateEntity(source.Name + (sourceId == id ? " Copy" : ""));
+                if (sourceId == id) root = copyId;
+                auto& copy = Get(copyId);
+                copy._parent = sourceId == id ? source.Parent() : copies.at(source.Parent());
+                copy.Transform = source.Transform;
+                copy.Sprite = source.Sprite;
+                copies.emplace(sourceId, copyId);
+            }
+        }
+        catch (...) { if (root != 0) DestroyEntity(root); throw; }
+        return root;
+    }
+
+    void Scene::RenameEntity(EntityId id, std::string name)
+    {
+        ValidateEntityName(name);
+        Get(id).Name = std::move(name);
     }
 
     void Scene::SetParent(EntityId child, EntityId parent)

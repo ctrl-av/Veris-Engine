@@ -3,6 +3,7 @@ using VerisEditor.Interop;
 try
 {
     AbiChecks.Run();
+    HierarchyChecks.Run();
     Reject<NativeEngineException>(() => new NativeEngine(0, 8));
     for (var session = 0; session < 4; session++)
     {

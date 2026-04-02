@@ -62,7 +62,30 @@
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="HIERARCHY" Style="{StaticResource PanelTitle}" />
                     <TextBlock DockPanel.Dock="Bottom" Text="{Binding SceneSummary}" Foreground="#8F9BAC" Margin="12" FontSize="11" />
-                    <ListBox x:Name="SceneEntities" ItemsSource="{Binding Entities}" DisplayMemberPath="Name" />
+                    <StackPanel DockPanel.Dock="Top" Margin="6,0,6,8">
+                        <TextBox x:Name="EntityNameInput" Text="{Binding EntityName, UpdateSourceTrigger=PropertyChanged}" Margin="4" Padding="4" ToolTip="Entity name" />
+                        <WrapPanel>
+                            <Button x:Name="CreateEntityButton" Content="Add" Click="CreateEntity" />
+                            <Button x:Name="RenameEntityButton" Content="Rename" Click="RenameEntity" IsEnabled="{Binding HasSelection}" />
+                            <Button x:Name="DuplicateEntityButton" Content="Duplicate" Click="DuplicateEntity" IsEnabled="{Binding HasSelection}" />
+                            <Button x:Name="DeleteEntityButton" Content="Delete" Click="DeleteEntity" IsEnabled="{Binding HasSelection}" />
+                        </WrapPanel>
+                        <ComboBox x:Name="ParentEntityInput" ItemsSource="{Binding ParentCandidates}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding SelectedParentId}" Margin="4" ToolTip="Parent entity" />
+                        <Button x:Name="ReparentEntityButton" Content="Set parent" Click="ReparentEntity" IsEnabled="{Binding HasSelection}" />
+                    </StackPanel>
+                    <TreeView x:Name="SceneEntities" ItemsSource="{Binding RootEntities}" SelectedItemChanged="HierarchySelectionChanged" Background="Transparent" Foreground="#DDE2EA" BorderThickness="0" Padding="8">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <TextBlock Text="{Binding Name}" />
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="True" />
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
                 </DockPanel>
             </Border>
             <GridSplitter Grid.Column="1" ResizeDirection="Columns" />

@@ -34,3 +34,4 @@
 - [x] Live embedded WPF viewport with native frame transfer, DPI-aware resizing, and deterministic rendering cleanup.
 - [x] Editable entity hierarchy with creation, rename, subtree duplication, parenting, cycle rejection, and recursive deletion.
 - [x] Synchronized hierarchy and viewport selection with native picking, layer priority, and entity outlines.
+- [x] Component inspector for validated local transforms and textured sprites, tint, visibility, layers, origins, and atlas rectangles.

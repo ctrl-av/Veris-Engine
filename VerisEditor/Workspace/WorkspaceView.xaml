@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:workspace="clr-namespace:VerisEditor.Workspace">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
         <SolidColorBrush x:Key="PanelBackground" Color="#22252C" />
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="#DDE2EA" />
@@ -106,6 +107,38 @@
                     <TextBlock DockPanel.Dock="Top" Text="INSPECTOR" Style="{StaticResource PanelTitle}" />
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="12,4">
+                            <StackPanel Visibility="{Binding HasSelection, Converter={StaticResource BooleanVisibility}}">
+                                <TextBlock Text="{Binding SelectedEntity.Name}" FontSize="16" Margin="0,0,0,12" />
+                                <TextBlock Text="Transform · local coordinates" Foreground="#8F9BAC" />
+                                <UniformGrid Columns="2">
+                                    <StackPanel><TextBlock Text="Position X" /><TextBox x:Name="PositionXInput" Text="{Binding Inspector.PositionX, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Position Y" /><TextBox x:Name="PositionYInput" Text="{Binding Inspector.PositionY, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Scale X" /><TextBox x:Name="ScaleXInput" Text="{Binding Inspector.ScaleX, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Scale Y" /><TextBox x:Name="ScaleYInput" Text="{Binding Inspector.ScaleY, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" /></StackPanel>
+                                </UniformGrid>
+                                <TextBlock Text="Rotation (degrees)" /><TextBox x:Name="RotationInput" Text="{Binding Inspector.Rotation, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
+                                <Button x:Name="ApplyTransformButton" Content="Apply transform" Click="ApplyTransform" />
+                                <TextBlock Text="Sprite" Foreground="#8F9BAC" Margin="0,14,0,8" />
+                                <TextBlock Text="Content-relative texture" />
+                                <TextBox x:Name="TexturePathInput" Text="{Binding Inspector.TexturePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4" />
+                                <Button Content="Use selected content" Click="UseSelectedTexture" />
+                                <TextBlock Text="Tint (RRGGBBAA)" /><TextBox x:Name="TintInput" Text="{Binding Inspector.Tint, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
+                                <UniformGrid Columns="2">
+                                    <StackPanel><TextBlock Text="Origin X" /><TextBox Text="{Binding Inspector.OriginX, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Origin Y" /><TextBox Text="{Binding Inspector.OriginY, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" /></StackPanel>
+                                </UniformGrid>
+                                <TextBlock Text="Layer" /><TextBox Text="{Binding Inspector.Layer, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
+                                <CheckBox Content="Visible" IsChecked="{Binding Inspector.Visible}" Foreground="#DDE2EA" Margin="0,4" />
+                                <CheckBox Content="Use atlas rectangle" IsChecked="{Binding Inspector.UseRectangle}" Foreground="#DDE2EA" Margin="0,4" />
+                                <UniformGrid Columns="2" IsEnabled="{Binding Inspector.UseRectangle}">
+                                    <StackPanel><TextBlock Text="Atlas X" /><TextBox Text="{Binding Inspector.RectangleX, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Atlas Y" /><TextBox Text="{Binding Inspector.RectangleY, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Width" /><TextBox Text="{Binding Inspector.RectangleWidth, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,8" /></StackPanel>
+                                    <StackPanel><TextBlock Text="Height" /><TextBox Text="{Binding Inspector.RectangleHeight, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" /></StackPanel>
+                                </UniformGrid>
+                                <Button x:Name="ApplySpriteButton" Content="Add / apply sprite" Click="ApplySprite" />
+                                <Button x:Name="RemoveSpriteButton" Content="Remove sprite" Click="RemoveSprite" IsEnabled="{Binding Inspector.HasSprite}" Margin="4,4,4,18" />
+                            </StackPanel>
                             <TextBlock Text="Project settings" FontSize="16" Margin="0,0,0,18" />
                             <TextBlock Text="Name" Foreground="#8F9BAC" FontSize="11" />
                             <TextBlock Text="{Binding Project.Name}" Margin="0,4,0,14" TextWrapping="Wrap" />

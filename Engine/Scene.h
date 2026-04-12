@@ -25,6 +25,7 @@ namespace Veris
 
     struct SpriteComponent
     {
+        std::string TexturePath;
         std::shared_ptr<const sf::Texture> Texture;
         std::optional<sf::IntRect> TextureRectangle;
         sf::Vector2f Origin{};

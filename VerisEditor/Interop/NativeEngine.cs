@@ -27,6 +27,19 @@ namespace VerisEditor.Interop
         }
 
         public void DestroyEntity(ulong entity) => Check(NativeMethods.DestroyEntity(_handle, entity));
+        public void SetContentRoot(string directory) => Check(NativeMethods.SetContentRoot(_handle, directory));
+        public void SetSprite(ulong entity, string texture, SpriteProperties sprite)
+        {
+            if (string.IsNullOrWhiteSpace(texture) || texture.Contains('\0')) throw new ArgumentException("A content-relative texture path is required.", nameof(texture));
+            Check(NativeMethods.SetSprite(_handle, entity, texture, in sprite));
+        }
+        public SpriteProperties? GetSprite(ulong entity)
+        {
+            Check(NativeMethods.GetSprite(_handle, entity, out var sprite, out var present));
+            return present == 0 ? null : sprite;
+        }
+        public string SpritePath(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.SpritePath(_handle, entity, buffer, capacity, out required));
+        public void RemoveSprite(ulong entity) => Check(NativeMethods.RemoveSprite(_handle, entity));
         public ulong PickEntity(int x, int y)
         {
             Check(NativeMethods.PickEntity(_handle, x, y, out var entity));
@@ -66,13 +79,7 @@ namespace VerisEditor.Interop
             return entities;
         }
 
-        public string EntityName(ulong entity)
-        {
-            Check(NativeMethods.EntityName(_handle, entity, null, 0, out var required));
-            var utf8 = new byte[required];
-            Check(NativeMethods.EntityName(_handle, entity, utf8, required, out _));
-            return Encoding.UTF8.GetString(utf8, 0, utf8.Length - 1);
-        }
+        public string EntityName(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.EntityName(_handle, entity, buffer, capacity, out required));
 
         public EntityTransform GetTransform(ulong entity)
         {
@@ -97,6 +104,16 @@ namespace VerisEditor.Interop
         private static void ValidateEntityName(string name)
         {
             if (string.IsNullOrWhiteSpace(name) || name.Contains('\0')) throw new ArgumentException("Entity names require visible text and no null characters.", nameof(name));
+        }
+
+        private delegate int Utf8Reader(byte[]? buffer, uint capacity, out uint required);
+
+        private static string ReadUtf8(Utf8Reader read)
+        {
+            Check(read(null, 0, out var required));
+            var utf8 = new byte[required];
+            Check(read(utf8, required, out _));
+            return Encoding.UTF8.GetString(utf8, 0, utf8.Length - 1);
         }
 
         private static void Check(int status)
@@ -128,6 +145,21 @@ namespace VerisEditor.Interop
         public readonly float Rotation = rotation;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct SpriteProperties
+    {
+        public float OriginX;
+        public float OriginY;
+        public uint Tint;
+        public int Layer;
+        public int Visible;
+        public int UseRectangle;
+        public int RectangleX;
+        public int RectangleY;
+        public int RectangleWidth;
+        public int RectangleHeight;
+    }
+
     public sealed class NativeEngineException(int status, string message) : Exception(message)
     {
         public int Status { get; } = status;
@@ -155,6 +187,16 @@ namespace VerisEditor.Interop
         internal static extern int CreateEntity(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, out ulong entity);
         [DllImport(Library, EntryPoint = "veris_destroy_entity", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DestroyEntity(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_set_content_root", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetContentRoot(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string directory);
+        [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetSprite(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string texture, in SpriteProperties sprite);
+        [DllImport(Library, EntryPoint = "veris_get_sprite", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GetSprite(EngineHandle engine, ulong entity, out SpriteProperties sprite, out int present);
+        [DllImport(Library, EntryPoint = "veris_sprite_path", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SpritePath(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
+        [DllImport(Library, EntryPoint = "veris_remove_sprite", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int RemoveSprite(EngineHandle engine, ulong entity);
         [DllImport(Library, EntryPoint = "veris_pick_entity", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int PickEntity(EngineHandle engine, int x, int y, out ulong entity);
         [DllImport(Library, EntryPoint = "veris_entity_corners", CallingConvention = CallingConvention.Cdecl)]

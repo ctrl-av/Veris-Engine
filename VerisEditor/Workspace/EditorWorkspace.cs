@@ -24,6 +24,7 @@ namespace VerisEditor.Workspace
         public WorkspaceEntity? SelectedEntity => _selectedEntity;
         public ulong SelectedEntityId => _selectedEntity?.Id ?? 0;
         public bool HasSelection => _selectedEntity != null;
+        public EntityInspector Inspector { get; }
         public string EntityName { get; set; } = "Entity";
         public ulong SelectedParentId { get; set; }
         public bool IsDisposed { get; private set; }
@@ -41,8 +42,10 @@ namespace VerisEditor.Workspace
             _currentDirectory = ContentRoot;
             ReadContentDirectory(ContentRoot);
             _engine = new NativeEngine((uint)project.WindowWidth, (uint)project.WindowHeight);
+            Inspector = new EntityInspector(_engine);
             try
             {
+                _engine.SetContentRoot(ContentRoot);
                 RefreshScene();
                 EditorLog.Info($"Workspace opened: {ProjectFile}");
                 RefreshOutput();
@@ -87,6 +90,7 @@ namespace VerisEditor.Workspace
             if (entityId != 0 && selected == null) throw new ArgumentOutOfRangeException(nameof(entityId), "Entity is not in the active scene.");
             if (ReferenceEquals(_selectedEntity, selected)) return;
             _selectedEntity = selected;
+            Inspector.Load(entityId);
             foreach (var entity in Entities) entity.IsSelected = entity.Id == entityId;
             EntityName = selected?.Name ?? "Entity";
             SelectedParentId = selected?.ParentId ?? 0;
@@ -105,6 +109,9 @@ namespace VerisEditor.Workspace
 
         public EntityPoint[] EntityCorners(ulong entity) => _engine.EntityCorners(entity);
         public void SelectAt(int pixelX, int pixelY) => Run(() => SelectEntity(_engine.PickEntity(pixelX, pixelY)));
+        public void ApplyTransform() => Run(Inspector.ApplyTransform);
+        public void ApplySprite() => Run(Inspector.ApplySprite);
+        public void RemoveSprite() => Run(Inspector.RemoveSprite);
 
         public void ReportViewportError(Exception exception)
         {

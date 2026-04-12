@@ -20,6 +20,15 @@ namespace VerisEditor.Workspace
         private void DuplicateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).DuplicateSelected();
         private void DeleteEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).DeleteSelected();
         private void ReparentEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ReparentSelected(((EditorWorkspace)DataContext).SelectedParentId);
+        private void ApplyTransform(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyTransform();
+        private void ApplySprite(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplySprite();
+        private void RemoveSprite(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).RemoveSprite();
+
+        private void UseSelectedTexture(object sender, RoutedEventArgs e)
+        {
+            if (ContentFiles.SelectedItem is FileInfo texture)
+                TexturePathInput.Text = Path.GetRelativePath(((EditorWorkspace)DataContext).ContentRoot, texture.FullName);
+        }
 
         private void HierarchySelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {

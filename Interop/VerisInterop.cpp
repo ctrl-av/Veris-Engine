@@ -9,6 +9,7 @@
 #include <iterator>
 #include <mutex>
 #include <thread>
+#include <cmath>
 
 namespace
 {
@@ -47,6 +48,28 @@ namespace
         if (session == Sessions.end()) throw std::out_of_range("Engine handle is invalid or has been released.");
         if (session->second->Owner != std::this_thread::get_id()) throw std::logic_error("Engine operations must run on the creating thread.");
         return session->second->Engine;
+    }
+
+    bool CopyText(const std::string& text, char* utf8, std::uint32_t capacity, std::uint32_t* required)
+    {
+        if (!required || (!utf8 && capacity != 0)) throw std::invalid_argument("UTF-8 buffer arguments are invalid.");
+        if (text.size() >= (std::numeric_limits<std::uint32_t>::max)()) throw std::overflow_error("Text exceeds the ABI size limit.");
+        *required = static_cast<std::uint32_t>(text.size() + 1);
+        if (!utf8 && capacity == 0) return true;
+        if (capacity < *required) return false;
+        std::memcpy(utf8, text.c_str(), *required);
+        return true;
+    }
+
+    void ValidateSprite(const VerisSprite& sprite, sf::Vector2u size)
+    {
+        if (!std::isfinite(sprite.OriginX) || !std::isfinite(sprite.OriginY) ||
+            (sprite.Visible != 0 && sprite.Visible != 1) || (sprite.UseRectangle != 0 && sprite.UseRectangle != 1))
+            throw std::invalid_argument("Sprite origins must be finite and flags must be zero or one.");
+        if (sprite.UseRectangle && (sprite.RectangleX < 0 || sprite.RectangleY < 0 || sprite.RectangleWidth <= 0 || sprite.RectangleHeight <= 0 ||
+            static_cast<std::uint64_t>(sprite.RectangleX) + sprite.RectangleWidth > size.x ||
+            static_cast<std::uint64_t>(sprite.RectangleY) + sprite.RectangleHeight > size.y))
+            throw std::invalid_argument("Sprite rectangle must fit within the loaded texture.");
     }
 }
 
@@ -185,16 +208,81 @@ int32_t veris_entity_name(uint64_t engine, uint64_t entity, char* utf8, uint32_t
     bool tooSmall = false;
     const auto status = Boundary([&]
     {
-        if (!required || (!utf8 && capacity != 0)) throw std::invalid_argument("Entity name buffer arguments are invalid.");
         const auto& name = FindEngine(engine).ActiveScene().Get(entity).Name;
-        if (name.size() >= (std::numeric_limits<std::uint32_t>::max)()) throw std::overflow_error("Entity name exceeds the ABI size limit.");
-        *required = static_cast<std::uint32_t>(name.size() + 1);
-        if (!utf8 && capacity == 0) return;
-        if (capacity < *required) { tooSmall = true; return; }
-        std::memcpy(utf8, name.c_str(), *required);
+        tooSmall = !CopyText(name, utf8, capacity, required);
     });
     if (status == VerisOk && tooSmall) { LastError = "Entity name buffer is too small."; return VerisBufferTooSmall; }
     return status;
+}
+
+int32_t veris_set_content_root(uint64_t engine, const wchar_t* directory)
+{
+    return Boundary([&]
+    {
+        if (!directory) throw std::invalid_argument("Content directory is required.");
+        FindEngine(engine).Textures().SetRoot(directory);
+    });
+}
+
+int32_t veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, const VerisSprite* sprite)
+{
+    return Boundary([&]
+    {
+        if (!texture || !sprite) throw std::invalid_argument("Texture path and sprite properties are required.");
+        auto& session = FindEngine(engine);
+        auto& target = session.ActiveScene().Get(entity);
+        Veris::SpriteComponent component;
+        component.TexturePath = texture;
+        component.Texture = session.Textures().Load(std::filesystem::u8path(texture));
+        ValidateSprite(*sprite, component.Texture->getSize());
+        component.Origin = {sprite->OriginX, sprite->OriginY};
+        component.Tint = sf::Color(sprite->Tint);
+        component.Layer = sprite->Layer;
+        component.Visible = sprite->Visible != 0;
+        if (sprite->UseRectangle) component.TextureRectangle = sf::IntRect({sprite->RectangleX, sprite->RectangleY}, {sprite->RectangleWidth, sprite->RectangleHeight});
+        target.Sprite = std::move(component);
+    });
+}
+
+int32_t veris_get_sprite(uint64_t engine, uint64_t entity, VerisSprite* sprite, int32_t* present)
+{
+    return Boundary([&]
+    {
+        if (!sprite || !present) throw std::invalid_argument("Sprite output pointers are required.");
+        const auto& component = FindEngine(engine).ActiveScene().Get(entity).Sprite;
+        *sprite = {};
+        *present = component ? 1 : 0;
+        if (!component) return;
+        sprite->OriginX = component->Origin.x;
+        sprite->OriginY = component->Origin.y;
+        sprite->Tint = component->Tint.toInteger();
+        sprite->Layer = component->Layer;
+        sprite->Visible = component->Visible ? 1 : 0;
+        sprite->UseRectangle = component->TextureRectangle ? 1 : 0;
+        if (!component->TextureRectangle) return;
+        sprite->RectangleX = component->TextureRectangle->position.x;
+        sprite->RectangleY = component->TextureRectangle->position.y;
+        sprite->RectangleWidth = component->TextureRectangle->size.x;
+        sprite->RectangleHeight = component->TextureRectangle->size.y;
+    });
+}
+
+int32_t veris_sprite_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&]
+    {
+        const auto& component = FindEngine(engine).ActiveScene().Get(entity).Sprite;
+        if (!component) throw std::out_of_range("Entity has no sprite component.");
+        tooSmall = !CopyText(component->TexturePath, utf8, capacity, required);
+    });
+    if (status == VerisOk && tooSmall) { LastError = "Sprite path buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+
+int32_t veris_remove_sprite(uint64_t engine, uint64_t entity)
+{
+    return Boundary([&] { FindEngine(engine).ActiveScene().Get(entity).Sprite.reset(); });
 }
 
 int32_t veris_get_transform(uint64_t engine, uint64_t entity, VerisTransform* transform)

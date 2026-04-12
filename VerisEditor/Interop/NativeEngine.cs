@@ -27,6 +27,17 @@ namespace VerisEditor.Interop
         }
 
         public void DestroyEntity(ulong entity) => Check(NativeMethods.DestroyEntity(_handle, entity));
+        public ulong PickEntity(int x, int y)
+        {
+            Check(NativeMethods.PickEntity(_handle, x, y, out var entity));
+            return entity;
+        }
+        public EntityPoint[] EntityCorners(ulong entity)
+        {
+            var corners = new EntityPoint[4];
+            Check(NativeMethods.EntityCorners(_handle, entity, corners, (uint)corners.Length));
+            return corners;
+        }
         public ulong DuplicateEntity(ulong entity)
         {
             Check(NativeMethods.DuplicateEntity(_handle, entity, out var duplicate));
@@ -101,6 +112,13 @@ namespace VerisEditor.Interop
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public readonly struct EntityPoint(float x, float y)
+    {
+        public readonly float X = x;
+        public readonly float Y = y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public readonly struct EntityTransform(float positionX, float positionY, float scaleX, float scaleY, float rotation)
     {
         public readonly float PositionX = positionX;
@@ -137,6 +155,10 @@ namespace VerisEditor.Interop
         internal static extern int CreateEntity(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string name, out ulong entity);
         [DllImport(Library, EntryPoint = "veris_destroy_entity", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DestroyEntity(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_pick_entity", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int PickEntity(EngineHandle engine, int x, int y, out ulong entity);
+        [DllImport(Library, EntryPoint = "veris_entity_corners", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int EntityCorners(EngineHandle engine, ulong entity, [Out] EntityPoint[] corners, uint count);
         [DllImport(Library, EntryPoint = "veris_duplicate_entity", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int DuplicateEntity(EngineHandle engine, ulong entity, out ulong duplicate);
         [DllImport(Library, EntryPoint = "veris_rename_entity", CallingConvention = CallingConvention.Cdecl)]

@@ -23,6 +23,7 @@ internal static class WorkspaceChecks
             VerifyContentNavigation(view, workspace);
             VerifyViewport(view);
             HierarchyChecks.Run(view, workspace);
+            SelectionChecks.Run(view, workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

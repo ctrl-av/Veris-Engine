@@ -11,6 +11,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <utility>
 #include <vector>
+#include <array>
 
 namespace Veris
 {
@@ -40,6 +41,8 @@ namespace Veris
         TextureResources& Textures() { return _textures; }
         sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
         sf::Vector2i WorldToPixel(sf::Vector2f world) const;
+        std::array<sf::Vector2f, 4> EntityCorners(EntityId id) const;
+        EntityId PickEntity(sf::Vector2i pixel, float tolerance = 8) const;
         const sf::Texture& GetFrame() const;
 
     private:

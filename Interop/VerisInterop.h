@@ -21,6 +21,12 @@ typedef struct VerisTransform
     float Rotation;
 } VerisTransform;
 
+typedef struct VerisPoint
+{
+    float X;
+    float Y;
+} VerisPoint;
+
 enum VerisStatus
 {
     VerisOk = 0,
@@ -40,6 +46,8 @@ VERIS_API int32_t __cdecl veris_duplicate_entity(uint64_t engine, uint64_t entit
 VERIS_API int32_t __cdecl veris_rename_entity(uint64_t engine, uint64_t entity, const char* name);
 VERIS_API int32_t __cdecl veris_entity_parent(uint64_t engine, uint64_t entity, uint64_t* parent);
 VERIS_API int32_t __cdecl veris_set_parent(uint64_t engine, uint64_t entity, uint64_t parent);
+VERIS_API int32_t __cdecl veris_pick_entity(uint64_t engine, int32_t x, int32_t y, uint64_t* entity);
+VERIS_API int32_t __cdecl veris_entity_corners(uint64_t engine, uint64_t entity, VerisPoint* corners, uint32_t count);
 VERIS_API int32_t __cdecl veris_entity_count(uint64_t engine, uint64_t* count);
 VERIS_API int32_t __cdecl veris_entity_at(uint64_t engine, uint64_t index, uint64_t* entity);
 VERIS_API int32_t __cdecl veris_entity_name(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required);

@@ -107,6 +107,25 @@ int32_t veris_entity_count(uint64_t engine, uint64_t* count)
     });
 }
 
+int32_t veris_pick_entity(uint64_t engine, int32_t x, int32_t y, uint64_t* entity)
+{
+    return Boundary([&]
+    {
+        if (!entity) throw std::invalid_argument("Pick output pointer is required.");
+        *entity = FindEngine(engine).PickEntity({x, y});
+    });
+}
+
+int32_t veris_entity_corners(uint64_t engine, uint64_t entity, VerisPoint* corners, uint32_t count)
+{
+    return Boundary([&]
+    {
+        if (!corners || count < 4) throw std::invalid_argument("Entity corners require space for four points.");
+        const auto geometry = FindEngine(engine).EntityCorners(entity);
+        for (std::size_t index = 0; index < geometry.size(); ++index) corners[index] = {geometry[index].x, geometry[index].y};
+    });
+}
+
 int32_t veris_duplicate_entity(uint64_t engine, uint64_t entity, uint64_t* duplicate)
 {
     return Boundary([&]

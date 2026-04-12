@@ -33,3 +33,4 @@
 - [x] Resizable editor workspace with hierarchy, scene summary, project inspector, content navigation, and log output.
 - [x] Live embedded WPF viewport with native frame transfer, DPI-aware resizing, and deterministic rendering cleanup.
 - [x] Editable entity hierarchy with creation, rename, subtree duplication, parenting, cycle rejection, and recursive deletion.
+- [x] Synchronized hierarchy and viewport selection with native picking, layer priority, and entity outlines.

@@ -46,6 +46,7 @@ int wmain(int, wchar_t* arguments[])
     try
     {
         VerifyTextureResources(std::filesystem::absolute(arguments[0]).parent_path() / L"Resource fixtures" );
+        VerifyEntityPicking();
         VerifySceneHierarchy();
         VerifySceneRendering();
         VerifyCameras();

@@ -103,6 +103,9 @@ namespace VerisEditor.Workspace
             _engine.CopyFrame(rgba);
         }
 
+        public EntityPoint[] EntityCorners(ulong entity) => _engine.EntityCorners(entity);
+        public void SelectAt(int pixelX, int pixelY) => Run(() => SelectEntity(_engine.PickEntity(pixelX, pixelY)));
+
         public void ReportViewportError(Exception exception)
         {
             Status = exception.Message;

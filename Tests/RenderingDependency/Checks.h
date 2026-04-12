@@ -24,3 +24,4 @@ void VerifyCameras();
 void VerifySceneHierarchy();
 void VerifySceneRendering();
 void VerifyTextureResources(const std::filesystem::path& fixtureDirectory);
+void VerifyEntityPicking();

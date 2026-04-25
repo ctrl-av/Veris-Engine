@@ -25,6 +25,7 @@ namespace VerisEditor.Workspace
         public ulong SelectedEntityId => _selectedEntity?.Id ?? 0;
         public bool HasSelection => _selectedEntity != null;
         public EntityInspector Inspector { get; }
+        public TransformTools Tools { get; }
         public string EntityName { get; set; } = "Entity";
         public ulong SelectedParentId { get; set; }
         public bool IsDisposed { get; private set; }
@@ -43,6 +44,7 @@ namespace VerisEditor.Workspace
             ReadContentDirectory(ContentRoot);
             _engine = new NativeEngine((uint)project.WindowWidth, (uint)project.WindowHeight);
             Inspector = new EntityInspector(_engine);
+            Tools = new TransformTools(_engine, Inspector);
             try
             {
                 _engine.SetContentRoot(ContentRoot);
@@ -73,8 +75,8 @@ namespace VerisEditor.Workspace
         });
 
         public void RenameSelected(string name) => Run(() => { _engine.RenameEntity(SelectedEntityId, name); RefreshScene(); });
-        public void ReparentSelected(ulong parent) => Run(() => { _engine.SetParent(SelectedEntityId, parent); RefreshScene(); });
-        public void DeleteSelected() => Run(() => { _engine.DestroyEntity(SelectedEntityId); RefreshScene(); });
+        public void ReparentSelected(ulong parent) => Run(() => { Tools.Cancel(); _engine.SetParent(SelectedEntityId, parent); RefreshScene(); });
+        public void DeleteSelected() => Run(() => { Tools.Cancel(); _engine.DestroyEntity(SelectedEntityId); RefreshScene(); });
         public void DuplicateSelected() => Run(() =>
         {
             var duplicate = _engine.DuplicateEntity(SelectedEntityId);
@@ -89,6 +91,7 @@ namespace VerisEditor.Workspace
             foreach (var entity in Entities) if (entity.Id == entityId) selected = entity;
             if (entityId != 0 && selected == null) throw new ArgumentOutOfRangeException(nameof(entityId), "Entity is not in the active scene.");
             if (ReferenceEquals(_selectedEntity, selected)) return;
+            Tools.Cancel();
             _selectedEntity = selected;
             Inspector.Load(entityId);
             foreach (var entity in Entities) entity.IsSelected = entity.Id == entityId;
@@ -108,10 +111,14 @@ namespace VerisEditor.Workspace
         }
 
         public EntityPoint[] EntityCorners(ulong entity) => _engine.EntityCorners(entity);
+        public EntityPoint EntityOrigin(ulong entity) => _engine.EntityOrigin(entity);
         public void SelectAt(int pixelX, int pixelY) => Run(() => SelectEntity(_engine.PickEntity(pixelX, pixelY)));
         public void ApplyTransform() => Run(Inspector.ApplyTransform);
         public void ApplySprite() => Run(Inspector.ApplySprite);
         public void RemoveSprite() => Run(Inspector.RemoveSprite);
+        public void BeginTransformDrag(int x, int y) => Run(() => Tools.Begin(SelectedEntityId, x, y));
+        public void DragTransform(int x, int y) => Run(() => Tools.Drag(x, y));
+        public void CancelTransformDrag() => Run(Tools.Cancel);
 
         public void ReportViewportError(Exception exception)
         {

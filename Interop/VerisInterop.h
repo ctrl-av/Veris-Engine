@@ -62,6 +62,8 @@ VERIS_API int32_t __cdecl veris_rename_entity(uint64_t engine, uint64_t entity, 
 VERIS_API int32_t __cdecl veris_entity_parent(uint64_t engine, uint64_t entity, uint64_t* parent);
 VERIS_API int32_t __cdecl veris_set_parent(uint64_t engine, uint64_t entity, uint64_t parent);
 VERIS_API int32_t __cdecl veris_pick_entity(uint64_t engine, int32_t x, int32_t y, uint64_t* entity);
+VERIS_API int32_t __cdecl veris_parent_coordinates(uint64_t engine, uint64_t entity, int32_t x, int32_t y, VerisPoint* local);
+VERIS_API int32_t __cdecl veris_entity_origin(uint64_t engine, uint64_t entity, VerisPoint* pixel);
 VERIS_API int32_t __cdecl veris_entity_corners(uint64_t engine, uint64_t entity, VerisPoint* corners, uint32_t count);
 VERIS_API int32_t __cdecl veris_set_content_root(uint64_t engine, const wchar_t* directory);
 VERIS_API int32_t __cdecl veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, const VerisSprite* sprite);

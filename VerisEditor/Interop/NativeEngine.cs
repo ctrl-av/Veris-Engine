@@ -45,6 +45,16 @@ namespace VerisEditor.Interop
             Check(NativeMethods.PickEntity(_handle, x, y, out var entity));
             return entity;
         }
+        public EntityPoint ParentCoordinates(ulong entity, int x, int y)
+        {
+            Check(NativeMethods.ParentCoordinates(_handle, entity, x, y, out var local));
+            return local;
+        }
+        public EntityPoint EntityOrigin(ulong entity)
+        {
+            Check(NativeMethods.EntityOrigin(_handle, entity, out var pixel));
+            return pixel;
+        }
         public EntityPoint[] EntityCorners(ulong entity)
         {
             var corners = new EntityPoint[4];
@@ -199,6 +209,10 @@ namespace VerisEditor.Interop
         internal static extern int RemoveSprite(EngineHandle engine, ulong entity);
         [DllImport(Library, EntryPoint = "veris_pick_entity", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int PickEntity(EngineHandle engine, int x, int y, out ulong entity);
+        [DllImport(Library, EntryPoint = "veris_parent_coordinates", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ParentCoordinates(EngineHandle engine, ulong entity, int x, int y, out EntityPoint local);
+        [DllImport(Library, EntryPoint = "veris_entity_origin", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int EntityOrigin(EngineHandle engine, ulong entity, out EntityPoint pixel);
         [DllImport(Library, EntryPoint = "veris_entity_corners", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int EntityCorners(EngineHandle engine, ulong entity, [Out] EntityPoint[] corners, uint count);
         [DllImport(Library, EntryPoint = "veris_duplicate_entity", CallingConvention = CallingConvention.Cdecl)]

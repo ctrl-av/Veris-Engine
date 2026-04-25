@@ -149,6 +149,39 @@ int32_t veris_entity_corners(uint64_t engine, uint64_t entity, VerisPoint* corne
     });
 }
 
+int32_t veris_parent_coordinates(uint64_t engine, uint64_t entity, int32_t x, int32_t y, VerisPoint* local)
+{
+    return Boundary([&]
+    {
+        if (!local) throw std::invalid_argument("Coordinate output pointer is required.");
+        auto& session = FindEngine(engine);
+        auto point = session.PixelToWorld({x, y});
+        const auto parent = session.ActiveScene().Get(entity).Parent();
+        if (parent != 0)
+        {
+            const auto transform = session.ActiveScene().WorldTransform(parent);
+            const auto matrix = transform.getMatrix();
+            const auto determinant = matrix[0] * matrix[5] - matrix[1] * matrix[4];
+            if (!std::isfinite(determinant) || std::abs(determinant) < 0.000001f) throw std::invalid_argument("Cannot manipulate an entity under a collapsed parent transform.");
+            point = transform.getInverse().transformPoint(point);
+        }
+        if (!std::isfinite(point.x) || !std::isfinite(point.y)) throw std::invalid_argument("Pointer coordinates exceed the transform range.");
+        *local = {point.x, point.y};
+    });
+}
+
+int32_t veris_entity_origin(uint64_t engine, uint64_t entity, VerisPoint* pixel)
+{
+    return Boundary([&]
+    {
+        if (!pixel) throw std::invalid_argument("Origin output pointer is required.");
+        auto& session = FindEngine(engine);
+        const auto world = session.ActiveScene().WorldTransform(entity).transformPoint({0, 0});
+        const auto origin = session.WorldToPixel(world);
+        *pixel = {static_cast<float>(origin.x), static_cast<float>(origin.y)};
+    });
+}
+
 int32_t veris_duplicate_entity(uint64_t engine, uint64_t entity, uint64_t* duplicate)
 {
     return Boundary([&]

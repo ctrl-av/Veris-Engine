@@ -25,6 +25,7 @@ internal static class WorkspaceChecks
             HierarchyChecks.Run(view, workspace);
             SelectionChecks.Run(view, workspace);
             InspectorChecks.Run(view, workspace);
+            TransformChecks.Run(view, workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

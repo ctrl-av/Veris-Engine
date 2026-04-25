@@ -98,7 +98,16 @@
                             <TextBlock Text="{Binding WindowSummary}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#8F9BAC" Margin="12,0" FontSize="11" />
                         </DockPanel>
                     </Border>
-                    <workspace:EngineViewport x:Name="SceneViewport" />
+                    <DockPanel DockPanel.Dock="Top" Background="#292D36" LastChildFill="False">
+                        <ComboBox x:Name="TransformToolInput" ItemsSource="{x:Static workspace:TransformTools.Modes}" SelectedItem="{Binding Tools.Mode}" Width="78" Margin="4" ToolTip="Move (W), rotate (E), scale (R)">
+                            <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" Foreground="#20242A" /></DataTemplate></ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <CheckBox Content="Snap" IsChecked="{Binding Tools.SnapEnabled}" Foreground="#DDE2EA" VerticalAlignment="Center" Margin="4" />
+                        <TextBox Text="{Binding Tools.MoveStep, UpdateSourceTrigger=PropertyChanged}" Width="42" Margin="4" ToolTip="Move grid in parent-local units" />
+                        <TextBox Text="{Binding Tools.AngleStep, UpdateSourceTrigger=PropertyChanged}" Width="42" Margin="4" ToolTip="Angle increment in degrees" />
+                        <TextBox Text="{Binding Tools.ScaleStep, UpdateSourceTrigger=PropertyChanged}" Width="42" Margin="4" ToolTip="Scale increment" />
+                    </DockPanel>
+                    <workspace:EngineViewport x:Name="SceneViewport" ToolTip="Drag to transform. W: move, E: rotate, R: scale. Ctrl: snap. Esc: cancel." />
                 </DockPanel>
             </Border>
             <GridSplitter Grid.Column="3" ResizeDirection="Columns" />

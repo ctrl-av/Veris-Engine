@@ -35,3 +35,4 @@
 - [x] Editable entity hierarchy with creation, rename, subtree duplication, parenting, cycle rejection, and recursive deletion.
 - [x] Synchronized hierarchy and viewport selection with native picking, layer priority, and entity outlines.
 - [x] Component inspector for validated local transforms and textured sprites, tint, visibility, layers, origins, and atlas rectangles.
+- [x] Viewport move, rotate, and scale tools with grid/angle/scale snapping, parent-aware coordinates, and drag cancellation.

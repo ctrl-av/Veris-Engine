@@ -49,7 +49,7 @@ namespace VerisEditor.Workspace
 
         public void ApplySprite()
         {
-            if (Tint.Length != 8 || !uint.TryParse(Tint, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var tint))
+            if (Tint.Length != 8 || !uint.TryParse(Tint, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var tint))
                 throw new ArgumentException("Tint must contain eight hexadecimal RGBA digits.");
             var sprite = new SpriteProperties
             {

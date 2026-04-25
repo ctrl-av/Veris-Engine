@@ -30,6 +30,10 @@ namespace VerisEditor.Workspace
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             MouseLeftButtonDown += OnPointerDown;
+            MouseMove += OnPointerMove;
+            MouseLeftButtonUp += OnPointerUp;
+            LostMouseCapture += OnCaptureLost;
+            KeyDown += OnKeyDown;
         }
 
         public void RenderFrame()
@@ -54,15 +58,71 @@ namespace VerisEditor.Workspace
         public void SelectAt(Point position)
         {
             if (_bitmap == null || DataContext is not EditorWorkspace workspace || workspace.IsDisposed) return;
-            workspace.SelectAt((int)(position.X * _bitmap.PixelWidth / ActualWidth), (int)(position.Y * _bitmap.PixelHeight / ActualHeight));
+            var pixel = ToPixel(position);
+            workspace.SelectAt(pixel.X, pixel.Y);
             RenderFrame();
         }
 
         private void OnPointerDown(object sender, MouseButtonEventArgs e)
         {
             Focus();
-            SelectAt(e.GetPosition(this));
+            if (_bitmap == null || DataContext is not EditorWorkspace workspace) return;
+            var position = e.GetPosition(this);
+            var onHandle = workspace.HasSelection && HitTransformHandle(position, workspace);
+            if (!onHandle) SelectAt(position);
+            if (workspace.HasSelection && (onHandle || workspace.Tools.Mode == TransformMode.Move))
+            {
+                var pixel = ToPixel(position);
+                workspace.BeginTransformDrag(pixel.X, pixel.Y);
+                if (workspace.Tools.IsDragging) CaptureMouse();
+            }
             e.Handled = true;
+        }
+
+        private void OnPointerMove(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseCaptured || DataContext is not EditorWorkspace workspace || !workspace.Tools.IsDragging) return;
+            var pixel = ToPixel(e.GetPosition(this));
+            workspace.Tools.TemporarySnap = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
+            workspace.DragTransform(pixel.X, pixel.Y);
+            RenderFrame();
+            e.Handled = true;
+        }
+
+        private void OnPointerUp(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is EditorWorkspace workspace) workspace.Tools.Complete();
+            ReleaseMouseCapture();
+            e.Handled = true;
+        }
+
+        private void OnCaptureLost(object sender, MouseEventArgs e)
+        {
+            if (DataContext is EditorWorkspace workspace && !workspace.IsDisposed) workspace.CancelTransformDrag();
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (DataContext is not EditorWorkspace workspace) return;
+            if (e.Key == Key.Escape) { workspace.CancelTransformDrag(); ReleaseMouseCapture(); }
+            else if (e.Key == Key.W) workspace.Tools.Mode = TransformMode.Move;
+            else if (e.Key == Key.E) workspace.Tools.Mode = TransformMode.Rotate;
+            else if (e.Key == Key.R) workspace.Tools.Mode = TransformMode.Scale;
+            else return;
+            RenderFrame();
+            e.Handled = true;
+        }
+
+        private bool HitTransformHandle(Point pointer, EditorWorkspace workspace)
+        {
+            var pivot = ToControlPoint(workspace.EntityOrigin(workspace.SelectedEntityId));
+            var offset = pointer - pivot;
+            return workspace.Tools.Mode switch
+            {
+                TransformMode.Rotate => Math.Abs(offset.Length - 32) <= 8,
+                TransformMode.Scale => (pointer - (pivot + new Vector(24, -24))).Length <= 10,
+                _ => offset.Length <= 12
+            };
         }
 
         private void DrawEntityOutlines(EditorWorkspace workspace)
@@ -81,7 +141,31 @@ namespace VerisEditor.Workspace
                 }
                 drawing.DrawGeometry(null, entity.Id == workspace.SelectedEntityId ? SelectionPen : EntityPen, outline);
             }
+            if (workspace.HasSelection) DrawTransformHandle(drawing, workspace);
         }
+
+        private void DrawTransformHandle(DrawingContext drawing, EditorWorkspace workspace)
+        {
+            var pivot = ToControlPoint(workspace.EntityOrigin(workspace.SelectedEntityId));
+            switch (workspace.Tools.Mode)
+            {
+                case TransformMode.Rotate:
+                    drawing.DrawEllipse(null, SelectionPen, pivot, 32, 32);
+                    break;
+                case TransformMode.Scale:
+                    var handle = pivot + new Vector(24, -24);
+                    drawing.DrawLine(SelectionPen, pivot, handle);
+                    drawing.DrawRectangle(Brushes.Gold, null, new Rect(handle - new Vector(4, 4), new Size(8, 8)));
+                    break;
+                default:
+                    drawing.DrawLine(SelectionPen, pivot - new Vector(12, 0), pivot + new Vector(12, 0));
+                    drawing.DrawLine(SelectionPen, pivot - new Vector(0, 12), pivot + new Vector(0, 12));
+                    drawing.DrawRectangle(null, SelectionPen, new Rect(pivot - new Vector(5, 5), new Size(10, 10)));
+                    break;
+            }
+        }
+
+        private (int X, int Y) ToPixel(Point position) => ((int)(position.X * _bitmap!.PixelWidth / ActualWidth), (int)(position.Y * _bitmap.PixelHeight / ActualHeight));
 
         private Point ToControlPoint(EntityPoint pixel) => new(pixel.X * ActualWidth / _bitmap!.PixelWidth, pixel.Y * ActualHeight / _bitmap.PixelHeight);
 
@@ -96,6 +180,8 @@ namespace VerisEditor.Workspace
         {
             _rendering = false;
             CompositionTarget.Rendering -= OnRendering;
+            if (DataContext is EditorWorkspace workspace && !workspace.IsDisposed) workspace.CancelTransformDrag();
+            ReleaseMouseCapture();
         }
 
         private void OnRendering(object? sender, EventArgs e)

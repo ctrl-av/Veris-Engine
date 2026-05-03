@@ -91,7 +91,7 @@ namespace VerisEditor.Workspace
 
         private void OnPointerUp(object sender, MouseButtonEventArgs e)
         {
-            if (DataContext is EditorWorkspace workspace) workspace.Tools.Complete();
+            if (DataContext is EditorWorkspace workspace) workspace.CompleteTransformDrag();
             ReleaseMouseCapture();
             e.Handled = true;
         }

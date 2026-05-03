@@ -22,6 +22,8 @@ namespace
     std::mutex SessionsMutex;
     std::map<std::uint64_t, std::unique_ptr<EngineSession>> Sessions;
     std::uint64_t NextSession = 1;
+    std::map<std::uint64_t, std::pair<std::uint64_t, std::unique_ptr<Veris::Scene>>> Snapshots;
+    std::uint64_t NextSnapshot = 1;
     thread_local std::string LastError;
 
     template<typename Operation>
@@ -48,6 +50,13 @@ namespace
         if (session == Sessions.end()) throw std::out_of_range("Engine handle is invalid or has been released.");
         if (session->second->Owner != std::this_thread::get_id()) throw std::logic_error("Engine operations must run on the creating thread.");
         return session->second->Engine;
+    }
+
+    const Veris::Scene& FindSnapshot(std::uint64_t engine, std::uint64_t snapshot)
+    {
+        const auto found = Snapshots.find(snapshot);
+        if (found == Snapshots.end() || found->second.first != engine) throw std::invalid_argument("Snapshot does not belong to this active engine.");
+        return *found->second.second;
     }
 
     bool CopyText(const std::string& text, char* utf8, std::uint32_t capacity, std::uint32_t* required)
@@ -92,7 +101,40 @@ int32_t veris_destroy(uint64_t engine)
     return Boundary([&]
     {
         if (Sessions.erase(engine) == 0) throw std::out_of_range("Engine handle is invalid or has been released.");
+        for (auto snapshot = Snapshots.begin(); snapshot != Snapshots.end();)
+            if (snapshot->second.first == engine) snapshot = Snapshots.erase(snapshot); else ++snapshot;
     });
+}
+
+int32_t veris_capture_scene(uint64_t engine, uint64_t* snapshot)
+{
+    return Boundary([&]
+    {
+        if (!snapshot) throw std::invalid_argument("Snapshot output pointer is required.");
+        if (NextSnapshot == (std::numeric_limits<std::uint64_t>::max)()) throw std::overflow_error("Snapshot identifiers exhausted.");
+        auto copy = std::make_unique<Veris::Scene>(FindEngine(engine).ActiveScene());
+        Snapshots.emplace(NextSnapshot, std::make_pair(engine, std::move(copy)));
+        *snapshot = NextSnapshot++;
+    });
+}
+
+int32_t veris_restore_scene(uint64_t engine, uint64_t snapshot)
+{
+    return Boundary([&] { FindEngine(engine).ActiveScene().Replace(FindSnapshot(engine, snapshot)); });
+}
+
+int32_t veris_matches_scene(uint64_t engine, uint64_t snapshot, int32_t* matches)
+{
+    return Boundary([&]
+    {
+        if (!matches) throw std::invalid_argument("Scene comparison output pointer is required.");
+        *matches = FindEngine(engine).ActiveScene().Matches(FindSnapshot(engine, snapshot)) ? 1 : 0;
+    });
+}
+
+int32_t veris_release_snapshot(uint64_t snapshot)
+{
+    return Boundary([&] { Snapshots.erase(snapshot); });
 }
 
 int32_t veris_resize(uint64_t engine, uint32_t width, uint32_t height)

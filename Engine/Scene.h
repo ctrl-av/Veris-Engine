@@ -63,6 +63,8 @@ namespace Veris
         sf::Transform WorldTransform(EntityId id) const;
         void Submit(Engine& engine) const;
         void Clear() { _entities.clear(); }
+        void Replace(Scene replacement);
+        bool Matches(const Scene& other) const;
 
     private:
         std::vector<EntityId> Subtree(EntityId id) const;

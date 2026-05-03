@@ -154,6 +154,7 @@
     <ClCompile Include="InputActions.cpp" />
     <ClCompile Include="TextureResources.cpp" />
     <ClCompile Include="ScenePicking.cpp" />
+    <ClCompile Include="SceneHistory.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />

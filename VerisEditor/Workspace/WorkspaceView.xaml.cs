@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Controls.Primitives;
 
 namespace VerisEditor.Workspace
 {
@@ -11,10 +12,22 @@ namespace VerisEditor.Workspace
         {
             InitializeComponent();
             DataContext = workspace;
+            PreviewKeyDown += OnWorkspaceKeyDown;
+        }
+
+        private void OnWorkspaceKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers != ModifierKeys.Control || e.OriginalSource is TextBoxBase) return;
+            if (e.Key == Key.Z) ((EditorWorkspace)DataContext).Undo();
+            else if (e.Key == Key.Y) ((EditorWorkspace)DataContext).Redo();
+            else return;
+            e.Handled = true;
         }
 
         private void RefreshWorkspace(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Refresh();
         private void NavigateUp(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).NavigateUp();
+        private void Undo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Undo();
+        private void Redo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Redo();
         private void CreateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).CreateEntity(((EditorWorkspace)DataContext).EntityName);
         private void RenameEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).RenameSelected(((EditorWorkspace)DataContext).EntityName);
         private void DuplicateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).DuplicateSelected();

@@ -53,6 +53,10 @@ enum VerisStatus
 
 VERIS_API int32_t __cdecl veris_create(uint32_t width, uint32_t height, uint64_t* engine);
 VERIS_API int32_t __cdecl veris_destroy(uint64_t engine);
+VERIS_API int32_t __cdecl veris_capture_scene(uint64_t engine, uint64_t* snapshot);
+VERIS_API int32_t __cdecl veris_restore_scene(uint64_t engine, uint64_t snapshot);
+VERIS_API int32_t __cdecl veris_matches_scene(uint64_t engine, uint64_t snapshot, int32_t* matches);
+VERIS_API int32_t __cdecl veris_release_snapshot(uint64_t snapshot);
 VERIS_API int32_t __cdecl veris_resize(uint64_t engine, uint32_t width, uint32_t height);
 VERIS_API int32_t __cdecl veris_update(uint64_t engine);
 VERIS_API int32_t __cdecl veris_create_entity(uint64_t engine, const char* name, uint64_t* entity);

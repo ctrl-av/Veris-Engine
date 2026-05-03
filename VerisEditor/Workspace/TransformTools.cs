@@ -5,7 +5,7 @@ namespace VerisEditor.Workspace
 {
     public enum TransformMode { Move, Rotate, Scale }
 
-    public sealed class TransformTools(NativeEngine engine, EntityInspector inspector) : ViewModelBase
+    public sealed class TransformTools(NativeEngine engine, EntityInspector inspector, SceneHistory history) : ViewModelBase
     {
         private ulong _entity;
         private EntityTransform _initial;
@@ -34,6 +34,7 @@ namespace VerisEditor.Workspace
             if (Mode != TransformMode.Move && distance < 0.001f) throw new ArgumentException("Start the drag on the rotation ring or scale handle, away from the pivot.");
             _initial = initial;
             _start = start;
+            history.BeginEdit();
             _entity = entity;
         }
 
@@ -54,6 +55,7 @@ namespace VerisEditor.Workspace
 
         public void Complete()
         {
+            history.CommitEdit("Transform entity");
             _entity = 0;
             TemporarySnap = false;
         }
@@ -66,6 +68,7 @@ namespace VerisEditor.Workspace
             _entity = 0;
             engine.SetTransform(entity, _initial);
             inspector.Load(entity);
+            history.CancelEdit();
         }
 
         private EntityTransform Move(EntityPoint pointer)

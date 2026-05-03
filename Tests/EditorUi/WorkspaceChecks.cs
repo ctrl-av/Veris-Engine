@@ -22,6 +22,7 @@ internal static class WorkspaceChecks
             VerifyPanels(view, workspace);
             VerifyContentNavigation(view, workspace);
             VerifyViewport(view);
+            HistoryChecks.Run(workspace);
             HierarchyChecks.Run(view, workspace);
             SelectionChecks.Run(view, workspace);
             InspectorChecks.Run(view, workspace);

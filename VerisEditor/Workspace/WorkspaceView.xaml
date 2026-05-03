@@ -40,6 +40,8 @@
         <Border Background="#292D36" Padding="16,6">
             <DockPanel>
                 <Button x:Name="RefreshWorkspaceButton" DockPanel.Dock="Right" Content="Refresh workspace" Click="RefreshWorkspace" />
+                <Button x:Name="RedoButton" DockPanel.Dock="Right" Content="Redo" Click="Redo" IsEnabled="{Binding History.CanRedo}" />
+                <Button x:Name="UndoButton" DockPanel.Dock="Right" Content="Undo" Click="Undo" IsEnabled="{Binding History.CanUndo}" />
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding Project.Name}" FontSize="17" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding ProjectFile}" FontSize="11" Foreground="#A9B6C8" TextTrimming="CharacterEllipsis" />

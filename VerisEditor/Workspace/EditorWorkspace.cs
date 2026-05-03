@@ -26,6 +26,7 @@ namespace VerisEditor.Workspace
         public bool HasSelection => _selectedEntity != null;
         public EntityInspector Inspector { get; }
         public TransformTools Tools { get; }
+        public SceneHistory History { get; }
         public string EntityName { get; set; } = "Entity";
         public ulong SelectedParentId { get; set; }
         public bool IsDisposed { get; private set; }
@@ -44,7 +45,8 @@ namespace VerisEditor.Workspace
             ReadContentDirectory(ContentRoot);
             _engine = new NativeEngine((uint)project.WindowWidth, (uint)project.WindowHeight);
             Inspector = new EntityInspector(_engine);
-            Tools = new TransformTools(_engine, Inspector);
+            History = new SceneHistory(_engine, () => SelectedEntityId, RestoreSelection);
+            Tools = new TransformTools(_engine, Inspector, History);
             try
             {
                 _engine.SetContentRoot(ContentRoot);
@@ -65,7 +67,7 @@ namespace VerisEditor.Workspace
         }
 
         public void Refresh() => Run(() => { ReadContentDirectory(CurrentDirectory); RefreshScene(); RefreshOutput(); });
-        public void CreateEntity(string name, ulong parent = 0) => Run(() =>
+        public void CreateEntity(string name, ulong parent = 0) => Edit("Create entity", () =>
         {
             var entity = _engine.CreateEntity(name);
             try { _engine.SetParent(entity, parent); }
@@ -74,10 +76,10 @@ namespace VerisEditor.Workspace
             SelectEntity(entity);
         });
 
-        public void RenameSelected(string name) => Run(() => { _engine.RenameEntity(SelectedEntityId, name); RefreshScene(); });
-        public void ReparentSelected(ulong parent) => Run(() => { Tools.Cancel(); _engine.SetParent(SelectedEntityId, parent); RefreshScene(); });
-        public void DeleteSelected() => Run(() => { Tools.Cancel(); _engine.DestroyEntity(SelectedEntityId); RefreshScene(); });
-        public void DuplicateSelected() => Run(() =>
+        public void RenameSelected(string name) => Edit("Rename entity", () => { _engine.RenameEntity(SelectedEntityId, name); RefreshScene(); });
+        public void ReparentSelected(ulong parent) => Edit("Reparent entity", () => { _engine.SetParent(SelectedEntityId, parent); RefreshScene(); });
+        public void DeleteSelected() => Edit("Delete subtree", () => { _engine.DestroyEntity(SelectedEntityId); RefreshScene(); });
+        public void DuplicateSelected() => Edit("Duplicate subtree", () =>
         {
             var duplicate = _engine.DuplicateEntity(SelectedEntityId);
             RefreshScene();
@@ -113,12 +115,15 @@ namespace VerisEditor.Workspace
         public EntityPoint[] EntityCorners(ulong entity) => _engine.EntityCorners(entity);
         public EntityPoint EntityOrigin(ulong entity) => _engine.EntityOrigin(entity);
         public void SelectAt(int pixelX, int pixelY) => Run(() => SelectEntity(_engine.PickEntity(pixelX, pixelY)));
-        public void ApplyTransform() => Run(Inspector.ApplyTransform);
-        public void ApplySprite() => Run(Inspector.ApplySprite);
-        public void RemoveSprite() => Run(Inspector.RemoveSprite);
+        public void ApplyTransform() => Edit("Edit transform", Inspector.ApplyTransform);
+        public void ApplySprite() => Edit("Edit sprite", Inspector.ApplySprite);
+        public void RemoveSprite() => Edit("Remove sprite", Inspector.RemoveSprite);
         public void BeginTransformDrag(int x, int y) => Run(() => Tools.Begin(SelectedEntityId, x, y));
         public void DragTransform(int x, int y) => Run(() => Tools.Drag(x, y));
         public void CancelTransformDrag() => Run(Tools.Cancel);
+        public void CompleteTransformDrag() => Run(Tools.Complete);
+        public void Undo() => Run(() => { Tools.Cancel(); History.Undo(); });
+        public void Redo() => Run(() => { Tools.Cancel(); History.Redo(); });
 
         public void ReportViewportError(Exception exception)
         {
@@ -129,7 +134,17 @@ namespace VerisEditor.Workspace
         public void Dispose()
         {
             IsDisposed = true;
+            History.Dispose();
             _engine.Dispose();
+        }
+
+        private void Edit(string name, Action operation) => Run(() => { Tools.Cancel(); History.Execute(name, operation); });
+
+        private void RestoreSelection(ulong entity)
+        {
+            RefreshScene();
+            foreach (var candidate in Entities) if (candidate.Id == entity) { SelectEntity(entity); return; }
+            SelectEntity(0);
         }
 
         private void Run(Action operation)

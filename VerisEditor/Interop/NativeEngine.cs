@@ -100,6 +100,17 @@ namespace VerisEditor.Interop
         public void Update() => Check(NativeMethods.Update(_handle));
         public void SetTransform(ulong entity, EntityTransform transform) => Check(NativeMethods.SetTransform(_handle, entity, in transform));
         public void Dispose() => _handle.Dispose();
+        public SceneSnapshot CaptureScene()
+        {
+            Check(NativeMethods.CaptureScene(_handle, out var snapshot));
+            return new SceneSnapshot(snapshot);
+        }
+        public void RestoreScene(SceneSnapshot snapshot) => Check(NativeMethods.RestoreScene(_handle, snapshot));
+        public bool MatchesScene(SceneSnapshot snapshot)
+        {
+            Check(NativeMethods.MatchesScene(_handle, snapshot, out var matches));
+            return matches != 0;
+        }
         public void CopyFrame(byte[] rgba) => Check(NativeMethods.CopyFrame(_handle, rgba, (ulong)rgba.Length, out _));
 
         public byte[] CopyFrame()
@@ -181,6 +192,12 @@ namespace VerisEditor.Interop
         protected override bool ReleaseHandle() => NativeMethods.Destroy(unchecked((ulong)handle.ToInt64())) == 0;
     }
 
+    public sealed class SceneSnapshot : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        internal SceneSnapshot(ulong snapshot) : base(true) => SetHandle(new IntPtr(checked((long)snapshot)));
+        protected override bool ReleaseHandle() => NativeMethods.ReleaseSnapshot(unchecked((ulong)handle.ToInt64())) == 0;
+    }
+
     internal static class NativeMethods
     {
         private const string Library = "VerisInterop";
@@ -189,6 +206,14 @@ namespace VerisEditor.Interop
         internal static extern int Create(uint width, uint height, out ulong engine);
         [DllImport(Library, EntryPoint = "veris_destroy", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int Destroy(ulong engine);
+        [DllImport(Library, EntryPoint = "veris_capture_scene", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int CaptureScene(EngineHandle engine, out ulong snapshot);
+        [DllImport(Library, EntryPoint = "veris_restore_scene", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int RestoreScene(EngineHandle engine, SceneSnapshot snapshot);
+        [DllImport(Library, EntryPoint = "veris_matches_scene", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int MatchesScene(EngineHandle engine, SceneSnapshot snapshot, out int matches);
+        [DllImport(Library, EntryPoint = "veris_release_snapshot", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ReleaseSnapshot(ulong snapshot);
         [DllImport(Library, EntryPoint = "veris_resize", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int Resize(EngineHandle engine, uint width, uint height);
         [DllImport(Library, EntryPoint = "veris_update", CallingConvention = CallingConvention.Cdecl)]

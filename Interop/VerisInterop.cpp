@@ -1,5 +1,6 @@
 #include "VerisInterop.h"
 #include "../Engine/Engine.h"
+#include "../Engine/SceneFormat.h"
 #include <SFML/Graphics/Image.hpp>
 #include <Windows.h>
 #include <cstring>
@@ -135,6 +136,24 @@ int32_t veris_matches_scene(uint64_t engine, uint64_t snapshot, int32_t* matches
 int32_t veris_release_snapshot(uint64_t snapshot)
 {
     return Boundary([&] { Snapshots.erase(snapshot); });
+}
+
+int32_t veris_serialize_scene(uint64_t engine, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&] { tooSmall = !CopyText(Veris::SerializeScene(FindEngine(engine).ActiveScene()), utf8, capacity, required); });
+    if (status == VerisOk && tooSmall) { LastError = "Scene buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+
+int32_t veris_deserialize_scene(uint64_t engine, const char* utf8)
+{
+    return Boundary([&]
+    {
+        if (!utf8) throw std::invalid_argument("Scene document is required.");
+        auto& session = FindEngine(engine);
+        session.ActiveScene().Replace(Veris::DeserializeScene(utf8, session.Textures()));
+    });
 }
 
 int32_t veris_resize(uint64_t engine, uint32_t width, uint32_t height)

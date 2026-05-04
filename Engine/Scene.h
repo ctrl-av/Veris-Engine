@@ -52,6 +52,7 @@ namespace Veris
     {
     public:
         EntityId CreateEntity(std::string name);
+        EntityId ImportEntity(EntityId id, std::string name);
         void DestroyEntity(EntityId id);
         EntityId DuplicateEntity(EntityId id);
         void RenameEntity(EntityId id, std::string name);

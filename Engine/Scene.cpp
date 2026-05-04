@@ -19,11 +19,15 @@ namespace Veris
 {
     EntityId Scene::CreateEntity(std::string name)
     {
+        return ImportEntity(_nextId, std::move(name));
+    }
+
+    EntityId Scene::ImportEntity(EntityId id, std::string name)
+    {
         ValidateEntityName(name);
-        if (_nextId == std::numeric_limits<EntityId>::max()) throw std::overflow_error("Entity identifiers exhausted.");
-        const auto id = _nextId;
+        if (id == 0 || id == std::numeric_limits<EntityId>::max() || Contains(id)) throw std::invalid_argument("Entity IDs must be unique, nonzero, and below the maximum integer.");
         _entities.emplace(id, Entity(id, std::move(name)));
-        ++_nextId;
+        _nextId = std::max(_nextId, id + 1);
         return id;
     }
 

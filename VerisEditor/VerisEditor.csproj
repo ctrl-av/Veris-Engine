@@ -17,6 +17,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="..\.dependencies\json-3.12.0\LICENSE.MIT">
+      <Link>licenses\nlohmann-json.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="$(NativeInteropDirectory)VerisInterop.dll;$(NativeInteropDirectory)sfml-graphics$(NativeDebugSuffix)-3.dll;$(NativeInteropDirectory)sfml-window$(NativeDebugSuffix)-3.dll;$(NativeInteropDirectory)sfml-system$(NativeDebugSuffix)-3.dll">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

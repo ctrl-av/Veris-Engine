@@ -105,6 +105,8 @@ namespace VerisEditor.Interop
             Check(NativeMethods.CaptureScene(_handle, out var snapshot));
             return new SceneSnapshot(snapshot);
         }
+        public string SerializeScene() => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.SerializeScene(_handle, buffer, capacity, out required));
+        public void DeserializeScene(string json) => Check(NativeMethods.DeserializeScene(_handle, json));
         public void RestoreScene(SceneSnapshot snapshot) => Check(NativeMethods.RestoreScene(_handle, snapshot));
         public bool MatchesScene(SceneSnapshot snapshot)
         {
@@ -214,6 +216,10 @@ namespace VerisEditor.Interop
         internal static extern int MatchesScene(EngineHandle engine, SceneSnapshot snapshot, out int matches);
         [DllImport(Library, EntryPoint = "veris_release_snapshot", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ReleaseSnapshot(ulong snapshot);
+        [DllImport(Library, EntryPoint = "veris_serialize_scene", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SerializeScene(EngineHandle engine, [Out] byte[]? utf8, uint capacity, out uint required);
+        [DllImport(Library, EntryPoint = "veris_deserialize_scene", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int DeserializeScene(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string utf8);
         [DllImport(Library, EntryPoint = "veris_resize", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int Resize(EngineHandle engine, uint width, uint height);
         [DllImport(Library, EntryPoint = "veris_update", CallingConvention = CallingConvention.Cdecl)]

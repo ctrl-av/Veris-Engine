@@ -27,6 +27,7 @@ internal static class WorkspaceChecks
             SelectionChecks.Run(view, workspace);
             InspectorChecks.Run(view, workspace);
             TransformChecks.Run(view, workspace);
+            SceneFileChecks.Run(workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

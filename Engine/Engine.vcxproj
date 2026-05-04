@@ -54,6 +54,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="SFML.props" />
+  <ItemDefinitionGroup><ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\.dependencies\json-3.12.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
@@ -142,6 +143,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputActions.h" />
     <ClInclude Include="TextureResources.h" />
+    <ClInclude Include="SceneFormat.h" />
+    <ClInclude Include="JsonValidation.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
@@ -155,6 +158,7 @@
     <ClCompile Include="TextureResources.cpp" />
     <ClCompile Include="ScenePicking.cpp" />
     <ClCompile Include="SceneHistory.cpp" />
+    <ClCompile Include="SceneFormat.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />

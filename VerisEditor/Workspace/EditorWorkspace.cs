@@ -5,7 +5,7 @@ using VerisEditor.Interop;
 
 namespace VerisEditor.Workspace
 {
-    public sealed class EditorWorkspace : ViewModelBase, IDisposable
+    public sealed partial class EditorWorkspace : ViewModelBase, IDisposable
     {
         private readonly NativeEngine _engine;
         private string _currentDirectory;
@@ -150,7 +150,7 @@ namespace VerisEditor.Workspace
         private void Run(Action operation)
         {
             try { operation(); Status = "Workspace refreshed"; }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or NativeEngineException or ArgumentException)
+            catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or NativeEngineException or ArgumentException)
             {
                 Status = exception.Message;
                 EditorLog.Error("Cannot refresh editor workspace.", exception);

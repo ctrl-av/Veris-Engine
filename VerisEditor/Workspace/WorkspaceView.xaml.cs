@@ -28,6 +28,8 @@ namespace VerisEditor.Workspace
         private void NavigateUp(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).NavigateUp();
         private void Undo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Undo();
         private void Redo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Redo();
+        private void SaveScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).SaveScene(((EditorWorkspace)DataContext).ScenePathInput);
+        private void OpenScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).OpenScene(((EditorWorkspace)DataContext).ScenePathInput);
         private void CreateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).CreateEntity(((EditorWorkspace)DataContext).EntityName);
         private void RenameEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).RenameSelected(((EditorWorkspace)DataContext).EntityName);
         private void DuplicateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).DuplicateSelected();

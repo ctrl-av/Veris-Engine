@@ -26,7 +26,9 @@ internal static class TransformChecks
     {
         workspace.BeginTransformDrag(64, 64);
         workspace.DragTransform(80, 90);
-        Program.Assert(workspace.Inspector.PositionX == "80" && workspace.Inspector.PositionY == "90", "Move must apply pointer deltas to native transforms.");
+        Program.Assert(Math.Abs(float.Parse(workspace.Inspector.PositionX, CultureInfo.InvariantCulture) - 80) < 0.001f &&
+            Math.Abs(float.Parse(workspace.Inspector.PositionY, CultureInfo.InvariantCulture) - 90) < 0.001f,
+            $"Move must apply pointer deltas to native transforms; received {workspace.Inspector.PositionX}, {workspace.Inspector.PositionY}.");
         workspace.CancelTransformDrag();
         Program.Assert(workspace.Inspector.PositionX == "64" && workspace.Inspector.PositionY == "64", "Cancel must restore the complete starting transform.");
         workspace.Tools.SnapEnabled = true;

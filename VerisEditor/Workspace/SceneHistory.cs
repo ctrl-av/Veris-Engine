@@ -86,16 +86,21 @@ namespace VerisEditor.Workspace
 
         public void Clear()
         {
+            ReleaseEdits();
+            Revision = checked(++_nextRevision);
+            NotifyChanged();
+        }
+
+        public void Dispose() => ReleaseEdits();
+
+        private void ReleaseEdits()
+        {
             CancelEdit();
             foreach (var edit in _undo) edit.Dispose();
             foreach (var edit in _redo) edit.Dispose();
             _undo.Clear();
             _redo.Clear();
-            Revision = checked(++_nextRevision);
-            NotifyChanged();
         }
-
-        public void Dispose() => Clear();
 
         private void NotifyChanged()
         {

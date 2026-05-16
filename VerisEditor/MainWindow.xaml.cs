@@ -1,4 +1,5 @@
 using System.Windows;
+using System.ComponentModel;
 using VerisEditor.GameProject;
 using VerisEditor.Workspace;
 
@@ -18,6 +19,12 @@ namespace VerisEditor
         {
             _workspace?.Dispose();
             base.OnClosed(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (_workspace != null && !_workspace.CanLeaveScene(() => ScenePrompts.Choose(this, _workspace.SceneTitle))) e.Cancel = true;
+            base.OnClosing(e);
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
@@ -54,11 +61,21 @@ namespace VerisEditor
             WorkspaceView view;
             try { view = new WorkspaceView(workspace); }
             catch { workspace.Dispose(); throw; }
+            if (_workspace != null && !_workspace.CanLeaveScene(() => ScenePrompts.Choose(this, _workspace.SceneTitle))) { workspace.Dispose(); return; }
             var previous = _workspace;
+            if (previous != null) previous.PropertyChanged -= OnWorkspaceChanged;
             WorkspaceContent.Content = view;
             _workspace = workspace;
-            Title = $"Veris Editor - {project.Name}";
+            workspace.PropertyChanged += OnWorkspaceChanged;
+            UpdateWorkspaceTitle();
             previous?.Dispose();
         }
+
+        private void OnWorkspaceChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(EditorWorkspace.SceneTitle)) UpdateWorkspaceTitle();
+        }
+
+        private void UpdateWorkspaceTitle() => Title = $"Veris Editor - {_workspace!.Project.Name} - {_workspace.SceneTitle}";
     }
 }

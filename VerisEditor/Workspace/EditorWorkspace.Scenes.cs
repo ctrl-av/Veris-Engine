@@ -17,6 +17,7 @@ namespace VerisEditor.Workspace
                 AtomicFile.WriteText(path, _engine.SerializeScene());
                 _sceneFile = path;
                 ScenePathInput = relativePath;
+                MarkSaved();
                 OnPropertyChanged(nameof(SceneFile));
                 OnPropertyChanged(nameof(ScenePathInput));
                 Status = "Scene saved";
@@ -30,8 +31,9 @@ namespace VerisEditor.Workspace
             }
         }
 
-        public bool OpenScene(string relativePath)
+        public bool OpenScene(string relativePath, Func<UnsavedChoice> choose)
         {
+            if (!CanLeaveScene(choose)) return false;
             try
             {
                 Tools.Cancel();
@@ -42,6 +44,7 @@ namespace VerisEditor.Workspace
                 RestoreSelection(0);
                 _sceneFile = path;
                 ScenePathInput = relativePath;
+                MarkSaved();
                 OnPropertyChanged(nameof(SceneFile));
                 OnPropertyChanged(nameof(ScenePathInput));
                 Status = "Scene opened";

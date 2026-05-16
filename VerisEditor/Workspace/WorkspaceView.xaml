@@ -96,7 +96,7 @@
                 <DockPanel>
                     <Border DockPanel.Dock="Top" Background="{StaticResource PanelBackground}">
                         <DockPanel>
-                            <TextBlock Text="SCENE" Style="{StaticResource PanelTitle}" />
+                            <TextBlock Text="{Binding SceneTitle}" Style="{StaticResource PanelTitle}" />
                             <TextBlock Text="{Binding WindowSummary}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#8F9BAC" Margin="12,0" FontSize="11" />
                         </DockPanel>
                     </Border>
@@ -104,6 +104,7 @@
                         <TextBox x:Name="ScenePathInput" Text="{Binding ScenePathInput, UpdateSourceTrigger=PropertyChanged}" Width="145" Margin="4" ToolTip="Content-relative .verisscene file" />
                         <Button x:Name="OpenSceneButton" Content="Open" Click="OpenScene" />
                         <Button x:Name="SaveSceneButton" Content="Save" Click="SaveScene" />
+                        <Button x:Name="NewSceneButton" Content="New" Click="NewScene" />
                     </DockPanel>
                     <DockPanel DockPanel.Dock="Top" Background="#292D36" LastChildFill="False">
                         <ComboBox x:Name="TransformToolInput" ItemsSource="{x:Static workspace:TransformTools.Modes}" SelectedItem="{Binding Tools.Mode}" Width="78" Margin="4" ToolTip="Move (W), rotate (E), scale (R)">

@@ -17,8 +17,10 @@ namespace VerisEditor.Workspace
 
         private void OnWorkspaceKeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers != ModifierKeys.Control || e.OriginalSource is TextBoxBase) return;
-            if (e.Key == Key.Z) ((EditorWorkspace)DataContext).Undo();
+            if (Keyboard.Modifiers != ModifierKeys.Control) return;
+            if (e.Key == Key.S) ((EditorWorkspace)DataContext).SaveScene(((EditorWorkspace)DataContext).ScenePathInput);
+            else if (e.OriginalSource is TextBoxBase) return;
+            else if (e.Key == Key.Z) ((EditorWorkspace)DataContext).Undo();
             else if (e.Key == Key.Y) ((EditorWorkspace)DataContext).Redo();
             else return;
             e.Handled = true;
@@ -29,7 +31,9 @@ namespace VerisEditor.Workspace
         private void Undo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Undo();
         private void Redo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Redo();
         private void SaveScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).SaveScene(((EditorWorkspace)DataContext).ScenePathInput);
-        private void OpenScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).OpenScene(((EditorWorkspace)DataContext).ScenePathInput);
+        private void OpenScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).OpenScene(((EditorWorkspace)DataContext).ScenePathInput, ChooseUnsaved);
+        private void NewScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).NewScene(ChooseUnsaved);
+        private UnsavedChoice ChooseUnsaved() => ScenePrompts.Choose(Window.GetWindow(this), ((EditorWorkspace)DataContext).SceneTitle);
         private void CreateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).CreateEntity(((EditorWorkspace)DataContext).EntityName);
         private void RenameEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).RenameSelected(((EditorWorkspace)DataContext).EntityName);
         private void DuplicateEntity(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).DuplicateSelected();

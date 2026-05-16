@@ -46,6 +46,7 @@ namespace VerisEditor.Workspace
             _engine = new NativeEngine((uint)project.WindowWidth, (uint)project.WindowHeight);
             Inspector = new EntityInspector(_engine);
             History = new SceneHistory(_engine, () => SelectedEntityId, RestoreSelection);
+            History.Changed += OnHistoryChanged;
             Tools = new TransformTools(_engine, Inspector, History);
             try
             {

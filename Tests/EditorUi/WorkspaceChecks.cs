@@ -29,6 +29,7 @@ internal static class WorkspaceChecks
             TransformChecks.Run(view, workspace);
             SceneFileChecks.Run(workspace);
             UnsavedChecks.Run(workspace);
+            AssetImportChecks.Run(view, workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

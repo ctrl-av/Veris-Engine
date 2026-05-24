@@ -72,6 +72,9 @@ VERIS_API int32_t __cdecl veris_parent_coordinates(uint64_t engine, uint64_t ent
 VERIS_API int32_t __cdecl veris_entity_origin(uint64_t engine, uint64_t entity, VerisPoint* pixel);
 VERIS_API int32_t __cdecl veris_entity_corners(uint64_t engine, uint64_t entity, VerisPoint* corners, uint32_t count);
 VERIS_API int32_t __cdecl veris_set_content_root(uint64_t engine, const wchar_t* directory);
+VERIS_API int32_t __cdecl veris_load_asset_catalog(uint64_t engine, const wchar_t* manifest);
+VERIS_API int32_t __cdecl veris_validate_texture(const wchar_t* file);
+VERIS_API int32_t __cdecl veris_reload_texture(uint64_t engine, const char* path);
 VERIS_API int32_t __cdecl veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, const VerisSprite* sprite);
 VERIS_API int32_t __cdecl veris_get_sprite(uint64_t engine, uint64_t entity, VerisSprite* sprite, int32_t* present);
 VERIS_API int32_t __cdecl veris_sprite_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required);

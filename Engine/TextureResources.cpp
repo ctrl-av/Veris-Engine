@@ -11,6 +11,8 @@ namespace Veris
         auto root = std::filesystem::canonical(contentDirectory);
         if (!std::filesystem::is_directory(root)) throw std::invalid_argument("Texture resource root must be a directory.");
         Clear();
+        _assetPaths.clear();
+        _assetIdsByPath.clear();
         _root = std::move(root);
     }
 

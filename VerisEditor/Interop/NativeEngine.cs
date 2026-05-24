@@ -28,6 +28,9 @@ namespace VerisEditor.Interop
 
         public void DestroyEntity(ulong entity) => Check(NativeMethods.DestroyEntity(_handle, entity));
         public void SetContentRoot(string directory) => Check(NativeMethods.SetContentRoot(_handle, directory));
+        public void LoadAssetCatalog(string manifest) => Check(NativeMethods.LoadAssetCatalog(_handle, manifest));
+        public static void ValidateTextureFile(string source) => Check(NativeMethods.ValidateTexture(source));
+        public void ReloadTexture(string path) => Check(NativeMethods.ReloadTexture(_handle, path));
         public void SetSprite(ulong entity, string texture, SpriteProperties sprite)
         {
             if (string.IsNullOrWhiteSpace(texture) || texture.Contains('\0')) throw new ArgumentException("A content-relative texture path is required.", nameof(texture));
@@ -230,6 +233,12 @@ namespace VerisEditor.Interop
         internal static extern int DestroyEntity(EngineHandle engine, ulong entity);
         [DllImport(Library, EntryPoint = "veris_set_content_root", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int SetContentRoot(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string directory);
+        [DllImport(Library, EntryPoint = "veris_load_asset_catalog", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int LoadAssetCatalog(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string manifest);
+        [DllImport(Library, EntryPoint = "veris_validate_texture", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
+        [DllImport(Library, EntryPoint = "veris_reload_texture", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ReloadTexture(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
         [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int SetSprite(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string texture, in SpriteProperties sprite);
         [DllImport(Library, EntryPoint = "veris_get_sprite", CallingConvention = CallingConvention.Cdecl)]

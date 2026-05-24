@@ -58,15 +58,21 @@ namespace
         if (!sprite.Texture || sprite.TexturePath.empty()) throw std::invalid_argument("Saved sprites require a content-relative texture path.");
         Document rectangle = nullptr;
         if (sprite.TextureRectangle) rectangle = {sprite.TextureRectangle->position.x, sprite.TextureRectangle->position.y, sprite.TextureRectangle->size.x, sprite.TextureRectangle->size.y};
-        return {{"texture", sprite.TexturePath}, {"origin", {sprite.Origin.x, sprite.Origin.y}}, {"tint", sprite.Tint.toInteger()},
+        return {{"texture", sprite.TexturePath}, {"assetId", sprite.TextureAssetId}, {"origin", {sprite.Origin.x, sprite.Origin.y}}, {"tint", sprite.Tint.toInteger()},
             {"layer", sprite.Layer}, {"visible", sprite.Visible}, {"rectangle", rectangle}};
     }
 
     Veris::SpriteComponent ReadSprite(const Document& sprite, Veris::TextureResources& textures)
     {
-        Veris::Json::Fields(sprite, {"texture", "origin", "tint", "layer", "visible", "rectangle"});
+        Veris::Json::Fields(sprite, {"texture", "origin", "tint", "layer", "visible", "rectangle"}, {"assetId"});
         Veris::SpriteComponent component;
         component.TexturePath = sprite.at("texture").get<std::string>();
+        if (sprite.contains("assetId")) component.TextureAssetId = sprite.at("assetId").get<std::string>();
+        if (!component.TextureAssetId.empty())
+        {
+            component.TextureAssetId = Veris::TextureResources::NormalizeAssetId(component.TextureAssetId);
+            component.TexturePath = textures.AssetPath(component.TextureAssetId).u8string();
+        }
         component.Texture = textures.Load(std::filesystem::u8path(component.TexturePath));
         component.Origin = ReadVector(sprite.at("origin"));
         const auto& tint = sprite.at("tint");

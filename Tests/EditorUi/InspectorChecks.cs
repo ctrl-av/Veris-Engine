@@ -29,7 +29,7 @@ internal static class InspectorChecks
 
     private static void VerifySprite(WorkspaceView view, EditorWorkspace workspace, ulong entity)
     {
-        SaveTexture(Path.Combine(workspace.ContentRoot, "inspector.png"));
+        ImageFixtures.SaveSolidPng(Path.Combine(workspace.ContentRoot, "inspector.png"), Colors.White);
         ((TextBox)view.FindName("TexturePathInput")).Text = "inspector.png";
         ((TextBox)view.FindName("TintInput")).Text = "E84050FF";
         ((Button)view.FindName("ApplySpriteButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -53,13 +53,4 @@ internal static class InspectorChecks
         Program.Assert(!workspace.Inspector.HasSprite, "Remove sprite must release the native component.");
     }
 
-    private static void SaveTexture(string path)
-    {
-        var pixels = Enumerable.Repeat((byte)255, 16).ToArray();
-        var texture = BitmapSource.Create(2, 2, 96, 96, PixelFormats.Bgra32, null, pixels, 8);
-        var encoder = new PngBitmapEncoder();
-        encoder.Frames.Add(BitmapFrame.Create(texture));
-        using var stream = File.Create(path);
-        encoder.Save(stream);
-    }
 }

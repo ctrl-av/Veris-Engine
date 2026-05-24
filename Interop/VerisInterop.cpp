@@ -327,6 +327,7 @@ int32_t veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, 
         auto& target = session.ActiveScene().Get(entity);
         Veris::SpriteComponent component;
         component.TexturePath = texture;
+        component.TextureAssetId = session.Textures().AssetId(std::filesystem::u8path(texture));
         component.Texture = session.Textures().Load(std::filesystem::u8path(texture));
         ValidateSprite(*sprite, component.Texture->getSize());
         component.Origin = {sprite->OriginX, sprite->OriginY};
@@ -366,12 +367,46 @@ int32_t veris_sprite_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t
     bool tooSmall = false;
     const auto status = Boundary([&]
     {
-        const auto& component = FindEngine(engine).ActiveScene().Get(entity).Sprite;
+        auto& session = FindEngine(engine);
+        const auto& component = session.ActiveScene().Get(entity).Sprite;
         if (!component) throw std::out_of_range("Entity has no sprite component.");
-        tooSmall = !CopyText(component->TexturePath, utf8, capacity, required);
+        const auto path = component->TextureAssetId.empty() ? component->TexturePath : session.Textures().AssetPath(component->TextureAssetId).u8string();
+        tooSmall = !CopyText(path, utf8, capacity, required);
     });
     if (status == VerisOk && tooSmall) { LastError = "Sprite path buffer is too small."; return VerisBufferTooSmall; }
     return status;
+}
+
+int32_t veris_load_asset_catalog(uint64_t engine, const wchar_t* manifest)
+{
+    return Boundary([&]
+    {
+        if (!manifest) throw std::invalid_argument("Asset manifest path is required.");
+        FindEngine(engine).Textures().SetCatalog(manifest);
+    });
+}
+
+int32_t veris_validate_texture(const wchar_t* file)
+{
+    return Boundary([&]
+    {
+        if (!file) throw std::invalid_argument("Texture source path is required.");
+        sf::Image image;
+        if (!image.loadFromFile(file)) throw std::invalid_argument("Source file is not a supported texture image.");
+        if (image.getSize().x > 16384 || image.getSize().y > 16384) throw std::invalid_argument("Texture dimensions cannot exceed 16384 pixels per axis.");
+    });
+}
+
+int32_t veris_reload_texture(uint64_t engine, const char* path)
+{
+    return Boundary([&]
+    {
+        if (!path) throw std::invalid_argument("Texture path is required.");
+        auto& textures = FindEngine(engine).Textures();
+        const auto relative = std::filesystem::u8path(path);
+        textures.Load(relative);
+        textures.Reload(relative);
+    });
 }
 
 int32_t veris_remove_sprite(uint64_t engine, uint64_t entity)

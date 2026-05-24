@@ -177,6 +177,7 @@
                     <DockPanel DockPanel.Dock="Top">
                         <TextBlock Text="CONTENT" Style="{StaticResource PanelTitle}" />
                         <Button x:Name="ContentUpButton" Content="Up" Click="NavigateUp" DockPanel.Dock="Right" />
+                        <Button x:Name="ImportAssetButton" Content="Import texture…" Click="ImportAsset" DockPanel.Dock="Right" />
                         <TextBlock Text="{Binding CurrentDirectory}" VerticalAlignment="Center" Foreground="#8F9BAC" FontSize="11" TextTrimming="CharacterEllipsis" />
                     </DockPanel>
                     <ListBox x:Name="ContentFiles" ItemsSource="{Binding ContentEntries}" MouseDoubleClick="OpenContentDirectory">

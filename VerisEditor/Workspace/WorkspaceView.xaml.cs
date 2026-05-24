@@ -28,6 +28,11 @@ namespace VerisEditor.Workspace
 
         private void RefreshWorkspace(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Refresh();
         private void NavigateUp(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).NavigateUp();
+        private void ImportAsset(object sender, RoutedEventArgs e)
+        {
+            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Import texture", Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.tga|All files|*.*" };
+            if (picker.ShowDialog(Window.GetWindow(this)) == true) ((EditorWorkspace)DataContext).ImportAsset(picker.FileName);
+        }
         private void Undo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Undo();
         private void Redo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Redo();
         private void SaveScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).SaveScene(((EditorWorkspace)DataContext).ScenePathInput);

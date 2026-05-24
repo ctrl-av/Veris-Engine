@@ -158,6 +158,7 @@
     <ClCompile Include="TextureResources.cpp" />
     <ClCompile Include="ScenePicking.cpp" />
     <ClCompile Include="SceneHistory.cpp" />
+    <ClCompile Include="AssetCatalog.cpp" />
     <ClCompile Include="SceneFormat.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Camera.cpp" />

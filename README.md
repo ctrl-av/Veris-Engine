@@ -39,3 +39,4 @@
 - [x] Scene undo and redo with stable IDs, subtree/component restoration, grouped drags, and bounded native snapshot ownership.
 - [x] Versioned scene JSON with stable entity/component round trips, transactional loading, atomic saves, and content-relative paths.
 - [x] Save-point dirty tracking and Save/Discard/Cancel protection for scene replacement, project switching, and editor closing.
+- [x] Validated texture importing and reimport with persistent GUIDs, project asset catalogs, content hashes, and stable scene references.

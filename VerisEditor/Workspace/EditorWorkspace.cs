@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using VerisEditor.GameProject;
 using VerisEditor.Interop;
+using VerisEditor.Assets;
 
 namespace VerisEditor.Workspace
 {
@@ -27,6 +28,7 @@ namespace VerisEditor.Workspace
         public EntityInspector Inspector { get; }
         public TransformTools Tools { get; }
         public SceneHistory History { get; }
+        public AssetCatalog Catalog { get; }
         public string EntityName { get; set; } = "Entity";
         public ulong SelectedParentId { get; set; }
         public bool IsDisposed { get; private set; }
@@ -43,6 +45,7 @@ namespace VerisEditor.Workspace
             ContentRoot = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(ProjectFile)!, project.ContentDirectory));
             _currentDirectory = ContentRoot;
             ReadContentDirectory(ContentRoot);
+            Catalog = new AssetCatalog(ContentRoot, Path.GetDirectoryName(ProjectFile)!, NativeEngine.ValidateTextureFile);
             _engine = new NativeEngine((uint)project.WindowWidth, (uint)project.WindowHeight);
             Inspector = new EntityInspector(_engine);
             History = new SceneHistory(_engine, () => SelectedEntityId, RestoreSelection);
@@ -51,6 +54,7 @@ namespace VerisEditor.Workspace
             try
             {
                 _engine.SetContentRoot(ContentRoot);
+                _engine.LoadAssetCatalog(Catalog.ManifestPath);
                 RefreshScene();
                 EditorLog.Info($"Workspace opened: {ProjectFile}");
                 RefreshOutput();

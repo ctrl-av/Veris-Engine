@@ -81,6 +81,17 @@ namespace
             static_cast<std::uint64_t>(sprite.RectangleY) + sprite.RectangleHeight > size.y))
             throw std::invalid_argument("Sprite rectangle must fit within the loaded texture.");
     }
+
+    void CountAssetReferences(const Veris::Scene& scene, const Veris::TextureResources& textures, const std::string& asset, std::uint32_t& stable, std::uint32_t& legacy)
+    {
+        for (const auto& entry : scene.Entities())
+        {
+            const auto& sprite = entry.second.Sprite;
+            if (!sprite) continue;
+            if (sprite->TextureAssetId == asset) ++stable;
+            else if (sprite->TextureAssetId.empty() && !sprite->TexturePath.empty() && textures.AssetId(std::filesystem::u8path(sprite->TexturePath)) == asset) ++legacy;
+        }
+    }
 }
 
 int32_t veris_create(uint32_t width, uint32_t height, uint64_t* engine)
@@ -406,6 +417,21 @@ int32_t veris_reload_texture(uint64_t engine, const char* path)
         const auto relative = std::filesystem::u8path(path);
         textures.Load(relative);
         textures.Reload(relative);
+    });
+}
+
+int32_t veris_asset_usage(uint64_t engine, const char* asset, uint32_t* stable, uint32_t* legacy)
+{
+    return Boundary([&]
+    {
+        if (!asset || !stable || !legacy) throw std::invalid_argument("Asset identity and usage outputs are required.");
+        auto& session = FindEngine(engine);
+        const auto identity = Veris::TextureResources::NormalizeAssetId(asset);
+        session.Textures().AssetPath(identity);
+        *stable = 0; *legacy = 0;
+        CountAssetReferences(session.ActiveScene(), session.Textures(), identity, *stable, *legacy);
+        for (const auto& snapshot : Snapshots)
+            if (snapshot.second.first == engine) CountAssetReferences(*snapshot.second.second, session.Textures(), identity, *stable, *legacy);
     });
 }
 

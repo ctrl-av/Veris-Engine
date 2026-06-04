@@ -31,6 +31,11 @@ namespace VerisEditor.Interop
         public void LoadAssetCatalog(string manifest) => Check(NativeMethods.LoadAssetCatalog(_handle, manifest));
         public static void ValidateTextureFile(string source) => Check(NativeMethods.ValidateTexture(source));
         public void ReloadTexture(string path) => Check(NativeMethods.ReloadTexture(_handle, path));
+        public (uint Stable, uint Legacy) AssetUsage(Guid id)
+        {
+            Check(NativeMethods.AssetUsage(_handle, id.ToString("D"), out var stable, out var legacy));
+            return (stable, legacy);
+        }
         public void SetSprite(ulong entity, string texture, SpriteProperties sprite)
         {
             if (string.IsNullOrWhiteSpace(texture) || texture.Contains('\0')) throw new ArgumentException("A content-relative texture path is required.", nameof(texture));
@@ -239,6 +244,8 @@ namespace VerisEditor.Interop
         internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
         [DllImport(Library, EntryPoint = "veris_reload_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ReloadTexture(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
+        [DllImport(Library, EntryPoint = "veris_asset_usage", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int AssetUsage(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string asset, out uint stable, out uint legacy);
         [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int SetSprite(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string texture, in SpriteProperties sprite);
         [DllImport(Library, EntryPoint = "veris_get_sprite", CallingConvention = CallingConvention.Cdecl)]

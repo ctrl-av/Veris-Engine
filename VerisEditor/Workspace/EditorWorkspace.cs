@@ -55,6 +55,7 @@ namespace VerisEditor.Workspace
             {
                 _engine.SetContentRoot(ContentRoot);
                 _engine.LoadAssetCatalog(Catalog.ManifestPath);
+                RefreshAssetList();
                 RefreshScene();
                 EditorLog.Info($"Workspace opened: {ProjectFile}");
                 RefreshOutput();
@@ -71,7 +72,7 @@ namespace VerisEditor.Workspace
                 NavigateTo(Directory.GetParent(CurrentDirectory)!.FullName);
         }
 
-        public void Refresh() => Run(() => { ReadContentDirectory(CurrentDirectory); RefreshScene(); RefreshOutput(); });
+        public void Refresh() => Run(() => { ReadContentDirectory(CurrentDirectory); RefreshScene(); RefreshOutput(); RefreshAssetList(); });
         public void CreateEntity(string name, ulong parent = 0) => Edit("Create entity", () =>
         {
             var entity = _engine.CreateEntity(name);

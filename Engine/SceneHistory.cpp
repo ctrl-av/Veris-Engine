@@ -8,7 +8,8 @@ namespace
     {
         if (left.has_value() != right.has_value()) return false;
         if (!left) return true;
-        return left->TexturePath == right->TexturePath && left->TextureAssetId == right->TextureAssetId && left->Texture == right->Texture && left->TextureRectangle == right->TextureRectangle &&
+        const bool sameTexture = left->TextureAssetId.empty() && right->TextureAssetId.empty() ? left->TexturePath == right->TexturePath : left->TextureAssetId == right->TextureAssetId;
+        return sameTexture && left->Texture == right->Texture && left->TextureRectangle == right->TextureRectangle &&
             left->Origin == right->Origin && left->Tint == right->Tint && left->Layer == right->Layer && left->Visible == right->Visible;
     }
 }

@@ -79,13 +79,15 @@
                     <TreeView x:Name="SceneEntities" ItemsSource="{Binding RootEntities}" SelectedItemChanged="HierarchySelectionChanged" Background="Transparent" Foreground="#DDE2EA" BorderThickness="0" Padding="8">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Name}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" />
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="TreeViewItem">
+                                <Setter Property="Foreground" Value="#DDE2EA" />
                                 <Setter Property="IsExpanded" Value="True" />
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Foreground" Value="#20242A" /></Trigger></Style.Triggers>
                             </Style>
                         </TreeView.ItemContainerStyle>
                     </TreeView>
@@ -167,6 +169,8 @@
                             <TextBlock Text="{Binding WindowSummary}" Margin="0,4,0,14" />
                             <TextBlock Text="Selected content" Foreground="#8F9BAC" FontSize="11" />
                             <TextBlock x:Name="ContentSelectionDetails" Text="{Binding SelectedItem.FullName, ElementName=ContentFiles}" Margin="0,4,0,14" TextWrapping="Wrap" />
+                            <TextBlock Text="Asset metadata" Foreground="#8F9BAC" FontSize="11" />
+                            <TextBlock Text="{Binding AssetDetails}" Margin="0,4,0,14" TextWrapping="Wrap" />
                         </StackPanel>
                     </ScrollViewer>
                 </DockPanel>
@@ -180,16 +184,38 @@
                         <Button x:Name="ImportAssetButton" Content="Import texture…" Click="ImportAsset" DockPanel.Dock="Right" />
                         <TextBlock Text="{Binding CurrentDirectory}" VerticalAlignment="Center" Foreground="#8F9BAC" FontSize="11" TextTrimming="CharacterEllipsis" />
                     </DockPanel>
-                    <ListBox x:Name="ContentFiles" ItemsSource="{Binding ContentEntries}" MouseDoubleClick="OpenContentDirectory">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="4,2">
-                                    <TextBlock Text="{Binding Name}" ToolTip="{Binding FullName}" />
-                                    <TextBlock Text="{Binding Extension}" Foreground="#8F9BAC" Margin="12,0,0,0" FontSize="11" />
+                    <TabControl x:Name="AssetTabs" Background="Transparent" BorderThickness="0">
+                        <TabItem Header="Files">
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                    <TextBox Text="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="4" ToolTip="Folder name" />
+                                    <Button x:Name="CreateFolderButton" Content="New folder" Click="CreateFolder" />
+                                    <Button Content="Register texture" Click="RegisterTexture" />
                                 </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                <ListBox x:Name="ContentFiles" ItemsSource="{Binding ContentEntries}" MouseDoubleClick="OpenContentDirectory" AllowDrop="True" Drop="ImportDroppedFiles">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate><TextBlock Text="{Binding Name}" ToolTip="{Binding FullName}" Margin="4,2" /></DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+                        </TabItem>
+                        <TabItem Header="Assets">
+                            <DockPanel>
+                                <TextBox x:Name="AssetSearchInput" DockPanel.Dock="Top" Text="{Binding AssetSearch, UpdateSourceTrigger=PropertyChanged}" Margin="4" ToolTip="Search by path or asset ID" />
+                                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                                    <TextBox x:Name="AssetDestinationInput" Text="{Binding AssetDestination, UpdateSourceTrigger=PropertyChanged}" Width="180" Margin="4" ToolTip="Content-relative destination, including filename" />
+                                    <Button x:Name="MoveAssetButton" Content="Move / rename" Click="MoveAsset" IsEnabled="{Binding HasSelectedAsset}" />
+                                    <Button x:Name="UseAssetButton" Content="Use texture" Click="UseAsset" IsEnabled="{Binding HasSelectedAsset}" />
+                                    <Button x:Name="ReimportAssetButton" Content="Reimport…" Click="ReimportAsset" IsEnabled="{Binding HasSelectedAsset}" />
+                                    <Button x:Name="DeleteAssetButton" Content="Delete" Click="DeleteAsset" IsEnabled="{Binding HasSelectedAsset}" />
+                                </StackPanel>
+                                <DockPanel>
+                                    <Image x:Name="AssetPreviewImage" DockPanel.Dock="Right" Source="{Binding AssetPreview}" Width="90" Margin="8" Stretch="Uniform" />
+                                    <ListBox x:Name="ImportedAssetsList" ItemsSource="{Binding ImportedAssets}" SelectedItem="{Binding SelectedAsset}" DisplayMemberPath="Path" MouseDoubleClick="UseAsset" />
+                                </DockPanel>
+                            </DockPanel>
+                        </TabItem>
+                    </TabControl>
                 </DockPanel>
             </Border>
             <GridSplitter Grid.Row="2" Grid.Column="3" ResizeDirection="Columns" />

@@ -33,6 +33,36 @@ namespace VerisEditor.Workspace
             var picker = new Microsoft.Win32.OpenFileDialog { Title = "Import texture", Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.tga|All files|*.*" };
             if (picker.ShowDialog(Window.GetWindow(this)) == true) ((EditorWorkspace)DataContext).ImportAsset(picker.FileName);
         }
+        private void CreateFolder(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).CreateContentFolder();
+        private void MoveAsset(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).MoveSelectedAsset();
+        private void UseAsset(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).UseSelectedAsset();
+
+        private void RegisterTexture(object sender, RoutedEventArgs e)
+        {
+            if (ContentFiles.SelectedItem is FileInfo file)
+                ((EditorWorkspace)DataContext).RegisterContent(Path.GetRelativePath(((EditorWorkspace)DataContext).ContentRoot, file.FullName));
+        }
+
+        private void ReimportAsset(object sender, RoutedEventArgs e)
+        {
+            var workspace = (EditorWorkspace)DataContext;
+            if (workspace.SelectedAsset == null) return;
+            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Reimport texture", Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.tga|All files|*.*" };
+            if (picker.ShowDialog(Window.GetWindow(this)) == true) workspace.ReimportAsset(workspace.SelectedAsset.Id, picker.FileName);
+        }
+
+        private void DeleteAsset(object sender, RoutedEventArgs e)
+        {
+            var workspace = (EditorWorkspace)DataContext;
+            workspace.DeleteSelectedAsset(() => MessageBox.Show(Window.GetWindow(this), $"Delete {workspace.SelectedAsset!.Path} from this project?", "Delete asset", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes);
+        }
+
+        private void ImportDroppedFiles(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            foreach (var file in (string[])e.Data.GetData(DataFormats.FileDrop)) ((EditorWorkspace)DataContext).ImportAsset(file);
+            e.Handled = true;
+        }
         private void Undo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Undo();
         private void Redo(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Redo();
         private void SaveScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).SaveScene(((EditorWorkspace)DataContext).ScenePathInput);
@@ -63,6 +93,8 @@ namespace VerisEditor.Workspace
         {
             if (ContentFiles.SelectedItem is DirectoryInfo directory)
                 ((EditorWorkspace)DataContext).NavigateTo(directory.FullName);
+            else if (ContentFiles.SelectedItem is FileInfo file && file.Extension.Equals(".verisscene", StringComparison.OrdinalIgnoreCase))
+                ((EditorWorkspace)DataContext).OpenScene(Path.GetRelativePath(((EditorWorkspace)DataContext).ContentRoot, file.FullName), ChooseUnsaved);
         }
     }
 }

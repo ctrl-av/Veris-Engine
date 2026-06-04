@@ -67,18 +67,19 @@ namespace Veris
 
     void TextureResources::MigrateAssetCache(const std::map<std::string, std::filesystem::path>& paths)
     {
+        auto migrated = _textures;
+        for (const auto& asset : _assetPaths) migrated.erase(Resolve(asset.second));
         for (const auto& asset : _assetPaths)
         {
             const auto oldPath = Resolve(asset.second);
             const auto cached = _textures.find(oldPath);
             if (cached == _textures.end()) continue;
             const auto replacement = paths.find(asset.first);
-            if (replacement == paths.end()) { _textures.erase(cached); continue; }
+            if (replacement == paths.end()) continue;
             const auto newPath = Resolve(replacement->second);
-            if (newPath == oldPath) continue;
             const auto texture = cached->second;
-            _textures.erase(cached);
-            _textures[newPath] = texture;
+            migrated[newPath] = texture;
         }
+        _textures.swap(migrated);
     }
 }

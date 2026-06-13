@@ -60,6 +60,7 @@ namespace VerisEditor.Workspace
                 EditorLog.Info($"Workspace opened: {ProjectFile}");
                 RefreshOutput();
                 Status = historyWarning.Length == 0 ? "Project opened" : historyWarning;
+                WatchAssets();
             }
             catch { _engine.Dispose(); throw; }
         }
@@ -140,6 +141,8 @@ namespace VerisEditor.Workspace
         public void Dispose()
         {
             IsDisposed = true;
+            _assetTimer?.Stop();
+            _assetWatcher?.Dispose();
             History.Dispose();
             _engine.Dispose();
         }

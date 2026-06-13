@@ -41,3 +41,4 @@
 - [x] Save-point dirty tracking and Save/Discard/Cancel protection for scene replacement, project switching, and editor closing.
 - [x] Validated texture importing and reimport with persistent GUIDs, project asset catalogs, content hashes, and stable scene references.
 - [x] Asset browser with search, previews, GUID metadata, folder creation, assignment, move/rename, reimport, and reference-aware deletion.
+- [x] Debounced external asset monitoring with hash reconciliation, missing/corrupt reference diagnostics, last-good texture retention, and recovery without scene edits.

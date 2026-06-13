@@ -34,6 +34,8 @@ namespace Veris
         if (cached == _textures.end()) throw std::out_of_range("Load a texture before reloading it.");
         sf::Texture replacement;
         if (!replacement.loadFromFile(path)) throw std::runtime_error("Cannot reload texture: " + relativePath.u8string());
+        if (replacement.getSize() != cached->second->getSize())
+            throw std::invalid_argument("Live texture reload must preserve image dimensions; reassign a resized image explicitly to validate atlas references.");
         *cached->second = std::move(replacement);
     }
 

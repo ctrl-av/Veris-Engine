@@ -171,6 +171,7 @@
                             <TextBlock x:Name="ContentSelectionDetails" Text="{Binding SelectedItem.FullName, ElementName=ContentFiles}" Margin="0,4,0,14" TextWrapping="Wrap" />
                             <TextBlock Text="Asset metadata" Foreground="#8F9BAC" FontSize="11" />
                             <TextBlock Text="{Binding AssetDetails}" Margin="0,4,0,14" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding AssetDiagnostics}" Foreground="Orange" TextWrapping="Wrap" Margin="0,0,0,8" />
                         </StackPanel>
                     </ScrollViewer>
                 </DockPanel>

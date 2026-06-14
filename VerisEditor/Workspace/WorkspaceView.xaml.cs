@@ -27,6 +27,8 @@ namespace VerisEditor.Workspace
         }
 
         private void RefreshWorkspace(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Refresh();
+        private void ApplyAnimation(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyAnimation();
+        private void PreviewAnimation(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PreviewAnimation();
         private void NavigateUp(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).NavigateUp();
         private void ImportAsset(object sender, RoutedEventArgs e)
         {

@@ -9,6 +9,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "Animation.h"
 
 namespace Veris
 {
@@ -41,6 +42,7 @@ namespace Veris
         std::string Name;
         TransformComponent Transform;
         std::optional<SpriteComponent> Sprite;
+        std::optional<SpriteAnimation> Animation;
         Entity(EntityId id, std::string name) : Id(id), Name(std::move(name)) {}
         EntityId Parent() const noexcept { return _parent; }
 
@@ -64,6 +66,7 @@ namespace Veris
         const std::map<EntityId, Entity>& Entities() const noexcept { return _entities; }
         sf::Transform WorldTransform(EntityId id) const;
         void Submit(Engine& engine) const;
+        void AdvanceAnimations(double seconds);
         void Clear() { _entities.clear(); }
         void Replace(Scene replacement);
         bool Matches(const Scene& other) const;

@@ -161,6 +161,7 @@
     <ClCompile Include="AssetCatalog.cpp" />
     <ClCompile Include="SceneFormat.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="pch.cpp">

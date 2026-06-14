@@ -1,4 +1,5 @@
 #pragma once
+void VerifyAnimations();
 
 #include <stdexcept>
 #include <filesystem>

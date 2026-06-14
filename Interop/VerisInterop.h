@@ -75,6 +75,9 @@ VERIS_API int32_t __cdecl veris_set_content_root(uint64_t engine, const wchar_t*
 VERIS_API int32_t __cdecl veris_load_asset_catalog(uint64_t engine, const wchar_t* manifest);
 VERIS_API int32_t __cdecl veris_validate_texture(const wchar_t* file);
 VERIS_API int32_t __cdecl veris_reload_texture(uint64_t engine, const char* path);
+VERIS_API int32_t __cdecl veris_set_animation(uint64_t engine, uint64_t entity, const char* json);
+VERIS_API int32_t __cdecl veris_animation(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required);
+VERIS_API int32_t __cdecl veris_advance_animation(uint64_t engine, uint64_t entity, double seconds);
 VERIS_API int32_t __cdecl veris_asset_usage(uint64_t engine, const char* asset, uint32_t* stable, uint32_t* legacy);
 VERIS_API int32_t __cdecl veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, const VerisSprite* sprite);
 VERIS_API int32_t __cdecl veris_get_sprite(uint64_t engine, uint64_t entity, VerisSprite* sprite, int32_t* present);

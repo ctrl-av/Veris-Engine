@@ -341,6 +341,7 @@ int32_t veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, 
         component.TextureAssetId = session.Textures().AssetId(std::filesystem::u8path(texture));
         component.Texture = session.Textures().Load(std::filesystem::u8path(texture));
         ValidateSprite(*sprite, component.Texture->getSize());
+        if (target.Animation) target.Animation->Validate(component.Texture->getSize());
         component.Origin = {sprite->OriginX, sprite->OriginY};
         component.Tint = sf::Color(sprite->Tint);
         component.Layer = sprite->Layer;
@@ -437,7 +438,7 @@ int32_t veris_asset_usage(uint64_t engine, const char* asset, uint32_t* stable, 
 
 int32_t veris_remove_sprite(uint64_t engine, uint64_t entity)
 {
-    return Boundary([&] { FindEngine(engine).ActiveScene().Get(entity).Sprite.reset(); });
+    return Boundary([&] { auto& target = FindEngine(engine).ActiveScene().Get(entity); target.Sprite.reset(); target.Animation.reset(); });
 }
 
 int32_t veris_get_transform(uint64_t engine, uint64_t entity, VerisTransform* transform)
@@ -471,4 +472,38 @@ uint32_t veris_error_message(char* utf8, uint32_t capacity)
     const auto required = static_cast<std::uint32_t>(LastError.size() + 1);
     if (utf8 && capacity >= required) std::memcpy(utf8, LastError.c_str(), required);
     return required;
+}
+
+int32_t veris_set_animation(uint64_t engine, uint64_t entity, const char* json)
+{
+    return Boundary([&]
+    {
+        if (!json) throw std::invalid_argument("Animation JSON is required; use null JSON to remove the component.");
+        auto& target = FindEngine(engine).ActiveScene().Get(entity);
+        if (std::strcmp(json, "null") == 0) { target.Animation.reset(); return; }
+        if (!target.Sprite || !target.Sprite->Texture) throw std::invalid_argument("Add a textured sprite before its animation.");
+        target.Animation = Veris::DeserializeAnimation(json, target.Sprite->Texture->getSize());
+    });
+}
+
+int32_t veris_animation(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&]
+    {
+        const auto& animation = FindEngine(engine).ActiveScene().Get(entity).Animation;
+        tooSmall = !CopyText(animation ? Veris::SerializeAnimation(*animation) : "null", utf8, capacity, required);
+    });
+    if (status == VerisOk && tooSmall) { LastError = "Animation buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+
+int32_t veris_advance_animation(uint64_t engine, uint64_t entity, double seconds)
+{
+    return Boundary([&]
+    {
+        auto& animation = FindEngine(engine).ActiveScene().Get(entity).Animation;
+        if (!animation) throw std::invalid_argument("Entity has no sprite animation.");
+        animation->Advance(seconds);
+    });
 }

@@ -103,6 +103,8 @@ namespace VerisEditor.Workspace
             Tools.Cancel();
             _selectedEntity = selected;
             Inspector.Load(entityId);
+            AnimationJson = entityId == 0 ? "null" : _engine.Animation(entityId);
+            OnPropertyChanged(nameof(AnimationJson));
             foreach (var entity in Entities) entity.IsSelected = entity.Id == entityId;
             EntityName = selected?.Name ?? "Entity";
             SelectedParentId = selected?.ParentId ?? 0;

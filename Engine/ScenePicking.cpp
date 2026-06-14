@@ -33,7 +33,8 @@ namespace Veris
         if (!entity.Sprite) return {center + sf::Vector2f{-8, -8}, center + sf::Vector2f{8, -8}, center + sf::Vector2f{8, 8}, center + sf::Vector2f{-8, 8}};
         const auto& sprite = *entity.Sprite;
         if (!sprite.Texture) throw std::invalid_argument("Sprite has no texture.");
-        const auto size = sprite.TextureRectangle ? sf::Vector2f(sprite.TextureRectangle->size) : sf::Vector2f(sprite.Texture->getSize());
+        const auto size = entity.Animation ? sf::Vector2f(entity.Animation->Frames.at(entity.Animation->Frame).Rectangle.size) :
+            sprite.TextureRectangle ? sf::Vector2f(sprite.TextureRectangle->size) : sf::Vector2f(sprite.Texture->getSize());
         const sf::Vector2f extent{std::abs(size.x), std::abs(size.y)};
         std::array<sf::Vector2f, 4> corners{sf::Vector2f{0, 0}, sf::Vector2f{extent.x, 0}, extent, sf::Vector2f{0, extent.y}};
         for (auto& corner : corners) corner = sf::Vector2f(WorldToPixel(world.transformPoint(corner - sprite.Origin)));

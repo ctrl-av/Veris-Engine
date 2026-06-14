@@ -50,6 +50,7 @@ namespace Veris
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before simulating it.");
         if (!std::isfinite(stepSeconds) || stepSeconds <= 0) throw std::invalid_argument("Simulation step must be finite and positive.");
         _simulationSeconds += stepSeconds;
+        _scene.AdvanceAnimations(stepSeconds);
         ++_completedFixedUpdates;
     }
 

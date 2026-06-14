@@ -34,6 +34,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="AnimationChecks.cpp" />
     <ClCompile Include="WindowChecks.cpp" />
     <ClCompile Include="TimingChecks.cpp" />
     <ClCompile Include="InputChecks.cpp" />

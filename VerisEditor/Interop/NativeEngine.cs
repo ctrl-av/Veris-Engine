@@ -31,6 +31,9 @@ namespace VerisEditor.Interop
         public void LoadAssetCatalog(string manifest) => Check(NativeMethods.LoadAssetCatalog(_handle, manifest));
         public static void ValidateTextureFile(string source) => Check(NativeMethods.ValidateTexture(source));
         public void ReloadTexture(string path) => Check(NativeMethods.ReloadTexture(_handle, path));
+        public void SetAnimation(ulong entity, string json) => Check(NativeMethods.SetAnimation(_handle, entity, json));
+        public string Animation(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.Animation(_handle, entity, buffer, capacity, out required));
+        public void AdvanceAnimation(ulong entity, double seconds) => Check(NativeMethods.AdvanceAnimation(_handle, entity, seconds));
         public (uint Stable, uint Legacy) AssetUsage(Guid id)
         {
             Check(NativeMethods.AssetUsage(_handle, id.ToString("D"), out var stable, out var legacy));
@@ -244,6 +247,12 @@ namespace VerisEditor.Interop
         internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
         [DllImport(Library, EntryPoint = "veris_reload_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ReloadTexture(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
+        [DllImport(Library, EntryPoint = "veris_set_animation", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetAnimation(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string json);
+        [DllImport(Library, EntryPoint = "veris_animation", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int Animation(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
+        [DllImport(Library, EntryPoint = "veris_advance_animation", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int AdvanceAnimation(EngineHandle engine, ulong entity, double seconds);
         [DllImport(Library, EntryPoint = "veris_asset_usage", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int AssetUsage(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string asset, out uint stable, out uint legacy);
         [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]

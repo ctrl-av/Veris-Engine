@@ -62,6 +62,7 @@ namespace Veris
                 copy._parent = sourceId == id ? source.Parent() : copies.at(source.Parent());
                 copy.Transform = source.Transform;
                 copy.Sprite = source.Sprite;
+                copy.Animation = source.Animation;
                 copies.emplace(sourceId, copyId);
             }
         }
@@ -101,6 +102,11 @@ namespace Veris
             if (!component.Texture) throw std::invalid_argument("Sprite entity requires a texture: " + entity.Name);
             sf::Sprite sprite(*component.Texture);
             if (component.TextureRectangle) sprite.setTextureRect(*component.TextureRectangle);
+            if (entity.Animation)
+            {
+                entity.Animation->Validate(component.Texture->getSize());
+                sprite.setTextureRect(entity.Animation->Frames.at(entity.Animation->Frame).Rectangle);
+            }
             sprite.setOrigin(component.Origin);
             sprite.setColor(component.Tint);
             engine.SubmitSprite(sprite, component.Layer, WorldTransform(entity.Id));
@@ -114,5 +120,11 @@ namespace Veris
         sf::Transform transform;
         transform.translate(Position).rotate(sf::degrees(Rotation)).scale(Scale);
         return transform;
+    }
+
+    void Scene::AdvanceAnimations(double seconds)
+    {
+        for (auto& entry : _entities)
+            if (entry.second.Animation) entry.second.Animation->Advance(seconds);
     }
 }

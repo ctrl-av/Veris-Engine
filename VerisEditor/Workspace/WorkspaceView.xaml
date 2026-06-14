@@ -138,6 +138,14 @@
                                 <TextBlock Text="Rotation (degrees)" /><TextBox x:Name="RotationInput" Text="{Binding Inspector.Rotation, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
                                 <Button x:Name="ApplyTransformButton" Content="Apply transform" Click="ApplyTransform" />
                                 <TextBlock Text="Sprite" Foreground="#8F9BAC" Margin="0,14,0,8" />
+                                <Expander Header="Sprite animation" Foreground="#DDE2EA">
+                                    <StackPanel>
+                                        <TextBlock Text="Frames: rectangle [x,y,w,h], seconds; loop and playing. Use null to remove." TextWrapping="Wrap" />
+                                        <TextBox x:Name="AnimationInput" Text="{Binding AnimationJson, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" />
+                                        <Button x:Name="ApplyAnimationButton" Content="Apply animation" Click="ApplyAnimation" />
+                                        <Button Content="Advance animation 100 ms" Click="PreviewAnimation" />
+                                    </StackPanel>
+                                </Expander>
                                 <TextBlock Text="Content-relative texture" />
                                 <TextBox x:Name="TexturePathInput" Text="{Binding Inspector.TexturePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4" />
                                 <Button Content="Use selected content" Click="UseSelectedTexture" />

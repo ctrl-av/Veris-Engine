@@ -31,6 +31,8 @@ namespace Veris
             if (found == other._entities.end()) return false;
             const auto& left = entry.second;
             const auto& right = found->second;
+            if (left.Animation.has_value() != right.Animation.has_value()) return false;
+            if (left.Animation && SerializeAnimation(*left.Animation) != SerializeAnimation(*right.Animation)) return false;
             if (left.Name != right.Name || left.Parent() != right.Parent() || left.Transform.Position != right.Transform.Position ||
                 left.Transform.Scale != right.Transform.Scale || left.Transform.Rotation != right.Transform.Rotation || !SameSprite(left.Sprite, right.Sprite)) return false;
         }

@@ -39,6 +39,7 @@ namespace Veris
         Camera& ActiveCamera() { return _camera; }
         Scene& ActiveScene() { return _scene; }
         TextureResources& Textures() { return _textures; }
+        AudioPlayback& Audio() { return _audio; }
         sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
         sf::Vector2i WorldToPixel(sf::Vector2f world) const;
         std::array<sf::Vector2f, 4> EntityCorners(EntityId id) const;
@@ -55,6 +56,7 @@ namespace Veris
         Camera _camera;
         Scene _scene;
         TextureResources _textures;
+        AudioPlayback _audio;
         struct SpriteSubmission
         {
             int Layer;

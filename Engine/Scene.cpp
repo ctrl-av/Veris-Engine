@@ -63,6 +63,7 @@ namespace Veris
                 copy.Transform = source.Transform;
                 copy.Sprite = source.Sprite;
                 copy.Animation = source.Animation;
+                copy.Audio = source.Audio;
                 copies.emplace(sourceId, copyId);
             }
         }

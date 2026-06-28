@@ -34,6 +34,15 @@ namespace VerisEditor.Interop
         public void SetAnimation(ulong entity, string json) => Check(NativeMethods.SetAnimation(_handle, entity, json));
         public string Animation(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.Animation(_handle, entity, buffer, capacity, out required));
         public void AdvanceAnimation(ulong entity, double seconds) => Check(NativeMethods.AdvanceAnimation(_handle, entity, seconds));
+        public void SetAudio(ulong entity, string json) => Check(NativeMethods.SetAudio(_handle, entity, json));
+        public string Audio(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.Audio(_handle, entity, buffer, capacity, out required));
+        public void PlayAudio(ulong entity) => Check(NativeMethods.PlayAudio(_handle, entity));
+        public void PauseAudio(ulong entity) => Check(NativeMethods.PauseAudio(_handle, entity));
+        public void ResumeAudio(ulong entity) => Check(NativeMethods.ResumeAudio(_handle, entity));
+        public void StopAudio(ulong entity) => Check(NativeMethods.StopAudio(_handle, entity));
+        public int AudioStatus(ulong entity) { Check(NativeMethods.AudioStatus(_handle, entity, out var status)); return status; }
+        public static void ValidateAudioFile(string path) => Check(NativeMethods.ValidateAudio(path));
+        public void ReloadAudio(string path) => Check(NativeMethods.ReloadAudio(_handle, path));
         public (uint Stable, uint Legacy) AssetUsage(Guid id)
         {
             Check(NativeMethods.AssetUsage(_handle, id.ToString("D"), out var stable, out var legacy));
@@ -253,6 +262,24 @@ namespace VerisEditor.Interop
         internal static extern int Animation(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
         [DllImport(Library, EntryPoint = "veris_advance_animation", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int AdvanceAnimation(EngineHandle engine, ulong entity, double seconds);
+        [DllImport(Library, EntryPoint = "veris_set_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetAudio(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string json);
+        [DllImport(Library, EntryPoint = "veris_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int Audio(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
+        [DllImport(Library, EntryPoint = "veris_play_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int PlayAudio(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_pause_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int PauseAudio(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_resume_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ResumeAudio(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_stop_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int StopAudio(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_audio_status", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int AudioStatus(EngineHandle engine, ulong entity, out int status);
+        [DllImport(Library, EntryPoint = "veris_validate_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ValidateAudio([MarshalAs(UnmanagedType.LPWStr)] string path);
+        [DllImport(Library, EntryPoint = "veris_reload_audio", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ReloadAudio(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
         [DllImport(Library, EntryPoint = "veris_asset_usage", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int AssetUsage(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string asset, out uint stable, out uint legacy);
         [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]

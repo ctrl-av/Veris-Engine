@@ -55,7 +55,7 @@ namespace Veris
                 const auto id = NormalizeAssetId(asset.at("id").get<std::string>());
                 const auto path = std::filesystem::u8path(asset.at("path").get<std::string>());
                 const auto hash = asset.at("sha256").get<std::string>();
-                if (asset.at("kind") != "texture" || hash.size() != 64 || !std::all_of(hash.begin(), hash.end(), [](unsigned char digit) { return std::isxdigit(digit); }))
+                if ((asset.at("kind") != "texture" && asset.at("kind") != "audio") || hash.size() != 64 || !std::all_of(hash.begin(), hash.end(), [](unsigned char digit) { return std::isxdigit(digit); }))
                     throw std::invalid_argument("Asset entries require a supported kind and SHA-256 digest.");
                 if (!paths.emplace(id, path).second || !identities.emplace(Resolve(path), id).second) throw std::invalid_argument("Asset identifiers and paths must be unique.");
             }

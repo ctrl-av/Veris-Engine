@@ -41,15 +41,16 @@ namespace VerisEditor.Assets
                 if (asset.Path.Equals(destination.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase)) throw new IOException("This destination is already registered; use Reimport to replace its contents.");
             if (File.Exists(path) && !Path.GetFullPath(source).Equals(path, StringComparison.OrdinalIgnoreCase)) throw new IOException("Import destination already exists.");
             if (Path.GetFullPath(source).Equals(path, StringComparison.OrdinalIgnoreCase)) return RegisterExisting(destination);
-            return Publish(new AssetRecord(Guid.NewGuid(), destination.Replace('\\', '/'), "texture", ""), source);
+            return Publish(new AssetRecord(Guid.NewGuid(), destination.Replace('\\', '/'), AssetKind(source), ""), source);
         }
 
         public AssetRecord RegisterExisting(string relativePath)
         {
             var path = ContentPaths.Resolve(_contentRoot, relativePath);
             foreach (var asset in _assets) if (asset.Path.Equals(relativePath.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase)) return asset;
-            ValidateTexture(path);
-            var record = new AssetRecord(Guid.NewGuid(), relativePath.Replace('\\', '/'), "texture", Hash(path));
+            var kind = AssetKind(path);
+            ValidateAsset(path, kind);
+            var record = new AssetRecord(Guid.NewGuid(), relativePath.Replace('\\', '/'), kind, Hash(path));
             var replacement = new List<AssetRecord>(_assets) { record };
             Save(replacement);
             return record;
@@ -73,7 +74,7 @@ namespace VerisEditor.Assets
             {
                 if (new FileInfo(source).Length > 256 * 1024 * 1024) throw new InvalidDataException("Texture imports cannot exceed 256 MiB.");
                 File.Copy(source, staged);
-                _validateTexture(staged);
+                ValidateAsset(staged, asset.Kind);
                 var replacement = asset with { Sha256 = Hash(staged) };
                 var records = new List<AssetRecord>(_assets);
                 records.RemoveAll(registered => registered.Id == asset.Id);
@@ -110,7 +111,7 @@ namespace VerisEditor.Assets
                 if (asset == null || asset.Id == Guid.Empty || !identities.Add(asset.Id) || string.IsNullOrWhiteSpace(asset.Path) || !paths.Add(asset.Path.Replace('\\', '/')))
                     throw new InvalidDataException("Asset identities and paths must be nonempty and unique.");
                 ContentPaths.Resolve(_contentRoot, asset.Path);
-                if (asset.Kind != "texture" || asset.Sha256 == null || asset.Sha256.Length != 64 || !asset.Sha256.All(Uri.IsHexDigit))
+                if ((asset.Kind != "texture" && asset.Kind != "audio") || asset.Sha256 == null || asset.Sha256.Length != 64 || !asset.Sha256.All(Uri.IsHexDigit))
                     throw new InvalidDataException("Asset entries require a supported kind and SHA-256 digest.");
             }
         }
@@ -124,11 +125,14 @@ namespace VerisEditor.Assets
             _assets = records;
         }
 
-        private void ValidateTexture(string path)
+        private void ValidateAsset(string path, string kind)
         {
             if (new FileInfo(path).Length > 256 * 1024 * 1024) throw new InvalidDataException("Texture imports cannot exceed 256 MiB.");
-            _validateTexture(path);
+            if (kind == "audio") Interop.NativeEngine.ValidateAudioFile(path);
+            else _validateTexture(path);
         }
+
+        private static string AssetKind(string path) => Path.GetExtension(path).ToLowerInvariant() is ".wav" or ".ogg" or ".flac" ? "audio" : "texture";
 
         private static string Hash(string path)
         {

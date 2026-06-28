@@ -21,6 +21,7 @@ namespace Veris
         void Clear() noexcept { _textures.clear(); }
         void Reset() noexcept { Clear(); _root.clear(); _assetPaths.clear(); _assetIdsByPath.clear(); }
         std::size_t Count() const noexcept { return _textures.size(); }
+        std::filesystem::path ContentPath(const std::filesystem::path& relativePath) const { return Resolve(relativePath); }
 
     private:
         std::filesystem::path Resolve(const std::filesystem::path& relativePath) const;

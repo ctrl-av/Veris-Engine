@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include "Animation.h"
+#include "Audio.h"
 
 namespace Veris
 {
@@ -43,6 +44,7 @@ namespace Veris
         TransformComponent Transform;
         std::optional<SpriteComponent> Sprite;
         std::optional<SpriteAnimation> Animation;
+        std::optional<AudioSource> Audio;
         Entity(EntityId id, std::string name) : Id(id), Name(std::move(name)) {}
         EntityId Parent() const noexcept { return _parent; }
 

@@ -33,6 +33,7 @@ internal static class WorkspaceChecks
             AssetBrowserChecks.Run(view, workspace);
             AssetChangeChecks.Run(workspace);
             AnimationChecks.Run(view, workspace);
+            AudioChecks.Run(workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

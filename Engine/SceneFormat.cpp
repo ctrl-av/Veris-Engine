@@ -24,6 +24,7 @@ namespace Veris
                     {"scale", {entity.Transform.Scale.x, entity.Transform.Scale.y}}, {"rotation", entity.Transform.Rotation}}},
                 {"sprite", entity.Sprite ? WriteSprite(*entity.Sprite) : Document(nullptr)}});
             if (entity.Animation) entities.back()["animation"] = Json::Parse(SerializeAnimation(*entity.Animation));
+            if (entity.Audio) entities.back()["audio"] = Json::Parse(SerializeAudio(*entity.Audio));
         }
         return Document{{"formatVersion", 1}, {"entities", entities}}.dump(2);
     }
@@ -39,13 +40,14 @@ namespace Veris
         Scene scene;
         for (const auto& entity : entities)
         {
-            Json::Fields(entity, {"id", "name", "parent", "transform", "sprite"}, {"animation"});
+            Json::Fields(entity, {"id", "name", "parent", "transform", "sprite"}, {"animation", "audio"});
             if (!entity.at("id").is_number_unsigned() || !entity.at("parent").is_number_unsigned()) throw std::invalid_argument("Scene identifiers must be unsigned integers.");
             const auto id = scene.ImportEntity(entity.at("id").get<EntityId>(), entity.at("name").get<std::string>());
             const auto& transform = entity.at("transform");
             Json::Fields(transform, {"position", "scale", "rotation"});
             scene.Get(id).Transform = {ReadVector(transform.at("position")), ReadVector(transform.at("scale")), Json::Number(transform.at("rotation"))};
             if (!entity.at("sprite").is_null()) scene.Get(id).Sprite = ReadSprite(entity.at("sprite"), textures);
+            if (entity.contains("audio") && !entity.at("audio").is_null()) scene.Get(id).Audio = DeserializeAudio(entity.at("audio").dump(), textures);
             if (entity.contains("animation") && !entity.at("animation").is_null())
             {
                 if (!scene.Get(id).Sprite) throw std::invalid_argument("Animations require a sprite component.");

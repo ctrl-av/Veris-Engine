@@ -29,10 +29,15 @@ namespace VerisEditor.Workspace
         private void RefreshWorkspace(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Refresh();
         private void ApplyAnimation(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyAnimation();
         private void PreviewAnimation(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PreviewAnimation();
+        private void ApplyAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyAudio();
+        private void PlayAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PlayAudio();
+        private void PauseAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PauseAudio();
+        private void ResumeAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ResumeAudio();
+        private void StopAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).StopAudio();
         private void NavigateUp(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).NavigateUp();
         private void ImportAsset(object sender, RoutedEventArgs e)
         {
-            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Import texture", Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.tga|All files|*.*" };
+            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Import asset", Filter = "Images and audio|*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.wav;*.ogg;*.flac|All files|*.*" };
             if (picker.ShowDialog(Window.GetWindow(this)) == true) ((EditorWorkspace)DataContext).ImportAsset(picker.FileName);
         }
         private void CreateFolder(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).CreateContentFolder();
@@ -49,7 +54,7 @@ namespace VerisEditor.Workspace
         {
             var workspace = (EditorWorkspace)DataContext;
             if (workspace.SelectedAsset == null) return;
-            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Reimport texture", Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.tga|All files|*.*" };
+            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Reimport asset", Filter = "Images and audio|*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.wav;*.ogg;*.flac|All files|*.*" };
             if (picker.ShowDialog(Window.GetWindow(this)) == true) workspace.ReimportAsset(workspace.SelectedAsset.Id, picker.FileName);
         }
 

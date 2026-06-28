@@ -146,6 +146,14 @@
                                         <Button Content="Advance animation 100 ms" Click="PreviewAnimation" />
                                     </StackPanel>
                                 </Expander>
+                                <Expander Header="Audio source" Foreground="#DDE2EA">
+                                    <StackPanel>
+                                        <TextBlock Text="Assign an imported audio asset or edit clip, assetId, volume (0–100), loop and autoPlay. Use null to remove." TextWrapping="Wrap" />
+                                        <TextBox Text="{Binding AudioJson, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" />
+                                        <Button x:Name="ApplyAudioButton" Content="Apply audio" Click="ApplyAudio" />
+                                        <WrapPanel><Button Content="Play" Click="PlayAudio" /><Button Content="Pause" Click="PauseAudio" /><Button Content="Resume" Click="ResumeAudio" /><Button Content="Stop" Click="StopAudio" /></WrapPanel>
+                                    </StackPanel>
+                                </Expander>
                                 <TextBlock Text="Content-relative texture" />
                                 <TextBox x:Name="TexturePathInput" Text="{Binding Inspector.TexturePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4" />
                                 <Button Content="Use selected content" Click="UseSelectedTexture" />
@@ -214,7 +222,7 @@
                                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                                     <TextBox x:Name="AssetDestinationInput" Text="{Binding AssetDestination, UpdateSourceTrigger=PropertyChanged}" Width="180" Margin="4" ToolTip="Content-relative destination, including filename" />
                                     <Button x:Name="MoveAssetButton" Content="Move / rename" Click="MoveAsset" IsEnabled="{Binding HasSelectedAsset}" />
-                                    <Button x:Name="UseAssetButton" Content="Use texture" Click="UseAsset" IsEnabled="{Binding HasSelectedAsset}" />
+                                    <Button x:Name="UseAssetButton" Content="Use asset" Click="UseAsset" IsEnabled="{Binding HasSelectedAsset}" />
                                     <Button x:Name="ReimportAssetButton" Content="Reimport…" Click="ReimportAsset" IsEnabled="{Binding HasSelectedAsset}" />
                                     <Button x:Name="DeleteAssetButton" Content="Delete" Click="DeleteAsset" IsEnabled="{Binding HasSelectedAsset}" />
                                 </StackPanel>

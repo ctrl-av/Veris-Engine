@@ -43,7 +43,7 @@ namespace VerisEditor.Workspace
         {
             var asset = Catalog.Reimport(id, source);
             _engine.LoadAssetCatalog(Catalog.ManifestPath);
-            _engine.ReloadTexture(asset.Path);
+            ReloadAsset(asset);
             if (HasSelection) Inspector.Load(SelectedEntityId);
             RefreshAssetList();
         });
@@ -78,6 +78,13 @@ namespace VerisEditor.Workspace
         public void UseSelectedAsset() => Edit("Assign texture asset", () =>
         {
             if (SelectedAsset == null || !HasSelection) return;
+            if (SelectedAsset.Kind == "audio")
+            {
+                _engine.SetAudio(SelectedEntityId, System.Text.Json.JsonSerializer.Serialize(new { clip = SelectedAsset.Path, assetId = SelectedAsset.Id, volume = 100, loop = false, autoPlay = false }));
+                AudioJson = _engine.Audio(SelectedEntityId);
+                OnPropertyChanged(nameof(AudioJson));
+                return;
+            }
             var sprite = _engine.GetSprite(SelectedEntityId) ?? new Interop.SpriteProperties { Tint = uint.MaxValue, Visible = 1 };
             _engine.SetSprite(SelectedEntityId, SelectedAsset.Path, sprite);
             Inspector.Load(SelectedEntityId);
@@ -110,7 +117,7 @@ namespace VerisEditor.Workspace
         {
             AssetPreview = null;
             AssetDetails = SelectedAsset == null ? "Select an imported texture" : $"{SelectedAsset.Path}\n{SelectedAsset.Id:D}\nSHA-256: {SelectedAsset.Sha256}";
-            if (SelectedAsset != null)
+            if (SelectedAsset?.Kind == "texture")
             {
                 try
                 {

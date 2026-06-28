@@ -81,10 +81,9 @@ namespace VerisEditor.Assets
         {
             if (scene.RootElement.GetProperty("formatVersion").GetInt32() != 1) throw new InvalidDataException("Unsupported saved scene version.");
             foreach (var entity in scene.RootElement.GetProperty("entities").EnumerateArray())
+            foreach (var sprite in ReferencedComponents(entity))
             {
-                var sprite = entity.GetProperty("sprite");
-                if (sprite.ValueKind == JsonValueKind.Null) continue;
-                if (string.IsNullOrEmpty(sprite.GetProperty("texture").GetString())) throw new InvalidDataException("Saved sprites require texture paths.");
+                if (string.IsNullOrEmpty(sprite.GetProperty(sprite.TryGetProperty("clip", out _) ? "clip" : "texture").GetString())) throw new InvalidDataException("Saved assets require content paths.");
                 if (sprite.TryGetProperty("assetId", out var id)) id.GetString();
             }
         }
@@ -94,9 +93,8 @@ namespace VerisEditor.Assets
             foreach (var scene in SavedScenes())
             using (scene)
                 foreach (var entity in scene.RootElement.GetProperty("entities").EnumerateArray())
+                foreach (var sprite in ReferencedComponents(entity))
                 {
-                    var sprite = entity.GetProperty("sprite");
-                    if (sprite.ValueKind == JsonValueKind.Null) continue;
                     if (sprite.TryGetProperty("assetId", out var id) && Guid.TryParse(id.GetString(), out var guid) && guid == asset.Id) return true;
                     if (IsLegacyReference(sprite, asset)) return true;
                 }
@@ -108,8 +106,8 @@ namespace VerisEditor.Assets
             foreach (var scene in SavedScenes())
             using (scene)
                 foreach (var entity in scene.RootElement.GetProperty("entities").EnumerateArray())
+                foreach (var sprite in ReferencedComponents(entity))
                 {
-                    var sprite = entity.GetProperty("sprite");
                     if (sprite.ValueKind != JsonValueKind.Null && IsLegacyReference(sprite, asset)) return true;
                 }
             return false;
@@ -118,7 +116,14 @@ namespace VerisEditor.Assets
         private static bool IsLegacyReference(JsonElement sprite, AssetRecord asset)
         {
             return (!sprite.TryGetProperty("assetId", out var id) || string.IsNullOrEmpty(id.GetString())) &&
-                sprite.GetProperty("texture").GetString()!.Replace('\\', '/').Equals(asset.Path, StringComparison.OrdinalIgnoreCase);
+                sprite.GetProperty(sprite.TryGetProperty("clip", out _) ? "clip" : "texture").GetString()!.Replace('\\', '/').Equals(asset.Path, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static IEnumerable<JsonElement> ReferencedComponents(JsonElement entity)
+        {
+            var sprite = entity.GetProperty("sprite");
+            if (sprite.ValueKind != JsonValueKind.Null) yield return sprite;
+            if (entity.TryGetProperty("audio", out var audio) && audio.ValueKind != JsonValueKind.Null) yield return audio;
         }
     }
 }

@@ -12,6 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="$(NativeInteropDirectory)sfml-audio$(NativeDebugSuffix)-3.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="..\.dependencies\SFML-3.0.1\license.md">
       <Link>licenses\SFML.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

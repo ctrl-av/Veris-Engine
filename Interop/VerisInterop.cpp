@@ -86,6 +86,12 @@ namespace
     {
         for (const auto& entry : scene.Entities())
         {
+            const auto& audio = entry.second.Audio;
+            if (audio)
+            {
+                if (audio->AssetId == asset) ++stable;
+                else if (audio->AssetId.empty() && textures.AssetId(std::filesystem::u8path(audio->ClipPath)) == asset) ++legacy;
+            }
             const auto& sprite = entry.second.Sprite;
             if (!sprite) continue;
             if (sprite->TextureAssetId == asset) ++stable;
@@ -505,5 +511,91 @@ int32_t veris_advance_animation(uint64_t engine, uint64_t entity, double seconds
         auto& animation = FindEngine(engine).ActiveScene().Get(entity).Animation;
         if (!animation) throw std::invalid_argument("Entity has no sprite animation.");
         animation->Advance(seconds);
+    });
+}
+
+int32_t veris_set_audio(uint64_t engine, uint64_t entity, const char* json)
+{
+    return Boundary([&]
+    {
+        if (!json) throw std::invalid_argument("Audio JSON is required.");
+        auto& session = FindEngine(engine);
+        auto& target = session.ActiveScene().Get(entity);
+        if (std::strcmp(json, "null") == 0) target.Audio.reset();
+        else target.Audio = Veris::DeserializeAudio(json, session.Textures());
+        session.Audio().Stop(entity);
+        session.Audio().Synchronize(session.ActiveScene());
+    });
+}
+
+int32_t veris_audio(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&]
+    {
+        const auto& audio = FindEngine(engine).ActiveScene().Get(entity).Audio;
+        tooSmall = !CopyText(audio ? Veris::SerializeAudio(*audio) : "null", utf8, capacity, required);
+    });
+    if (status == VerisOk && tooSmall) { LastError = "Audio buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+
+int32_t veris_play_audio(uint64_t engine, uint64_t entity)
+{
+    return Boundary([&]
+    {
+        auto& session = FindEngine(engine);
+        const auto& source = session.ActiveScene().Get(entity).Audio;
+        if (!source) throw std::invalid_argument("Entity has no audio source.");
+        session.Audio().Play(entity, *source);
+    });
+}
+int32_t veris_pause_audio(uint64_t engine, uint64_t entity) { return Boundary([&] { FindEngine(engine).Audio().Pause(entity); }); }
+int32_t veris_resume_audio(uint64_t engine, uint64_t entity) { return Boundary([&] { FindEngine(engine).Audio().Resume(entity); }); }
+int32_t veris_stop_audio(uint64_t engine, uint64_t entity) { return Boundary([&] { FindEngine(engine).Audio().Stop(entity); }); }
+int32_t veris_audio_status(uint64_t engine, uint64_t entity, int32_t* status)
+{
+    return Boundary([&]
+    {
+        if (!status) throw std::invalid_argument("Audio status output is required.");
+        auto& session = FindEngine(engine);
+        session.Audio().Synchronize(session.ActiveScene());
+        *status = static_cast<int32_t>(session.Audio().Status(entity));
+    });
+}
+int32_t veris_validate_audio(const wchar_t* path)
+{
+    return Boundary([&]
+    {
+        if (!path) throw std::invalid_argument("Audio source path is required.");
+        if (std::filesystem::file_size(path) > 256 * 1024 * 1024) throw std::invalid_argument("Audio clips cannot exceed 256 MiB.");
+        sf::SoundBuffer buffer;
+        if (!buffer.loadFromFile(path)) throw std::invalid_argument("Cannot decode audio clip.");
+    });
+}
+
+int32_t veris_reload_audio(uint64_t engine, const char* path)
+{
+    return Boundary([&]
+    {
+        if (!path) throw std::invalid_argument("Audio path is required.");
+        auto& session = FindEngine(engine);
+        const auto relative = std::filesystem::u8path(path);
+        const auto absolute = session.Textures().ContentPath(relative);
+        if (std::filesystem::file_size(absolute) > 256 * 1024 * 1024) throw std::invalid_argument("Audio clips cannot exceed 256 MiB.");
+        auto buffer = std::make_shared<sf::SoundBuffer>();
+        if (!buffer->loadFromFile(absolute)) throw std::invalid_argument("Cannot decode changed audio clip.");
+        const auto id = session.Textures().AssetId(relative);
+        const auto replace = [&](Veris::Scene& scene)
+        {
+            for (const auto& entry : scene.Entities())
+            {
+                auto& audio = scene.Get(entry.first).Audio;
+                if (audio && ((!id.empty() && audio->AssetId == id) || audio->ClipPath == path)) audio->Buffer = buffer;
+            }
+        };
+        replace(session.ActiveScene());
+        for (auto& snapshot : Snapshots) if (snapshot.second.first == engine) replace(*snapshot.second.second);
+        session.Audio().Synchronize(session.ActiveScene());
     });
 }

@@ -14,7 +14,7 @@ namespace VerisEditor.Workspace
 
         public void ReconcileAssets() => Run(() =>
         {
-            var failures = Catalog.Reconcile(asset => _engine.ReloadTexture(asset.Path));
+            var failures = Catalog.Reconcile(ReloadAsset);
             var diagnostics = string.Join(Environment.NewLine, failures.Values);
             if (_assetDiagnostics != diagnostics && diagnostics.Length != 0) EditorLog.Info("Asset references: " + diagnostics);
             _assetDiagnostics = diagnostics;

@@ -10,7 +10,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SfmlRoot)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics$(SfmlDebugSuffix).lib;sfml-window$(SfmlDebugSuffix).lib;sfml-system$(SfmlDebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio$(SfmlDebugSuffix).lib;sfml-graphics$(SfmlDebugSuffix).lib;sfml-window$(SfmlDebugSuffix).lib;sfml-system$(SfmlDebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="ValidateSfmlDependency" BeforeTargets="PrepareForBuild">
@@ -22,5 +22,6 @@
       <SfmlRuntime Include="$(SfmlRoot)bin\sfml-graphics$(SfmlDebugSuffix)-3.dll;$(SfmlRoot)bin\sfml-window$(SfmlDebugSuffix)-3.dll;$(SfmlRoot)bin\sfml-system$(SfmlDebugSuffix)-3.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(SfmlRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(SfmlRoot)bin\sfml-audio$(SfmlDebugSuffix)-3.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
 </Project>

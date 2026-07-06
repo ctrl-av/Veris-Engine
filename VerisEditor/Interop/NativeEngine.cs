@@ -43,6 +43,11 @@ namespace VerisEditor.Interop
         public int AudioStatus(ulong entity) { Check(NativeMethods.AudioStatus(_handle, entity, out var status)); return status; }
         public static void ValidateAudioFile(string path) => Check(NativeMethods.ValidateAudio(path));
         public void ReloadAudio(string path) => Check(NativeMethods.ReloadAudio(_handle, path));
+        public void SetPhysics(ulong entity, string json) => Check(NativeMethods.SetPhysics(_handle, entity, json));
+        public string Physics(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.Physics(_handle, entity, buffer, capacity, out required));
+        public void FixedUpdate(double seconds) => Check(NativeMethods.FixedUpdate(_handle, seconds));
+        public void SetGravity(float x, float y) => Check(NativeMethods.SetGravity(_handle, x, y));
+        public void ApplyImpulse(ulong entity, float x, float y) => Check(NativeMethods.ApplyImpulse(_handle, entity, x, y));
         public (uint Stable, uint Legacy) AssetUsage(Guid id)
         {
             Check(NativeMethods.AssetUsage(_handle, id.ToString("D"), out var stable, out var legacy));
@@ -280,6 +285,16 @@ namespace VerisEditor.Interop
         internal static extern int ValidateAudio([MarshalAs(UnmanagedType.LPWStr)] string path);
         [DllImport(Library, EntryPoint = "veris_reload_audio", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ReloadAudio(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
+        [DllImport(Library, EntryPoint = "veris_set_physics", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetPhysics(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string json);
+        [DllImport(Library, EntryPoint = "veris_physics", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int Physics(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
+        [DllImport(Library, EntryPoint = "veris_fixed_update", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int FixedUpdate(EngineHandle engine, double seconds);
+        [DllImport(Library, EntryPoint = "veris_set_gravity", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetGravity(EngineHandle engine, float x, float y);
+        [DllImport(Library, EntryPoint = "veris_apply_impulse", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ApplyImpulse(EngineHandle engine, ulong entity, float x, float y);
         [DllImport(Library, EntryPoint = "veris_asset_usage", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int AssetUsage(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string asset, out uint stable, out uint legacy);
         [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]

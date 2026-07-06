@@ -107,6 +107,8 @@ namespace VerisEditor.Workspace
             OnPropertyChanged(nameof(AnimationJson));
             AudioJson = entityId == 0 ? "null" : _engine.Audio(entityId);
             OnPropertyChanged(nameof(AudioJson));
+            PhysicsJson = entityId == 0 ? "null" : _engine.Physics(entityId);
+            OnPropertyChanged(nameof(PhysicsJson));
             foreach (var entity in Entities) entity.IsSelected = entity.Id == entityId;
             EntityName = selected?.Name ?? "Entity";
             SelectedParentId = selected?.ParentId ?? 0;

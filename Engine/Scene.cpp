@@ -64,6 +64,7 @@ namespace Veris
                 copy.Sprite = source.Sprite;
                 copy.Animation = source.Animation;
                 copy.Audio = source.Audio;
+                copy.Physics = source.Physics;
                 copies.emplace(sourceId, copyId);
             }
         }
@@ -80,6 +81,7 @@ namespace Veris
     void Scene::SetParent(EntityId child, EntityId parent)
     {
         auto& entity = Get(child);
+        if (entity.Physics && parent != 0) throw std::invalid_argument("Physics bodies must remain root entities.");
         for (auto ancestor = parent; ancestor != 0; ancestor = Get(ancestor).Parent())
             if (ancestor == child) throw std::invalid_argument("Entity parenting cannot create cycles.");
         entity._parent = parent;

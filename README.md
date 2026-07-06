@@ -44,3 +44,4 @@
 - [x] Debounced external asset monitoring with hash reconciliation, missing/corrupt reference diagnostics, last-good texture retention, and recovery without scene edits.
 - [x] Fixed-step sprite atlas animation with frame durations, looping, pause, one-shot completion, inspector previews, serialization, and undo.
 - [x] SFML audio playback with owned buffers, play/pause/resume/stop, volume, looping, automatic start, imported audio GUIDs, and scene/editor integration.
+- [x] Pinned Box2D physics with static/kinematic/dynamic bodies, box/circle colliders, gravity, materials, impulses, fixed stepping, serialization, and undoable editor simulation.

@@ -1,5 +1,6 @@
 #pragma once
 void VerifyAnimations();
+void VerifyPhysics();
 
 #include <stdexcept>
 #include <filesystem>

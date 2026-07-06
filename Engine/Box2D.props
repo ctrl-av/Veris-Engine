@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup><Box2dRoot>$(MSBuildThisFileDirectory)..\.dependencies\box2d-2.4.1\</Box2dRoot></PropertyGroup>
+  <ItemDefinitionGroup><ClCompile><AdditionalIncludeDirectories>$(Box2dRoot)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>
+  <Target Name="ValidateBox2dDependency" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(Box2dRoot)include\box2d\box2d.h')" Text="Box2D is missing. Run powershell -File scripts/InitializeDependencies.ps1." />
+  </Target>
+  <Target Name="CopyBox2dLicense" AfterTargets="Build" Condition="'$(ConfigurationType)' == 'Application' Or '$(ConfigurationType)' == 'DynamicLibrary'">
+    <MakeDir Directories="$(OutDir)licenses" />
+    <Copy SourceFiles="$(Box2dRoot)LICENSE" DestinationFiles="$(OutDir)licenses\Box2D.txt" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

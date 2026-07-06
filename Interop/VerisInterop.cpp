@@ -138,7 +138,13 @@ int32_t veris_capture_scene(uint64_t engine, uint64_t* snapshot)
 
 int32_t veris_restore_scene(uint64_t engine, uint64_t snapshot)
 {
-    return Boundary([&] { FindEngine(engine).ActiveScene().Replace(FindSnapshot(engine, snapshot)); });
+    return Boundary([&]
+    {
+        auto& session = FindEngine(engine);
+        session.ActiveScene().Replace(FindSnapshot(engine, snapshot));
+        session.Physics().Clear();
+        session.Audio().Clear();
+    });
 }
 
 int32_t veris_matches_scene(uint64_t engine, uint64_t snapshot, int32_t* matches)
@@ -170,6 +176,8 @@ int32_t veris_deserialize_scene(uint64_t engine, const char* utf8)
         if (!utf8) throw std::invalid_argument("Scene document is required.");
         auto& session = FindEngine(engine);
         session.ActiveScene().Replace(Veris::DeserializeScene(utf8, session.Textures()));
+        session.Physics().Clear();
+        session.Audio().Clear();
     });
 }
 
@@ -299,7 +307,12 @@ int32_t veris_set_transform(uint64_t engine, uint64_t entity, const VerisTransfo
         if (!transform) throw std::invalid_argument("Transform pointer is required.");
         Veris::TransformComponent component{{transform->PositionX, transform->PositionY}, {transform->ScaleX, transform->ScaleY}, transform->Rotation};
         component.Matrix();
-        FindEngine(engine).ActiveScene().Get(entity).Transform = component;
+        auto& session = FindEngine(engine);
+        auto& target = session.ActiveScene().Get(entity);
+        const auto previous = target.Transform;
+        target.Transform = component;
+        try { session.Physics().Synchronize(session.ActiveScene()); }
+        catch (...) { target.Transform = previous; throw; }
     });
 }
 
@@ -598,4 +611,36 @@ int32_t veris_reload_audio(uint64_t engine, const char* path)
         for (auto& snapshot : Snapshots) if (snapshot.second.first == engine) replace(*snapshot.second.second);
         session.Audio().Synchronize(session.ActiveScene());
     });
+}
+
+int32_t veris_set_physics(uint64_t engine, uint64_t entity, const char* json)
+{
+    return Boundary([&]
+    {
+        if (!json) throw std::invalid_argument("Physics JSON is required.");
+        auto& session = FindEngine(engine);
+        auto& target = session.ActiveScene().Get(entity);
+        const auto previous = target.Physics;
+        if (std::strcmp(json, "null") == 0) target.Physics.reset();
+        else target.Physics = Veris::DeserializePhysics(json);
+        try { session.Physics().Synchronize(session.ActiveScene()); }
+        catch (...) { target.Physics = previous; throw; }
+    });
+}
+int32_t veris_physics(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&]
+    {
+        const auto& physics = FindEngine(engine).ActiveScene().Get(entity).Physics;
+        tooSmall = !CopyText(physics ? Veris::SerializePhysics(*physics) : "null", utf8, capacity, required);
+    });
+    if (status == VerisOk && tooSmall) { LastError = "Physics buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+int32_t veris_fixed_update(uint64_t engine, double seconds) { return Boundary([&] { FindEngine(engine).FixedUpdate(seconds); }); }
+int32_t veris_set_gravity(uint64_t engine, float x, float y) { return Boundary([&] { FindEngine(engine).Physics().SetGravity({x, y}); }); }
+int32_t veris_apply_impulse(uint64_t engine, uint64_t entity, float x, float y)
+{
+    return Boundary([&] { auto& session = FindEngine(engine); session.Physics().ApplyImpulse(session.ActiveScene(), entity, {x, y}); });
 }

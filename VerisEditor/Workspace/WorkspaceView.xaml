@@ -154,6 +154,14 @@
                                         <WrapPanel><Button Content="Play" Click="PlayAudio" /><Button Content="Pause" Click="PauseAudio" /><Button Content="Resume" Click="ResumeAudio" /><Button Content="Stop" Click="StopAudio" /></WrapPanel>
                                     </StackPanel>
                                 </Expander>
+                                <Expander Header="Physics body" Foreground="#DDE2EA">
+                                    <StackPanel>
+                                        <TextBlock Text="Body types: static 0, kinematic 1, dynamic 2. Shapes: box 0, circle 1. Dimensions and velocity use pixels. Root entities only. Use null to remove." TextWrapping="Wrap" />
+                                        <TextBox Text="{Binding PhysicsJson, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" />
+                                        <Button x:Name="ApplyPhysicsButton" Content="Apply physics" Click="ApplyPhysics" />
+                                        <Button x:Name="StepPhysicsButton" Content="Simulate one frame (undoable)" Click="StepPhysics" />
+                                    </StackPanel>
+                                </Expander>
                                 <TextBlock Text="Content-relative texture" />
                                 <TextBox x:Name="TexturePathInput" Text="{Binding Inspector.TexturePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4" />
                                 <Button Content="Use selected content" Click="UseSelectedTexture" />

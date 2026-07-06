@@ -12,6 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\.dependencies\box2d-2.4.1\LICENSE">
+      <Link>licenses\Box2D.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="$(NativeInteropDirectory)sfml-audio$(NativeDebugSuffix)-3.dll">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

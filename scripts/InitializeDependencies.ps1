@@ -34,6 +34,17 @@ try {
         }
     }
     Write-Output 'nlohmann/json 3.12.0 is ready.'
+    $physicsArchive = Join-Path $dependencyDirectory 'box2d-2.4.1.zip'
+    if (!(Test-Path -LiteralPath $physicsArchive)) {
+        Invoke-WebRequest -Uri 'https://codeload.github.com/erincatto/box2d/zip/refs/tags/v2.4.1' -OutFile $physicsArchive
+    }
+    if ((Get-FileHash -LiteralPath $physicsArchive -Algorithm SHA256).Hash -ne '0CB512DFA5BE79CA227CD881B279ADEE61249C85C8B51CAF5AA036B71E943002') {
+        throw 'Box2D archive checksum mismatch.'
+    }
+    if (!(Test-Path -LiteralPath (Join-Path $dependencyDirectory 'box2d-2.4.1\src\dynamics\b2_world.cpp'))) {
+        Expand-Archive -LiteralPath $physicsArchive -DestinationPath $dependencyDirectory -Force
+    }
+    Write-Output 'Box2D 2.4.1 is ready.'
 }
 catch {
     Write-Error "Native dependency setup failed: $_"

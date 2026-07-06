@@ -25,6 +25,7 @@ namespace Veris
                 {"sprite", entity.Sprite ? WriteSprite(*entity.Sprite) : Document(nullptr)}});
             if (entity.Animation) entities.back()["animation"] = Json::Parse(SerializeAnimation(*entity.Animation));
             if (entity.Audio) entities.back()["audio"] = Json::Parse(SerializeAudio(*entity.Audio));
+            if (entity.Physics) entities.back()["physics"] = Json::Parse(SerializePhysics(*entity.Physics));
         }
         return Document{{"formatVersion", 1}, {"entities", entities}}.dump(2);
     }
@@ -40,7 +41,7 @@ namespace Veris
         Scene scene;
         for (const auto& entity : entities)
         {
-            Json::Fields(entity, {"id", "name", "parent", "transform", "sprite"}, {"animation", "audio"});
+            Json::Fields(entity, {"id", "name", "parent", "transform", "sprite"}, {"animation", "audio", "physics"});
             if (!entity.at("id").is_number_unsigned() || !entity.at("parent").is_number_unsigned()) throw std::invalid_argument("Scene identifiers must be unsigned integers.");
             const auto id = scene.ImportEntity(entity.at("id").get<EntityId>(), entity.at("name").get<std::string>());
             const auto& transform = entity.at("transform");
@@ -48,6 +49,7 @@ namespace Veris
             scene.Get(id).Transform = {ReadVector(transform.at("position")), ReadVector(transform.at("scale")), Json::Number(transform.at("rotation"))};
             if (!entity.at("sprite").is_null()) scene.Get(id).Sprite = ReadSprite(entity.at("sprite"), textures);
             if (entity.contains("audio") && !entity.at("audio").is_null()) scene.Get(id).Audio = DeserializeAudio(entity.at("audio").dump(), textures);
+            if (entity.contains("physics") && !entity.at("physics").is_null()) scene.Get(id).Physics = DeserializePhysics(entity.at("physics").dump());
             if (entity.contains("animation") && !entity.at("animation").is_null())
             {
                 if (!scene.Get(id).Sprite) throw std::invalid_argument("Animations require a sprite component.");
@@ -55,6 +57,8 @@ namespace Veris
             }
         }
         for (const auto& entity : entities) scene.SetParent(entity.at("id").get<EntityId>(), entity.at("parent").get<EntityId>());
+        PhysicsWorld validation;
+        validation.Synchronize(scene);
         return scene;
     }
 }

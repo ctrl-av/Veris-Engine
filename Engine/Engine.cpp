@@ -21,14 +21,14 @@ namespace Veris
         _camera = Camera{};
         _camera.Resize(viewportSize);
         _completedFrames = 0;
+        _physics.SetGravity({0, 9.81f});
     }
 
     void Engine::Update()
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before updating it.");
-        try { _scene.Submit(*this); }
+        try { _audio.Synchronize(_scene); _physics.Synchronize(_scene); _scene.Submit(*this); }
         catch (...) { _sprites.clear(); throw; }
-        _audio.Synchronize(_scene);
         _renderTarget->clear(BackgroundColor);
         _renderTarget->setView(_camera.View());
         std::stable_sort(_sprites.begin(), _sprites.end(), [](const auto& left, const auto& right) { return left.Layer < right.Layer; });
@@ -50,6 +50,7 @@ namespace Veris
     {
         if (!IsInitialized()) throw std::logic_error("Initialize the engine before simulating it.");
         if (!std::isfinite(stepSeconds) || stepSeconds <= 0) throw std::invalid_argument("Simulation step must be finite and positive.");
+        _physics.Step(_scene, stepSeconds);
         _simulationSeconds += stepSeconds;
         _scene.AdvanceAnimations(stepSeconds);
         _audio.StartAutomatic(_scene);
@@ -73,6 +74,7 @@ namespace Veris
         _sprites.clear();
         _scene.Clear();
         _audio.Clear();
+        _physics.Clear();
         _textures.Reset();
         _renderTarget.reset();
         _completedFrames = 0;

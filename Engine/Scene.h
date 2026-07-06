@@ -11,6 +11,7 @@
 #include <vector>
 #include "Animation.h"
 #include "Audio.h"
+#include "Physics.h"
 
 namespace Veris
 {
@@ -45,6 +46,7 @@ namespace Veris
         std::optional<SpriteComponent> Sprite;
         std::optional<SpriteAnimation> Animation;
         std::optional<AudioSource> Audio;
+        std::optional<PhysicsBody> Physics;
         Entity(EntityId id, std::string name) : Id(id), Name(std::move(name)) {}
         EntityId Parent() const noexcept { return _parent; }
 

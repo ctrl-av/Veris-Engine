@@ -21,6 +21,9 @@ void VerifyTextureResources(const std::filesystem::path& fixtureDirectory)
     resources.Reload("texture.png");
     Require(resources.Load("texture.png") == texture && texture->copyToImage().getPixel({0, 0}) == sf::Color::Blue,
         "Reload must update existing resource handles without replacing their identity.");
+    Require(sf::Image({4, 2}, sf::Color::Green).saveToFile(texturePath), "Resized fixture must be saved.");
+    Reject<std::invalid_argument>([&] { resources.Reload("texture.png"); });
+    Require(texture->getSize() == sf::Vector2u{2, 2}, "Unsafe dimension changes must preserve existing atlas references.");
     std::ofstream(texturePath, std::ios::binary | std::ios::trunc) << "invalid image";
     Reject<std::runtime_error>([&] { resources.Reload("texture.png"); });
     Require(texture->copyToImage().getPixel({0, 0}) == sf::Color::Blue, "Failed reloads must preserve the last good texture.");

@@ -48,6 +48,8 @@ namespace VerisEditor.Interop
         public void FixedUpdate(double seconds) => Check(NativeMethods.FixedUpdate(_handle, seconds));
         public void SetGravity(float x, float y) => Check(NativeMethods.SetGravity(_handle, x, y));
         public void ApplyImpulse(ulong entity, float x, float y) => Check(NativeMethods.ApplyImpulse(_handle, entity, x, y));
+        public void SetPhysicsDebug(bool enabled) => Check(NativeMethods.SetPhysicsDebug(_handle, enabled ? 1 : 0));
+        public string Contacts() => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.Contacts(_handle, buffer, capacity, out required));
         public (uint Stable, uint Legacy) AssetUsage(Guid id)
         {
             Check(NativeMethods.AssetUsage(_handle, id.ToString("D"), out var stable, out var legacy));
@@ -295,6 +297,10 @@ namespace VerisEditor.Interop
         internal static extern int SetGravity(EngineHandle engine, float x, float y);
         [DllImport(Library, EntryPoint = "veris_apply_impulse", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ApplyImpulse(EngineHandle engine, ulong entity, float x, float y);
+        [DllImport(Library, EntryPoint = "veris_set_physics_debug", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetPhysicsDebug(EngineHandle engine, int enabled);
+        [DllImport(Library, EntryPoint = "veris_contacts", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int Contacts(EngineHandle engine, [Out] byte[]? utf8, uint capacity, out uint required);
         [DllImport(Library, EntryPoint = "veris_asset_usage", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int AssetUsage(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string asset, out uint stable, out uint legacy);
         [DllImport(Library, EntryPoint = "veris_set_sprite", CallingConvention = CallingConvention.Cdecl)]

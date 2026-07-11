@@ -62,7 +62,7 @@ namespace VerisEditor.Workspace
                 Status = historyWarning.Length == 0 ? "Project opened" : historyWarning;
                 WatchAssets();
             }
-            catch { _engine.Dispose(); throw; }
+            catch { Dispose(); throw; }
         }
 
         public void NavigateTo(string directory) => Run(() => ReadContentDirectory(directory));

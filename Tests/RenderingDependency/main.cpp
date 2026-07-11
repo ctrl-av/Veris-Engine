@@ -47,6 +47,7 @@ int wmain(int, wchar_t* arguments[])
     {
         VerifyAnimations();
         VerifyPhysics();
+        VerifyContacts(std::filesystem::absolute(arguments[0]).parent_path() / "physics-debug.png");
         VerifyAudio(std::filesystem::absolute(arguments[0]).parent_path() / "Audio fixtures");
         VerifyTextureResources(std::filesystem::absolute(arguments[0]).parent_path() / L"Resource fixtures" );
         VerifyEntityPicking();
@@ -63,7 +64,7 @@ int wmain(int, wchar_t* arguments[])
         VerifyActionAggregation();
         VerifyActionRebindingAndQuickTaps();
         VerifySpriteRendering(std::filesystem::absolute(arguments[0]).parent_path() / "sprite-rendering.png");
-        std::cout << "PASS: Native lifecycle, window, timing, input, action, and sprite checks.\n";
+        std::cout << "PASS: Native lifecycle, rendering, resources, animation, audio, Box2D simulation, contacts, triggers, and debug geometry.\n";
         return 0;
     }
     catch (const std::exception& exception)

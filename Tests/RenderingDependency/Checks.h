@@ -5,6 +5,7 @@ void VerifyPhysics();
 #include <stdexcept>
 #include <filesystem>
 void VerifyAudio(const std::filesystem::path& directory);
+void VerifyContacts(const std::filesystem::path& imagePath);
 
 void Require(bool condition, const char* message);
 void VerifyWindowManagement();

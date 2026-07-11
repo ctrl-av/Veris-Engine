@@ -41,6 +41,7 @@ namespace Veris
         TextureResources& Textures() { return _textures; }
         AudioPlayback& Audio() { return _audio; }
         PhysicsWorld& Physics() { return _physics; }
+        bool PhysicsDebugEnabled = false;
         sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
         sf::Vector2i WorldToPixel(sf::Vector2f world) const;
         std::array<sf::Vector2f, 4> EntityCorners(EntityId id) const;

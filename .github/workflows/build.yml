@@ -48,9 +48,9 @@ jobs:
       - name: Publish editor prototype
         run: dotnet publish VerisEditor/VerisEditor.csproj --configuration ${{ matrix.configuration }} --no-build --no-restore --output artifacts/publish/editor
       - name: Verify built editor resources
-        run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/bin/VerisEditor/${{ matrix.configuration }}/net8.0-windows
+        run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/bin/VerisEditor/${{ matrix.configuration }}/net8.0-windows -Configuration ${{ matrix.configuration }}
       - name: Verify published editor resources
-        run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/publish/editor
+        run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/publish/editor -Configuration ${{ matrix.configuration }}
       - name: Check whitespace
         run: git diff --check
       - name: Upload build outputs

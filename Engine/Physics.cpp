@@ -36,11 +36,14 @@ namespace Veris
     void PhysicsWorld::Step(Scene& scene, double seconds)
     {
         if (!std::isfinite(seconds) || seconds <= 0) throw std::invalid_argument("Physics steps must be finite and positive.");
+        _events.clear();
+        _began.clear();
         Synchronize(scene);
         if (_bodies.empty()) return;
         if (seconds > 0.25) throw std::invalid_argument("Physics steps cannot exceed 250 ms; use fixed updates.");
         const auto substeps = static_cast<int>(std::ceil(seconds * 60));
         for (int index = 0; index < substeps; ++index) _world.Step(static_cast<float>(seconds / substeps), 8, 3);
+        RefreshContacts();
         WriteTransforms(scene);
     }
 
@@ -118,34 +121,46 @@ namespace Veris
         const auto& configuration = *entity.Physics;
         const auto scale = entity.Transform.Scale;
         b2PolygonShape box;
-        box.SetAsBox(configuration.HalfSize.x * scale.x / PixelsPerMeter, configuration.HalfSize.y * scale.y / PixelsPerMeter,
-            {configuration.Offset.x * scale.x / PixelsPerMeter, configuration.Offset.y * scale.y / PixelsPerMeter}, 0);
+        if (configuration.Shape == ColliderShape::Box)
+            box.SetAsBox(configuration.HalfSize.x * scale.x / PixelsPerMeter, configuration.HalfSize.y * scale.y / PixelsPerMeter,
+                {configuration.Offset.x * scale.x / PixelsPerMeter, configuration.Offset.y * scale.y / PixelsPerMeter}, 0);
         b2CircleShape circle;
         circle.m_radius = configuration.Radius * scale.x / PixelsPerMeter;
         circle.m_p.Set(configuration.Offset.x * scale.x / PixelsPerMeter, configuration.Offset.y * scale.y / PixelsPerMeter);
         b2FixtureDef fixture;
         fixture.shape = configuration.Shape == ColliderShape::Box ? static_cast<b2Shape*>(&box) : static_cast<b2Shape*>(&circle);
         fixture.density = configuration.Density; fixture.friction = configuration.Friction; fixture.restitution = configuration.Restitution;
+        fixture.isSensor = configuration.Sensor;
+        fixture.filter.categoryBits = configuration.Category;
+        fixture.filter.maskBits = configuration.Mask;
+        fixture.filter.groupIndex = configuration.Group;
         body.CreateFixture(&fixture);
     }
 
     void PhysicsWorld::SetGravity(sf::Vector2f acceleration)
     {
-        if (!std::isfinite(acceleration.x) || !std::isfinite(acceleration.y)) throw std::invalid_argument("Gravity must be finite in meters per second squared.");
+        if (!std::isfinite(acceleration.x) || !std::isfinite(acceleration.y) || std::abs(acceleration.x) > 10000 || std::abs(acceleration.y) > 10000)
+            throw std::invalid_argument("Gravity must be finite and within ±10000 meters per second squared per axis.");
         _world.SetGravity({acceleration.x, acceleration.y});
         for (auto& entry : _bodies) entry.second.Body->SetAwake(true);
     }
     void PhysicsWorld::ApplyImpulse(const Scene& scene, std::uint64_t entity, sf::Vector2f impulse)
     {
-        if (!std::isfinite(impulse.x) || !std::isfinite(impulse.y)) throw std::invalid_argument("Impulses must be finite.");
+        if (!std::isfinite(impulse.x) || !std::isfinite(impulse.y) || std::abs(impulse.x) > 1000000 || std::abs(impulse.y) > 1000000)
+            throw std::invalid_argument("Impulse components must be finite and within ±1000000 kg m/s.");
         Synchronize(scene);
         _bodies.at(entity).Body->ApplyLinearImpulseToCenter({impulse.x, impulse.y}, true);
     }
     float PhysicsWorld::Mass(const Scene& scene, std::uint64_t entity) { Synchronize(scene); return _bodies.at(entity).Body->GetMass(); }
     void PhysicsWorld::Clear() noexcept
     {
+        _world.SetContactListener(nullptr);
         for (auto& entry : _bodies) _world.DestroyBody(entry.second.Body);
         _bodies.clear();
+        _contacts.clear();
+        _events.clear();
+        _began.clear();
+        _world.SetContactListener(this);
     }
 
     void PhysicsBody::Validate() const
@@ -164,7 +179,8 @@ namespace Veris
     bool PhysicsBody::SameSettings(const PhysicsBody& other) const
     {
         return Type == other.Type && Shape == other.Shape && HalfSize == other.HalfSize && Offset == other.Offset && Radius == other.Radius &&
-            GravityScale == other.GravityScale && Density == other.Density && Friction == other.Friction && Restitution == other.Restitution && FixedRotation == other.FixedRotation && Bullet == other.Bullet;
+            GravityScale == other.GravityScale && Density == other.Density && Friction == other.Friction && Restitution == other.Restitution && FixedRotation == other.FixedRotation && Bullet == other.Bullet &&
+            Sensor == other.Sensor && Category == other.Category && Mask == other.Mask && Group == other.Group;
     }
 
     std::string SerializePhysics(const PhysicsBody& body)
@@ -172,12 +188,13 @@ namespace Veris
         body.Validate();
         return Json::Document{{"type", static_cast<int>(body.Type)}, {"shape", static_cast<int>(body.Shape)}, {"halfSize", {body.HalfSize.x, body.HalfSize.y}},
             {"radius", body.Radius}, {"offset", {body.Offset.x, body.Offset.y}}, {"velocity", {body.Velocity.x, body.Velocity.y}}, {"angularVelocity", body.AngularVelocity},
-            {"gravityScale", body.GravityScale}, {"density", body.Density}, {"friction", body.Friction}, {"restitution", body.Restitution}, {"fixedRotation", body.FixedRotation}, {"bullet", body.Bullet}}.dump();
+            {"gravityScale", body.GravityScale}, {"density", body.Density}, {"friction", body.Friction}, {"restitution", body.Restitution}, {"fixedRotation", body.FixedRotation}, {"bullet", body.Bullet},
+            {"sensor", body.Sensor}, {"category", body.Category}, {"mask", body.Mask}, {"group", body.Group}}.dump();
     }
     PhysicsBody DeserializePhysics(const std::string& json)
     {
         const auto document = Json::Parse(json);
-        Json::Fields(document, {"type", "shape", "halfSize", "radius", "offset", "velocity", "angularVelocity", "gravityScale", "density", "friction", "restitution", "fixedRotation", "bullet"});
+        Json::Fields(document, {"type", "shape", "halfSize", "radius", "offset", "velocity", "angularVelocity", "gravityScale", "density", "friction", "restitution", "fixedRotation", "bullet"}, {"sensor", "category", "mask", "group"});
         PhysicsBody body;
         body.Type = static_cast<BodyType>(Json::Integer(document.at("type"))); body.Shape = static_cast<ColliderShape>(Json::Integer(document.at("shape")));
         body.HalfSize = ReadPhysicsVector(document.at("halfSize")); body.Offset = ReadPhysicsVector(document.at("offset")); body.Velocity = ReadPhysicsVector(document.at("velocity"));
@@ -185,6 +202,13 @@ namespace Veris
         body.GravityScale = Json::Number(document.at("gravityScale")); body.Density = Json::Number(document.at("density"));
         body.Friction = Json::Number(document.at("friction")); body.Restitution = Json::Number(document.at("restitution"));
         body.FixedRotation = document.at("fixedRotation").get<bool>(); body.Bullet = document.at("bullet").get<bool>();
+        body.Sensor = document.value("sensor", false);
+        const auto category = document.contains("category") ? Json::Integer(document.at("category")) : 1;
+        const auto mask = document.contains("mask") ? Json::Integer(document.at("mask")) : 65535;
+        const auto group = document.contains("group") ? Json::Integer(document.at("group")) : 0;
+        if (category < 0 || category > 65535 || mask < 0 || mask > 65535 || group < -32768 || group > 32767)
+            throw std::invalid_argument("Physics categories/masks require unsigned 16-bit values; groups require signed 16-bit values.");
+        body.Category = static_cast<std::uint16_t>(category); body.Mask = static_cast<std::uint16_t>(mask); body.Group = static_cast<std::int16_t>(group);
         body.Validate();
         return body;
     }

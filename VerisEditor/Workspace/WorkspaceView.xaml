@@ -137,7 +137,6 @@
                                 </UniformGrid>
                                 <TextBlock Text="Rotation (degrees)" /><TextBox x:Name="RotationInput" Text="{Binding Inspector.Rotation, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
                                 <Button x:Name="ApplyTransformButton" Content="Apply transform" Click="ApplyTransform" />
-                                <TextBlock Text="Sprite" Foreground="#8F9BAC" Margin="0,14,0,8" />
                                 <Expander Header="Sprite animation" Foreground="#DDE2EA">
                                     <StackPanel>
                                         <TextBlock Text="Frames: rectangle [x,y,w,h], seconds; loop and playing. Use null to remove." TextWrapping="Wrap" />
@@ -160,8 +159,12 @@
                                         <TextBox Text="{Binding PhysicsJson, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" />
                                         <Button x:Name="ApplyPhysicsButton" Content="Apply physics" Click="ApplyPhysics" />
                                         <Button x:Name="StepPhysicsButton" Content="Simulate one frame (undoable)" Click="StepPhysics" />
+                                        <CheckBox x:Name="PhysicsDebugToggle" Content="Draw colliders and contacts" IsChecked="{Binding PhysicsDebug}" Foreground="#DDE2EA" Margin="0,8" />
+                                        <TextBlock Text="Solid: green static, blue kinematic, yellow dynamic. Cyan: trigger. White: velocity. Red: contact normal." TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding ContactDetails}" TextWrapping="Wrap" Margin="0,8" />
                                     </StackPanel>
                                 </Expander>
+                                <TextBlock Text="Sprite" Foreground="#8F9BAC" Margin="0,14,0,8" />
                                 <TextBlock Text="Content-relative texture" />
                                 <TextBox x:Name="TexturePathInput" Text="{Binding Inspector.TexturePath, UpdateSourceTrigger=PropertyChanged}" Margin="0,4" />
                                 <Button Content="Use selected content" Click="UseSelectedTexture" />
@@ -206,7 +209,7 @@
                     <DockPanel DockPanel.Dock="Top">
                         <TextBlock Text="CONTENT" Style="{StaticResource PanelTitle}" />
                         <Button x:Name="ContentUpButton" Content="Up" Click="NavigateUp" DockPanel.Dock="Right" />
-                        <Button x:Name="ImportAssetButton" Content="Import texture…" Click="ImportAsset" DockPanel.Dock="Right" />
+                        <Button x:Name="ImportAssetButton" Content="Import asset…" Click="ImportAsset" DockPanel.Dock="Right" />
                         <TextBlock Text="{Binding CurrentDirectory}" VerticalAlignment="Center" Foreground="#8F9BAC" FontSize="11" TextTrimming="CharacterEllipsis" />
                     </DockPanel>
                     <TabControl x:Name="AssetTabs" Background="Transparent" BorderThickness="0">
@@ -215,7 +218,7 @@
                                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                                     <TextBox Text="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="4" ToolTip="Folder name" />
                                     <Button x:Name="CreateFolderButton" Content="New folder" Click="CreateFolder" />
-                                    <Button Content="Register texture" Click="RegisterTexture" />
+                                    <Button Content="Register asset" Click="RegisterTexture" />
                                 </StackPanel>
                                 <ListBox x:Name="ContentFiles" ItemsSource="{Binding ContentEntries}" MouseDoubleClick="OpenContentDirectory" AllowDrop="True" Drop="ImportDroppedFiles">
                                     <ListBox.ItemTemplate>

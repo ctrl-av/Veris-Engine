@@ -37,6 +37,7 @@
     <ClCompile Include="AnimationChecks.cpp" />
     <ClCompile Include="AudioChecks.cpp" />
     <ClCompile Include="PhysicsChecks.cpp" />
+    <ClCompile Include="ContactChecks.cpp" />
     <ClCompile Include="WindowChecks.cpp" />
     <ClCompile Include="TimingChecks.cpp" />
     <ClCompile Include="InputChecks.cpp" />

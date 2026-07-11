@@ -1,6 +1,8 @@
 param(
     [Parameter(Mandatory = $true)]
-    [string]$EditorDirectory
+    [string]$EditorDirectory,
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Release'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -19,3 +21,24 @@ foreach ($sourceAsset in $sourceAssets) {
 }
 
 Write-Output "PASS: All $($sourceAssets.Count) editor resources are deployed unchanged."
+
+$repositoryDirectory = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$sfmlSuffix = if ($Configuration -eq 'Debug') { '-d' } else { '' }
+$nativeFiles = @(
+    @{ Source = ".dependencies\SFML-3.0.1\license.md"; Destination = 'licenses\SFML.md' },
+    @{ Source = ".dependencies\box2d-2.4.1\LICENSE"; Destination = 'licenses\Box2D.txt' },
+    @{ Source = ".dependencies\json-3.12.0\LICENSE.MIT"; Destination = 'licenses\nlohmann-json.txt' },
+    @{ Source = "artifacts\bin\VerisInterop\x64\$Configuration\VerisInterop.dll"; Destination = 'VerisInterop.dll' }
+)
+foreach ($module in @('graphics', 'window', 'system', 'audio')) {
+    $name = "sfml-$module$sfmlSuffix-3.dll"
+    $nativeFiles += @{ Source = ".dependencies\SFML-3.0.1\bin\$name"; Destination = $name }
+}
+foreach ($nativeFile in $nativeFiles) {
+    $source = Join-Path $repositoryDirectory $nativeFile.Source
+    $destination = Join-Path $EditorDirectory $nativeFile.Destination
+    if (!(Test-Path -LiteralPath $destination) -or (Get-FileHash -LiteralPath $source).Hash -ne (Get-FileHash -LiteralPath $destination).Hash) {
+        throw "Missing or mismatched native editor dependency: $($nativeFile.Destination)"
+    }
+}
+Write-Output "PASS: $Configuration interop, four SFML DLLs, and three dependency licenses match their build sources."

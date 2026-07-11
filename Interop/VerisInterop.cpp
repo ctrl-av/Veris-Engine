@@ -644,3 +644,19 @@ int32_t veris_apply_impulse(uint64_t engine, uint64_t entity, float x, float y)
 {
     return Boundary([&] { auto& session = FindEngine(engine); session.Physics().ApplyImpulse(session.ActiveScene(), entity, {x, y}); });
 }
+
+int32_t veris_set_physics_debug(uint64_t engine, int32_t enabled)
+{
+    return Boundary([&]
+    {
+        if (enabled != 0 && enabled != 1) throw std::invalid_argument("Physics debugging must be zero or one.");
+        FindEngine(engine).PhysicsDebugEnabled = enabled != 0;
+    });
+}
+int32_t veris_contacts(uint64_t engine, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&] { tooSmall = !CopyText(FindEngine(engine).Physics().ContactsJson(), utf8, capacity, required); });
+    if (status == VerisOk && tooSmall) { LastError = "Contact buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}

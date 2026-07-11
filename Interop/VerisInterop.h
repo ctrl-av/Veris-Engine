@@ -92,6 +92,8 @@ VERIS_API int32_t __cdecl veris_physics(uint64_t engine, uint64_t entity, char* 
 VERIS_API int32_t __cdecl veris_fixed_update(uint64_t engine, double seconds);
 VERIS_API int32_t __cdecl veris_set_gravity(uint64_t engine, float x, float y);
 VERIS_API int32_t __cdecl veris_apply_impulse(uint64_t engine, uint64_t entity, float x, float y);
+VERIS_API int32_t __cdecl veris_set_physics_debug(uint64_t engine, int32_t enabled);
+VERIS_API int32_t __cdecl veris_contacts(uint64_t engine, char* utf8, uint32_t capacity, uint32_t* required);
 VERIS_API int32_t __cdecl veris_asset_usage(uint64_t engine, const char* asset, uint32_t* stable, uint32_t* legacy);
 VERIS_API int32_t __cdecl veris_set_sprite(uint64_t engine, uint64_t entity, const char* texture, const VerisSprite* sprite);
 VERIS_API int32_t __cdecl veris_get_sprite(uint64_t engine, uint64_t entity, VerisSprite* sprite, int32_t* present);

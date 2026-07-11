@@ -14,7 +14,7 @@ namespace VerisEditor.Workspace
         public string FolderName { get; set; } = "Textures";
         public string AssetDestination { get; set; } = "";
         public BitmapSource? AssetPreview { get; private set; }
-        public string AssetDetails { get; private set; } = "Select an imported texture";
+        public string AssetDetails { get; private set; } = "Select an imported asset";
         public bool HasSelectedAsset => _selectedAsset != null;
         public AssetRecord? SelectedAsset
         {
@@ -116,7 +116,7 @@ namespace VerisEditor.Workspace
         private void LoadAssetPreview()
         {
             AssetPreview = null;
-            AssetDetails = SelectedAsset == null ? "Select an imported texture" : $"{SelectedAsset.Path}\n{SelectedAsset.Id:D}\nSHA-256: {SelectedAsset.Sha256}";
+            AssetDetails = SelectedAsset == null ? "Select an imported asset" : $"{SelectedAsset.Path}\n{SelectedAsset.Id:D}\nSHA-256: {SelectedAsset.Sha256}";
             if (SelectedAsset?.Kind == "texture")
             {
                 try

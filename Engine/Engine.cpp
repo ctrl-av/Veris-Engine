@@ -33,6 +33,7 @@ namespace Veris
         _renderTarget->setView(_camera.View());
         std::stable_sort(_sprites.begin(), _sprites.end(), [](const auto& left, const auto& right) { return left.Layer < right.Layer; });
         for (const auto& sprite : _sprites) _renderTarget->draw(sprite.Sprite, sprite.Transform);
+        if (PhysicsDebugEnabled) _physics.DrawDebug(*_renderTarget);
         _renderTarget->display();
         _sprites.clear();
         ++_completedFrames;
@@ -75,6 +76,7 @@ namespace Veris
         _scene.Clear();
         _audio.Clear();
         _physics.Clear();
+        PhysicsDebugEnabled = false;
         _textures.Reset();
         _renderTarget.reset();
         _completedFrames = 0;

@@ -16,7 +16,7 @@ void VerifyAnimations()
     scene.Get(id).Sprite->Texture = texture;
     scene.Get(id).Sprite->TexturePath = "atlas.png";
     scene.Get(id).Animation = Veris::DeserializeAnimation(R"({"frames":[{"rectangle":[0,0,1,1],"seconds":0.1},{"rectangle":[1,0,1,1],"seconds":0.2}],"loop":true,"playing":true})", {2, 1});
-    engine.FixedUpdate(0.11);
+    engine.FixedUpdate(0.1);
     engine.Update();
     Require(scene.Get(id).Animation->Frame == 1 && engine.GetFrame().copyToImage().getPixel({0, 0}) == sf::Color::Blue, "Fixed updates must change rendered atlas frames.");
     engine.FixedUpdate(0.2);

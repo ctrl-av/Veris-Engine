@@ -34,6 +34,7 @@ namespace VerisEditor.Workspace
             _assetTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
             _assetTimer.Tick += (_, _) =>
             {
+                if (IsDisposed) return;
                 var changed = Interlocked.Read(ref _lastAssetChange);
                 if (changed == 0 || Environment.TickCount64 - changed < 500) return;
                 if (Interlocked.CompareExchange(ref _lastAssetChange, 0, changed) == changed) ReconcileAssets();

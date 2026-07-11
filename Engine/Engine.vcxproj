@@ -164,6 +164,8 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsContacts.cpp" />
+    <ClCompile Include="PhysicsDebug.cpp" />
     <ClCompile Include="$(Box2dRoot)src\**\*.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(Box2dRoot)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -24,7 +24,11 @@ namespace Veris
         if (!std::isfinite(seconds) || seconds <= 0) throw std::invalid_argument("Animation step must be finite and positive.");
         if (!Playing || Frames.empty()) return;
         double duration = 0;
-        for (const auto& frame : Frames) duration += frame.Seconds;
+        for (const auto& frame : Frames)
+        {
+            if (!std::isfinite(frame.Seconds) || frame.Seconds < 0.001 || frame.Seconds > 3600) throw std::invalid_argument("Animation frame duration is invalid.");
+            duration += frame.Seconds;
+        }
         if (Loop) seconds = std::fmod(seconds, duration);
         Elapsed += seconds;
         while (Elapsed + 1e-12 >= Frames.at(Frame).Seconds)
@@ -57,7 +61,7 @@ namespace Veris
             Json::Fields(frame, {"rectangle", "seconds"});
             const auto& rectangle = frame.at("rectangle");
             if (!rectangle.is_array() || rectangle.size() != 4) throw std::invalid_argument("Animation rectangles require four integers.");
-            animation.Frames.push_back({{{Json::Integer(rectangle[0]), Json::Integer(rectangle[1])}, {Json::Integer(rectangle[2]), Json::Integer(rectangle[3])}}, Json::Number(frame.at("seconds"))});
+            animation.Frames.push_back({{{Json::Integer(rectangle[0]), Json::Integer(rectangle[1])}, {Json::Integer(rectangle[2]), Json::Integer(rectangle[3])}}, frame.at("seconds").get<double>()});
         }
         animation.Validate(textureSize);
         return animation;

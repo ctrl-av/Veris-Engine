@@ -45,6 +45,14 @@ try {
         Expand-Archive -LiteralPath $physicsArchive -DestinationPath $dependencyDirectory -Force
     }
     Write-Output 'Box2D 2.4.1 is ready.'
+    $luaArchive = Join-Path $dependencyDirectory 'lua-5.4.8.tar.gz'
+    if (!(Test-Path -LiteralPath $luaArchive)) { Invoke-WebRequest -Uri 'https://www.lua.org/ftp/lua-5.4.8.tar.gz' -OutFile $luaArchive }
+    if ((Get-FileHash -LiteralPath $luaArchive -Algorithm SHA256).Hash -ne '4F18DDAE154E793E46EEAB727C59EF1C0C0C2B744E7B94219710D76F530629AE') { throw 'Lua archive checksum mismatch.' }
+    if (!(Test-Path -LiteralPath (Join-Path $dependencyDirectory 'lua-5.4.8\src\lua.h'))) {
+        tar -xzf $luaArchive -C $dependencyDirectory
+        if ($LASTEXITCODE -ne 0) { throw 'Lua extraction failed.' }
+    }
+    Write-Output 'Lua 5.4.8 is ready.'
 }
 catch {
     Write-Error "Native dependency setup failed: $_"

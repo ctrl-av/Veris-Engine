@@ -164,6 +164,12 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Scripting.cpp" />
+    <ClCompile Include="$(LuaRoot)src\*.c" Exclude="$(LuaRoot)src\lua.c;$(LuaRoot)src\luac.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="PhysicsContacts.cpp" />
     <ClCompile Include="PhysicsDebug.cpp" />
     <ClCompile Include="$(Box2dRoot)src\**\*.cpp">

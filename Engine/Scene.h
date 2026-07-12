@@ -12,6 +12,7 @@
 #include "Animation.h"
 #include "Audio.h"
 #include "Physics.h"
+#include "Scripting.h"
 
 namespace Veris
 {
@@ -47,6 +48,7 @@ namespace Veris
         std::optional<SpriteAnimation> Animation;
         std::optional<AudioSource> Audio;
         std::optional<PhysicsBody> Physics;
+        std::optional<ScriptComponent> Script;
         Entity(EntityId id, std::string name) : Id(id), Name(std::move(name)) {}
         EntityId Parent() const noexcept { return _parent; }
 

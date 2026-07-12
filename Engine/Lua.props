@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup><LuaRoot>$(MSBuildThisFileDirectory)..\.dependencies\lua-5.4.8\</LuaRoot></PropertyGroup>
+  <ItemDefinitionGroup><ClCompile><AdditionalIncludeDirectories>$(LuaRoot)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>
+  <Target Name="ValidateLua" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(LuaRoot)src\lua.h')" Text="Run scripts/InitializeDependencies.ps1 to install Lua." />
+  </Target>
+  <Target Name="CopyLuaLicense" AfterTargets="Build" Condition="'$(ConfigurationType)' == 'Application' Or '$(ConfigurationType)' == 'DynamicLibrary'">
+    <MakeDir Directories="$(OutDir)licenses" />
+    <Copy SourceFiles="$(LuaRoot)doc\readme.html" DestinationFiles="$(OutDir)licenses\Lua.html" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

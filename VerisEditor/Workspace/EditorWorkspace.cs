@@ -54,6 +54,7 @@ namespace VerisEditor.Workspace
             try
             {
                 _engine.SetContentRoot(ContentRoot);
+                _engine.SetScriptRoot(Path.Combine(Path.GetDirectoryName(ProjectFile)!, project.GameCodeDirectory));
                 _engine.LoadAssetCatalog(Catalog.ManifestPath);
                 RefreshAssetList();
                 RefreshScene();

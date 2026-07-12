@@ -12,6 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\.dependencies\lua-5.4.8\doc\readme.html">
+      <Link>licenses\Lua.html</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="..\.dependencies\box2d-2.4.1\LICENSE">
       <Link>licenses\Box2D.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

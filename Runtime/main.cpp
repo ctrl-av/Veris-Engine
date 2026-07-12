@@ -55,6 +55,7 @@ namespace
         Veris::Engine engine;
         engine.Initialize(project.Window.Size);
         engine.Textures().SetRoot(project.ContentDirectory);
+        engine.Scripts().SetRoot(project.GameCodeDirectory);
         engine.Textures().SetCatalog(project.ProjectFile.parent_path() / L".Veris" / L"assets.json");
         Veris::LoadInputConfiguration(project.ProjectFile.parent_path(), engine.Actions());
         Veris::GameWindow window(project.Window, project.Name);

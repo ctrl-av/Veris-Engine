@@ -29,3 +29,5 @@ void VerifySceneHierarchy();
 void VerifySceneRendering();
 void VerifyTextureResources(const std::filesystem::path& fixtureDirectory);
 void VerifyEntityPicking();
+
+void VerifyScripts(const std::filesystem::path& root);

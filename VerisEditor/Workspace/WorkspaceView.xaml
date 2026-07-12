@@ -153,6 +153,10 @@
                                         <WrapPanel><Button Content="Play" Click="PlayAudio" /><Button Content="Pause" Click="PauseAudio" /><Button Content="Resume" Click="ResumeAudio" /><Button Content="Stop" Click="StopAudio" /></WrapPanel>
                                     </StackPanel>
                                 </Expander>
+                                <Expander Header="Gameplay script" Foreground="#DDE2EA"><StackPanel>
+                                        <TextBlock Text="Lua file relative to GameCode" /><TextBox Text="{Binding ScriptPath, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Assign script" Click="ApplyScript" /><Button Content="Remove script" Click="RemoveScript" />
+                                    </StackPanel></Expander>
                                 <Expander Header="Physics body" Foreground="#DDE2EA">
                                     <StackPanel>
                                         <TextBlock Text="Body types: static 0, kinematic 1, dynamic 2. Shapes: box 0, circle 1. Dimensions and velocity use pixels. Root entities only. Use null to remove." TextWrapping="Wrap" />

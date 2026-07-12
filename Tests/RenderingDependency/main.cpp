@@ -45,6 +45,7 @@ int wmain(int, wchar_t* arguments[])
 {
     try
     {
+        VerifyScripts(std::filesystem::absolute(arguments[0]).parent_path() / "Script fixtures");
         VerifyAnimations();
         VerifyPhysics();
         VerifyContacts(std::filesystem::absolute(arguments[0]).parent_path() / "physics-debug.png");

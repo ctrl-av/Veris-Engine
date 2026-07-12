@@ -65,6 +65,7 @@ namespace Veris
                 copy.Animation = source.Animation;
                 copy.Audio = source.Audio;
                 copy.Physics = source.Physics;
+                copy.Script = source.Script;
                 copies.emplace(sourceId, copyId);
             }
         }

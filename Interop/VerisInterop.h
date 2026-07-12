@@ -110,3 +110,7 @@ VERIS_API uint32_t __cdecl veris_error_message(char* utf8, uint32_t capacity);
 #ifdef __cplusplus
 }
 #endif
+
+VERIS_API int32_t __cdecl veris_set_script_root(uint64_t engine, const wchar_t* directory);
+VERIS_API int32_t __cdecl veris_set_script(uint64_t engine, uint64_t entity, const char* json);
+VERIS_API int32_t __cdecl veris_script_log(uint64_t engine, char* utf8, uint32_t capacity, uint32_t* required);

@@ -1,5 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="Box2D.props" />
+  <Import Project="Lua.props" />
   <PropertyGroup>
     <SfmlRoot>$(MSBuildThisFileDirectory)..\.dependencies\SFML-3.0.1\</SfmlRoot>
     <SfmlDebugSuffix Condition="'$(Configuration)' == 'Debug'">-d</SfmlDebugSuffix>

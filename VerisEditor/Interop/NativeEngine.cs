@@ -26,6 +26,9 @@ namespace VerisEditor.Interop
             return entity;
         }
 
+        public void SetScriptRoot(string path) => Check(NativeMethods.SetScriptRoot(_handle, path));
+        public void SetScript(ulong entity, string json) => Check(NativeMethods.SetScript(_handle, entity, json));
+        public string ScriptLog() => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.ScriptLog(_handle, buffer, capacity, out required));
         public void DestroyEntity(ulong entity) => Check(NativeMethods.DestroyEntity(_handle, entity));
         public void SetContentRoot(string directory) => Check(NativeMethods.SetContentRoot(_handle, directory));
         public void LoadAssetCatalog(string manifest) => Check(NativeMethods.LoadAssetCatalog(_handle, manifest));
@@ -261,6 +264,12 @@ namespace VerisEditor.Interop
         internal static extern int LoadAssetCatalog(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string manifest);
         [DllImport(Library, EntryPoint = "veris_validate_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
+        [DllImport(Library, EntryPoint = "veris_set_script_root", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetScriptRoot(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string path);
+        [DllImport(Library, EntryPoint = "veris_set_script", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SetScript(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string json);
+        [DllImport(Library, EntryPoint = "veris_script_log", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ScriptLog(EngineHandle engine, [Out] byte[]? utf8, uint capacity, out uint required);
         [DllImport(Library, EntryPoint = "veris_reload_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ReloadTexture(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
         [DllImport(Library, EntryPoint = "veris_set_animation", CallingConvention = CallingConvention.Cdecl)]

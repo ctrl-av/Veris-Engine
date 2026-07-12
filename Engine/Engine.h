@@ -41,6 +41,7 @@ namespace Veris
         TextureResources& Textures() { return _textures; }
         AudioPlayback& Audio() { return _audio; }
         PhysicsWorld& Physics() { return _physics; }
+        ScriptRuntime& Scripts() { return _scripts; }
         bool PhysicsDebugEnabled = false;
         sf::Vector2f PixelToWorld(sf::Vector2i pixel) const;
         sf::Vector2i WorldToPixel(sf::Vector2f world) const;
@@ -60,6 +61,7 @@ namespace Veris
         TextureResources _textures;
         AudioPlayback _audio;
         PhysicsWorld _physics;
+        ScriptRuntime _scripts;
         struct SpriteSubmission
         {
             int Layer;

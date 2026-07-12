@@ -143,6 +143,7 @@ int32_t veris_restore_scene(uint64_t engine, uint64_t snapshot)
         auto& session = FindEngine(engine);
         session.ActiveScene().Replace(FindSnapshot(engine, snapshot));
         session.Physics().Clear();
+        session.Scripts().Clear();
         session.Audio().Clear();
     });
 }
@@ -177,6 +178,7 @@ int32_t veris_deserialize_scene(uint64_t engine, const char* utf8)
         auto& session = FindEngine(engine);
         session.ActiveScene().Replace(Veris::DeserializeScene(utf8, session.Textures()));
         session.Physics().Clear();
+        session.Scripts().Clear();
         session.Audio().Clear();
     });
 }
@@ -658,5 +660,34 @@ int32_t veris_contacts(uint64_t engine, char* utf8, uint32_t capacity, uint32_t*
     bool tooSmall = false;
     const auto status = Boundary([&] { tooSmall = !CopyText(FindEngine(engine).Physics().ContactsJson(), utf8, capacity, required); });
     if (status == VerisOk && tooSmall) { LastError = "Contact buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+
+int32_t veris_set_script_root(uint64_t engine, const wchar_t* directory)
+{
+    return Boundary([&] { if (!directory) throw std::invalid_argument("Script root is required."); FindEngine(engine).Scripts().SetRoot(directory); });
+}
+int32_t veris_set_script(uint64_t engine, uint64_t entity, const char* json)
+{
+    return Boundary([&]
+    {
+        if (!json) throw std::invalid_argument("Script JSON is required.");
+        auto& session = FindEngine(engine);
+        auto& target = session.ActiveScene().Get(entity);
+        if (std::strcmp(json, "null") == 0) target.Script.reset();
+        else { const auto script = Veris::DeserializeScript(json); session.Scripts().Validate(script); target.Script = script; }
+        session.Scripts().Clear();
+    });
+}
+int32_t veris_script_log(uint64_t engine, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&]
+    {
+        std::string log;
+        for (const auto& message : FindEngine(engine).Scripts().Diagnostics()) log += message + "\n";
+        tooSmall = !CopyText(log, utf8, capacity, required);
+    });
+    if (status == VerisOk && tooSmall) { LastError = "Script log buffer is too small."; return VerisBufferTooSmall; }
     return status;
 }

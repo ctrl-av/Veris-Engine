@@ -25,6 +25,7 @@ Write-Output "PASS: All $($sourceAssets.Count) editor resources are deployed unc
 $repositoryDirectory = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $sfmlSuffix = if ($Configuration -eq 'Debug') { '-d' } else { '' }
 $nativeFiles = @(
+    @{ Source = ".dependencies\lua-5.4.8\doc\readme.html"; Destination = 'licenses\Lua.html' },
     @{ Source = ".dependencies\SFML-3.0.1\license.md"; Destination = 'licenses\SFML.md' },
     @{ Source = ".dependencies\box2d-2.4.1\LICENSE"; Destination = 'licenses\Box2D.txt' },
     @{ Source = ".dependencies\json-3.12.0\LICENSE.MIT"; Destination = 'licenses\nlohmann-json.txt' },
@@ -41,4 +42,4 @@ foreach ($nativeFile in $nativeFiles) {
         throw "Missing or mismatched native editor dependency: $($nativeFile.Destination)"
     }
 }
-Write-Output "PASS: $Configuration interop, four SFML DLLs, and three dependency licenses match their build sources."
+Write-Output "PASS: $Configuration interop, four SFML DLLs, and four dependency licenses match their build sources."

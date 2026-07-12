@@ -35,6 +35,8 @@ namespace Veris
             if (left.Animation && SerializeAnimation(*left.Animation) != SerializeAnimation(*right.Animation)) return false;
             if (left.Audio.has_value() != right.Audio.has_value()) return false;
             if (left.Audio && SerializeAudio(*left.Audio) != SerializeAudio(*right.Audio)) return false;
+            if (left.Script.has_value() != right.Script.has_value()) return false;
+            if (left.Script && SerializeScript(*left.Script) != SerializeScript(*right.Script)) return false;
             if (left.Physics.has_value() != right.Physics.has_value()) return false;
             if (left.Physics && SerializePhysics(*left.Physics) != SerializePhysics(*right.Physics)) return false;
             if (left.Name != right.Name || left.Parent() != right.Parent() || left.Transform.Position != right.Transform.Position ||

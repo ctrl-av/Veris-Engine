@@ -35,6 +35,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScriptChecks.cpp" />
+    <ClCompile Include="GameplayChecks.cpp" />
     <ClCompile Include="AnimationChecks.cpp" />
     <ClCompile Include="AudioChecks.cpp" />
     <ClCompile Include="PhysicsChecks.cpp" />

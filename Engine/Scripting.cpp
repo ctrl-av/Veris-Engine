@@ -62,6 +62,7 @@ namespace Veris
         for (const auto* name : {"dofile", "loadfile", "load", "collectgarbage", "pcall", "xpcall"}) { lua_pushnil(state); lua_setglobal(state, name); }
         lua_pushcfunction(state, Print); lua_setglobal(state, "print");
         lua_pushinteger(state, static_cast<lua_Integer>(instance.Entity)); lua_setglobal(state, "self");
+        RegisterGameplayApi(state, instance.Host);
         return 0;
     }
 
@@ -134,7 +135,7 @@ namespace Veris
     }
 
     ScriptRuntime::ScriptRuntime() = default;
-    ScriptRuntime::~ScriptRuntime() = default;
+    ScriptRuntime::~ScriptRuntime() { Clear(); }
     void ScriptRuntime::SetRoot(const std::filesystem::path& directory) { _files.SetRoot(directory); Clear(); }
     void ScriptRuntime::Clear() { _instances.clear(); _diagnostics.clear(); }
     void ScriptRuntime::Log(std::string message)
@@ -159,7 +160,8 @@ namespace Veris
         }
         std::vector<std::uint64_t> entities;
         for (const auto& entry : engine.ActiveScene().Entities()) if (entry.second.Script && entry.second.Script->Enabled) entities.push_back(entry.first);
-        for (const auto id : entities) if (engine.ActiveScene().Contains(id)) UpdateEntity(engine, id, seconds);
+        for (const auto id : entities)
+            if (engine.ActiveScene().Contains(id) && engine.ActiveScene().Get(id).Script && engine.ActiveScene().Get(id).Script->Enabled) UpdateEntity(engine, id, seconds);
     }
     void ScriptRuntime::UpdateEntity(Engine& engine, std::uint64_t id, double seconds)
     {

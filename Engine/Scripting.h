@@ -14,6 +14,8 @@ namespace Veris
     std::string SerializeScript(const ScriptComponent& script);
     ScriptComponent DeserializeScript(const std::string& json);
 
+    void RegisterGameplayApi(lua_State* state, Engine& engine);
+
     class ScriptRuntime
     {
     public:

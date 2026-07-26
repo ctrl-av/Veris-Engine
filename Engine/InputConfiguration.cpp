@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "InputConfiguration.h"
 #include <nlohmann/json.hpp>
 #include <Windows.h>
@@ -169,4 +170,19 @@ namespace
             bindings.emplace(action.key(), ReadBindings(action.value()));
         return bindings;
     }
+}
+
+void Veris::SetNamedInput(InputState& input, const std::string& binding, bool down)
+{
+    if (binding.rfind("Key:", 0) == 0)
+    {
+        const auto key = KeyNames.at(binding.substr(4));
+        if (down) { sf::Event::KeyPressed event{}; event.code = key; input.HandleEvent(event); }
+        else { sf::Event::KeyReleased event{}; event.code = key; input.HandleEvent(event); }
+        return;
+    }
+    if (binding.rfind("Mouse:", 0) != 0) throw std::invalid_argument("Input device must be Key or Mouse.");
+    const auto button = MouseNames.at(binding.substr(6));
+    if (down) { sf::Event::MouseButtonPressed event{}; event.button = button; input.HandleEvent(event); }
+    else { sf::Event::MouseButtonReleased event{}; event.button = button; input.HandleEvent(event); }
 }

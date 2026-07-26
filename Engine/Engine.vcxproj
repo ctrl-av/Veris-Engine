@@ -165,6 +165,8 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Scripting.cpp" />
+    <ClCompile Include="GameplayApi.cpp" />
+    <ClCompile Include="InputConfiguration.cpp" />
     <ClCompile Include="$(LuaRoot)src\*.c" Exclude="$(LuaRoot)src\lua.c;$(LuaRoot)src\luac.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAs>CompileAsCpp</CompileAs>

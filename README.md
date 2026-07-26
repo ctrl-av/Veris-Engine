@@ -47,3 +47,4 @@
 - [x] Pinned Box2D physics with static/kinematic/dynamic bodies, box/circle colliders, gravity, materials, impulses, fixed stepping, serialization, and undoable editor simulation.
 - [x] Collision begin/stay/end events, nonblocking triggers, category/mask/group filtering, contact geometry, and camera-aligned collider/velocity/normal debugging.
 - [x] Pinned Lua gameplay scripts with isolated entity state, start/update callbacks, resource limits, failure diagnostics, scene persistence, and inspector assignment.
+- [x] Lua gameplay APIs for entities, transforms, configured input actions, physics, contacts, sprite animation/tint, audio, and cameras.

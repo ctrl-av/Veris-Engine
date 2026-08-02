@@ -12,6 +12,7 @@ namespace VerisEditor.Workspace
         {
             try
             {
+                RequireEditing();
                 Tools.Cancel();
                 var path = ScenePath(relativePath);
                 AtomicFile.WriteText(path, _engine.SerializeScene());

@@ -80,3 +80,15 @@ namespace Veris
             if (entry.second.Audio && entry.second.Audio->AutoPlay && _voices.count(entry.first) == 0) Play(entry.first, *entry.second.Audio);
     }
 }
+
+void Veris::AudioPlayback::PauseAll()
+{
+    for (auto& voice : _voices)
+        if (voice.second->Sound.getStatus() == sf::SoundSource::Status::Playing) { _suspended.insert(voice.first); voice.second->Sound.pause(); }
+}
+void Veris::AudioPlayback::ResumeAll()
+{
+    for (const auto id : _suspended)
+        if (_voices.count(id) && _voices.at(id)->Sound.getStatus() == sf::SoundSource::Status::Paused) _voices.at(id)->Sound.play();
+    _suspended.clear();
+}

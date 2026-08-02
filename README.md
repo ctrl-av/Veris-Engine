@@ -48,3 +48,4 @@
 - [x] Collision begin/stay/end events, nonblocking triggers, category/mask/group filtering, contact geometry, and camera-aligned collider/velocity/normal debugging.
 - [x] Pinned Lua gameplay scripts with isolated entity state, start/update callbacks, resource limits, failure diagnostics, scene persistence, and inspector assignment.
 - [x] Lua gameplay APIs for entities, transforms, configured input actions, physics, contacts, sprite animation/tint, audio, and cameras.
+- [x] Isolated editor play/pause/step/stop sessions with configured viewport input, paused audio, script diagnostics, and editing-state restoration.

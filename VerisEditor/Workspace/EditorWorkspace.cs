@@ -104,6 +104,8 @@ namespace VerisEditor.Workspace
             Tools.Cancel();
             _selectedEntity = selected;
             Inspector.Load(entityId);
+            ScriptPath = entityId == 0 ? "player.lua" : _engine.ScriptPath(entityId);
+            OnPropertyChanged(nameof(ScriptPath));
             AnimationJson = entityId == 0 ? "null" : _engine.Animation(entityId);
             OnPropertyChanged(nameof(AnimationJson));
             AudioJson = entityId == 0 ? "null" : _engine.Audio(entityId);
@@ -121,9 +123,11 @@ namespace VerisEditor.Workspace
         }
         public void DrawViewport(uint width, uint height, byte[] rgba)
         {
-            _engine.Resize(width, height);
-            _engine.Update();
-            _engine.CopyFrame(rgba);
+            AdvancePlay();
+            var engine = _playEngine ?? _engine;
+            engine.Resize(width, height);
+            engine.Update();
+            engine.CopyFrame(rgba);
         }
 
         public EntityPoint[] EntityCorners(ulong entity) => _engine.EntityCorners(entity);
@@ -136,8 +140,8 @@ namespace VerisEditor.Workspace
         public void DragTransform(int x, int y) => Run(() => Tools.Drag(x, y));
         public void CancelTransformDrag() => Run(Tools.Cancel);
         public void CompleteTransformDrag() => Run(Tools.Complete);
-        public void Undo() => Run(() => { Tools.Cancel(); History.Undo(); });
-        public void Redo() => Run(() => { Tools.Cancel(); History.Redo(); });
+        public void Undo() => Run(() => { RequireEditing(); Tools.Cancel(); History.Undo(); });
+        public void Redo() => Run(() => { RequireEditing(); Tools.Cancel(); History.Redo(); });
 
         public void ReportViewportError(Exception exception)
         {
@@ -150,11 +154,12 @@ namespace VerisEditor.Workspace
             IsDisposed = true;
             _assetTimer?.Stop();
             _assetWatcher?.Dispose();
+            StopPlay();
             History.Dispose();
             _engine.Dispose();
         }
 
-        private void Edit(string name, Action operation) => Run(() => { Tools.Cancel(); History.Execute(name, operation); });
+        private void Edit(string name, Action operation) => Run(() => { RequireEditing(); Tools.Cancel(); History.Execute(name, operation); });
 
         private void RestoreSelection(ulong entity)
         {

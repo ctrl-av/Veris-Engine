@@ -107,10 +107,20 @@ VERIS_API int32_t __cdecl veris_set_transform(uint64_t engine, uint64_t entity, 
 VERIS_API int32_t __cdecl veris_copy_frame(uint64_t engine, uint8_t* rgba, uint64_t capacity, uint64_t* required);
 VERIS_API uint32_t __cdecl veris_error_message(char* utf8, uint32_t capacity);
 
-#ifdef __cplusplus
-}
-#endif
+
 
 VERIS_API int32_t __cdecl veris_set_script_root(uint64_t engine, const wchar_t* directory);
 VERIS_API int32_t __cdecl veris_set_script(uint64_t engine, uint64_t entity, const char* json);
 VERIS_API int32_t __cdecl veris_script_log(uint64_t engine, char* utf8, uint32_t capacity, uint32_t* required);
+
+VERIS_API int32_t __cdecl veris_configure_input(uint64_t engine, const wchar_t* directory);
+VERIS_API int32_t __cdecl veris_named_input(uint64_t engine, const char* binding, int32_t down);
+VERIS_API int32_t __cdecl veris_game_step(uint64_t engine, double seconds);
+VERIS_API int32_t __cdecl veris_release_input(uint64_t engine);
+VERIS_API int32_t __cdecl veris_pause_audio_all(uint64_t engine);
+VERIS_API int32_t __cdecl veris_resume_audio_all(uint64_t engine);
+VERIS_API int32_t __cdecl veris_script_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required);
+
+#ifdef __cplusplus
+}
+#endif

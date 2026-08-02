@@ -34,6 +34,10 @@ namespace VerisEditor.Workspace
             MouseLeftButtonUp += OnPointerUp;
             LostMouseCapture += OnCaptureLost;
             KeyDown += OnKeyDown;
+            KeyUp += (_, e) => { if (DataContext is EditorWorkspace workspace && workspace.IsPlayingSession) { workspace.SetPlayInput("Key:" + PlayKey(e.Key), false); e.Handled = true; } };
+            LostKeyboardFocus += (_, _) => { if (DataContext is EditorWorkspace workspace && !workspace.IsDisposed) workspace.ReleasePlayInput(); };
+            MouseRightButtonDown += (_, _) => { if (DataContext is EditorWorkspace workspace && workspace.IsPlayingSession) workspace.SetPlayInput("Mouse:Right", true); };
+            MouseRightButtonUp += (_, _) => { if (DataContext is EditorWorkspace workspace && workspace.IsPlayingSession) workspace.SetPlayInput("Mouse:Right", false); };
         }
 
         public void RenderFrame()
@@ -67,6 +71,7 @@ namespace VerisEditor.Workspace
         {
             Focus();
             if (_bitmap == null || DataContext is not EditorWorkspace workspace) return;
+            if (workspace.IsPlayingSession) { workspace.SetPlayInput("Mouse:Left", true); e.Handled = true; return; }
             var position = e.GetPosition(this);
             var onHandle = workspace.HasSelection && HitTransformHandle(position, workspace);
             if (!onHandle) SelectAt(position);
@@ -91,7 +96,7 @@ namespace VerisEditor.Workspace
 
         private void OnPointerUp(object sender, MouseButtonEventArgs e)
         {
-            if (DataContext is EditorWorkspace workspace) workspace.CompleteTransformDrag();
+            if (DataContext is EditorWorkspace workspace) { if (workspace.IsPlayingSession) workspace.SetPlayInput("Mouse:Left", false); else workspace.CompleteTransformDrag(); }
             ReleaseMouseCapture();
             e.Handled = true;
         }
@@ -101,9 +106,16 @@ namespace VerisEditor.Workspace
             if (DataContext is EditorWorkspace workspace && !workspace.IsDisposed) workspace.CancelTransformDrag();
         }
 
+        private static string PlayKey(Key key) => key switch
+        {
+            Key.Return => "Enter", Key.Back => "Backspace", Key.LeftCtrl => "LControl", Key.RightCtrl => "RControl",
+            Key.LeftShift => "LShift", Key.RightShift => "RShift", Key.LeftAlt => "LAlt", Key.RightAlt => "RAlt", _ => key.ToString()
+        };
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (DataContext is not EditorWorkspace workspace) return;
+            if (workspace.IsPlayingSession) { workspace.SetPlayInput("Key:" + PlayKey(e.Key), true); e.Handled = true; return; }
             if (e.Key == Key.Escape) { workspace.CancelTransformDrag(); ReleaseMouseCapture(); }
             else if (e.Key == Key.W) workspace.Tools.Mode = TransformMode.Move;
             else if (e.Key == Key.E) workspace.Tools.Mode = TransformMode.Rotate;
@@ -130,6 +142,7 @@ namespace VerisEditor.Workspace
             _overlay.ClipGeometry = new RectangleGeometry(new Rect(0, 0, ActualWidth, ActualHeight));
             using var drawing = _overlay.Open();
             drawing.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, ActualWidth, ActualHeight));
+            if (workspace.IsPlayingSession) return;
             foreach (var entity in workspace.Entities)
             {
                 var corners = workspace.EntityCorners(entity.Id);

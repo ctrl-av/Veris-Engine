@@ -12,6 +12,7 @@ namespace VerisEditor.Workspace
 
         public bool CanLeaveScene(Func<UnsavedChoice> choose)
         {
+            if (IsPlayingSession) StopPlay();
             Tools.Cancel();
             if (!IsDirty) return true;
             return choose() switch
@@ -46,6 +47,8 @@ namespace VerisEditor.Workspace
 
         private void NotifySceneState()
         {
+            OnPropertyChanged(nameof(CanUndo));
+            OnPropertyChanged(nameof(CanRedo));
             OnPropertyChanged(nameof(IsDirty));
             OnPropertyChanged(nameof(SceneTitle));
         }

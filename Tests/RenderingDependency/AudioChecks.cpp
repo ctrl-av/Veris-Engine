@@ -26,6 +26,10 @@ void VerifyAudio(const std::filesystem::path& directory)
     Require(engine.Audio().Status(id) == sf::SoundSource::Status::Paused, "Pause must change native playback state.");
     engine.Audio().Resume(id);
     Require(engine.Audio().Status(id) == sf::SoundSource::Status::Playing, "Resume must restart a paused voice.");
+    engine.Audio().PauseAll(); engine.Audio().PauseAll(); engine.Audio().ResumeAll();
+    Require(engine.Audio().Status(id) == sf::SoundSource::Status::Playing, "Repeated session pauses must retain the list of voices to resume.");
+    engine.Audio().Pause(id); engine.Audio().PauseAll(); engine.Audio().ResumeAll();
+    Require(engine.Audio().Status(id) == sf::SoundSource::Status::Paused, "Session resume must preserve explicitly paused audio sources.");
     engine.Audio().Stop(id);
     engine.FixedUpdate(1.0 / 60);
     Require(engine.Audio().Status(id) == sf::SoundSource::Status::Stopped, "Stopped auto-play voices must not restart every fixed update.");

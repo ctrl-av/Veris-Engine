@@ -2,6 +2,7 @@
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <map>
+#include <set>
 #include <memory>
 #include <string>
 #include <cstdint>
@@ -34,7 +35,9 @@ namespace Veris
         void Stop(std::uint64_t entity);
         sf::SoundSource::Status Status(std::uint64_t entity) const;
         std::size_t VoiceCount() const { return _voices.size(); }
-        void Clear() noexcept { _voices.clear(); }
+        void Clear() noexcept { _voices.clear(); _suspended.clear(); }
+        void PauseAll();
+        void ResumeAll();
 
     private:
         struct Voice
@@ -44,5 +47,6 @@ namespace Veris
             Voice(const AudioSource& source);
         };
         std::map<std::uint64_t, std::unique_ptr<Voice>> _voices;
+        std::set<std::uint64_t> _suspended;
     };
 }

@@ -40,8 +40,8 @@
         <Border Background="#292D36" Padding="16,6">
             <DockPanel>
                 <Button x:Name="RefreshWorkspaceButton" DockPanel.Dock="Right" Content="Refresh workspace" Click="RefreshWorkspace" />
-                <Button x:Name="RedoButton" DockPanel.Dock="Right" Content="Redo" Click="Redo" IsEnabled="{Binding History.CanRedo}" />
-                <Button x:Name="UndoButton" DockPanel.Dock="Right" Content="Undo" Click="Undo" IsEnabled="{Binding History.CanUndo}" />
+                <Button x:Name="RedoButton" DockPanel.Dock="Right" Content="Redo" Click="Redo" IsEnabled="{Binding CanRedo}" />
+                <Button x:Name="UndoButton" DockPanel.Dock="Right" Content="Undo" Click="Undo" IsEnabled="{Binding CanUndo}" />
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding Project.Name}" FontSize="17" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding ProjectFile}" FontSize="11" Foreground="#A9B6C8" TextTrimming="CharacterEllipsis" />
@@ -61,7 +61,7 @@
                 <RowDefinition Height="5" />
                 <RowDefinition Height="200" MinHeight="110" />
             </Grid.RowDefinitions>
-            <Border x:Name="HierarchyPanel" Background="{StaticResource PanelBackground}">
+            <Border x:Name="HierarchyPanel" IsEnabled="{Binding CanEditScene}" Background="{StaticResource PanelBackground}">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="HIERARCHY" Style="{StaticResource PanelTitle}" />
                     <TextBlock DockPanel.Dock="Bottom" Text="{Binding SceneSummary}" Foreground="#8F9BAC" Margin="12" FontSize="11" />
@@ -102,6 +102,10 @@
                             <TextBlock Text="{Binding WindowSummary}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#8F9BAC" Margin="12,0" FontSize="11" />
                         </DockPanel>
                     </Border>
+                    <StackPanel DockPanel.Dock="Top" Background="#292D36">
+                        <WrapPanel><Button x:Name="PlayButton" Content="Play / Resume" Click="Play" /><Button Content="Pause" Click="Pause" /><Button x:Name="StepPlayButton" Content="Step" Click="StepPlay" /><Button Content="Stop" Click="StopPlay" /><TextBlock Text="{Binding Playback}" Margin="8" /></WrapPanel>
+                        <TextBlock Text="{Binding RuntimeDiagnostics}" TextWrapping="Wrap" MaxHeight="65" />
+                    </StackPanel>
                     <DockPanel DockPanel.Dock="Top" Background="#292D36" LastChildFill="False">
                         <TextBox x:Name="ScenePathInput" Text="{Binding ScenePathInput, UpdateSourceTrigger=PropertyChanged}" Width="145" Margin="4" ToolTip="Content-relative .verisscene file" />
                         <Button x:Name="OpenSceneButton" Content="Open" Click="OpenScene" />
@@ -121,7 +125,7 @@
                 </DockPanel>
             </Border>
             <GridSplitter Grid.Column="3" ResizeDirection="Columns" />
-            <Border x:Name="InspectorPanel" Grid.Column="4" Background="{StaticResource PanelBackground}">
+            <Border x:Name="InspectorPanel" IsEnabled="{Binding CanEditScene}" Grid.Column="4" Background="{StaticResource PanelBackground}">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="INSPECTOR" Style="{StaticResource PanelTitle}" />
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -208,7 +212,7 @@
                 </DockPanel>
             </Border>
             <GridSplitter Grid.Row="1" Grid.ColumnSpan="5" ResizeDirection="Rows" />
-            <Border x:Name="ContentPanel" Grid.Row="2" Grid.ColumnSpan="3" Background="{StaticResource PanelBackground}">
+            <Border x:Name="ContentPanel" IsEnabled="{Binding CanEditScene}" Grid.Row="2" Grid.ColumnSpan="3" Background="{StaticResource PanelBackground}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top">
                         <TextBlock Text="CONTENT" Style="{StaticResource PanelTitle}" />

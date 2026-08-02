@@ -26,6 +26,13 @@ namespace VerisEditor.Interop
             return entity;
         }
 
+        public void ConfigureInput(string directory) => Check(NativeMethods.ConfigureInput(_handle, directory));
+        public void NamedInput(string binding, bool down) => Check(NativeMethods.NamedInput(_handle, binding, down ? 1 : 0));
+        public void GameStep(double seconds) => Check(NativeMethods.GameStep(_handle, seconds));
+        public void ReleaseInput() => Check(NativeMethods.ReleaseInput(_handle));
+        public void PauseAllAudio() => Check(NativeMethods.PauseAllAudio(_handle));
+        public void ResumeAllAudio() => Check(NativeMethods.ResumeAllAudio(_handle));
+        public string ScriptPath(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.ScriptPath(_handle, entity, buffer, capacity, out required));
         public void SetScriptRoot(string path) => Check(NativeMethods.SetScriptRoot(_handle, path));
         public void SetScript(ulong entity, string json) => Check(NativeMethods.SetScript(_handle, entity, json));
         public string ScriptLog() => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.ScriptLog(_handle, buffer, capacity, out required));
@@ -264,6 +271,20 @@ namespace VerisEditor.Interop
         internal static extern int LoadAssetCatalog(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string manifest);
         [DllImport(Library, EntryPoint = "veris_validate_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
+        [DllImport(Library, EntryPoint = "veris_configure_input", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ConfigureInput(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string directory);
+        [DllImport(Library, EntryPoint = "veris_named_input", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int NamedInput(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string binding, int down);
+        [DllImport(Library, EntryPoint = "veris_game_step", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int GameStep(EngineHandle engine, double seconds);
+        [DllImport(Library, EntryPoint = "veris_release_input", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ReleaseInput(EngineHandle engine);
+        [DllImport(Library, EntryPoint = "veris_pause_audio_all", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int PauseAllAudio(EngineHandle engine);
+        [DllImport(Library, EntryPoint = "veris_resume_audio_all", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ResumeAllAudio(EngineHandle engine);
+        [DllImport(Library, EntryPoint = "veris_script_path", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ScriptPath(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
         [DllImport(Library, EntryPoint = "veris_set_script_root", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int SetScriptRoot(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string path);
         [DllImport(Library, EntryPoint = "veris_set_script", CallingConvention = CallingConvention.Cdecl)]

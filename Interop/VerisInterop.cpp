@@ -1,5 +1,6 @@
 #include "VerisInterop.h"
 #include "../Engine/Engine.h"
+#include "../Engine/InputConfiguration.h"
 #include "../Engine/SceneFormat.h"
 #include <SFML/Graphics/Image.hpp>
 #include <Windows.h>
@@ -689,5 +690,28 @@ int32_t veris_script_log(uint64_t engine, char* utf8, uint32_t capacity, uint32_
         tooSmall = !CopyText(log, utf8, capacity, required);
     });
     if (status == VerisOk && tooSmall) { LastError = "Script log buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+
+int32_t veris_configure_input(uint64_t engine, const wchar_t* directory)
+{
+    return Boundary([&] { if (!directory) throw std::invalid_argument("Project directory is required."); Veris::LoadInputConfiguration(directory, FindEngine(engine).Actions()); });
+}
+int32_t veris_named_input(uint64_t engine, const char* binding, int32_t down)
+{
+    return Boundary([&] { if (!binding || (down != 0 && down != 1)) throw std::invalid_argument("Input binding and boolean state are required."); Veris::SetNamedInput(FindEngine(engine).Input(), binding, down != 0); });
+}
+int32_t veris_game_step(uint64_t engine, double seconds)
+{
+    return Boundary([&] { auto& session = FindEngine(engine); session.Actions().Update(session.Input()); session.FixedUpdate(seconds); session.Input().BeginFrame(); });
+}
+int32_t veris_release_input(uint64_t engine) { return Boundary([&] { FindEngine(engine).Input().HandleEvent(sf::Event::FocusLost{}); FindEngine(engine).Input().HandleEvent(sf::Event::FocusGained{}); }); }
+int32_t veris_pause_audio_all(uint64_t engine) { return Boundary([&] { FindEngine(engine).Audio().PauseAll(); }); }
+int32_t veris_resume_audio_all(uint64_t engine) { return Boundary([&] { FindEngine(engine).Audio().ResumeAll(); }); }
+int32_t veris_script_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&] { const auto& script = FindEngine(engine).ActiveScene().Get(entity).Script; tooSmall = !CopyText(script ? script->Path : "", utf8, capacity, required); });
+    if (status == VerisOk && tooSmall) { LastError = "Script path buffer is too small."; return VerisBufferTooSmall; }
     return status;
 }

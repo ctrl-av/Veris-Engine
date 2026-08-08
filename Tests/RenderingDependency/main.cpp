@@ -47,6 +47,7 @@ int wmain(int, wchar_t* arguments[])
     {
         VerifyScripts(std::filesystem::absolute(arguments[0]).parent_path() / "Script fixtures");
         VerifyGameplayApi(std::filesystem::absolute(arguments[0]).parent_path() / "Gameplay fixtures");
+        VerifySceneLoading(std::filesystem::absolute(arguments[0]).parent_path() / "Scene loading fixtures");
         VerifyAnimations();
         VerifyPhysics();
         VerifyContacts(std::filesystem::absolute(arguments[0]).parent_path() / "physics-debug.png");

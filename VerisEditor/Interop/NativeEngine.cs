@@ -26,6 +26,8 @@ namespace VerisEditor.Interop
             return entity;
         }
 
+        public void LoadSceneFile(string path) => Check(NativeMethods.LoadSceneFile(_handle, path));
+        public void ValidateSceneFile(string path) => Check(NativeMethods.ValidateSceneFile(_handle, path));
         public void ConfigureInput(string directory) => Check(NativeMethods.ConfigureInput(_handle, directory));
         public void NamedInput(string binding, bool down) => Check(NativeMethods.NamedInput(_handle, binding, down ? 1 : 0));
         public void GameStep(double seconds) => Check(NativeMethods.GameStep(_handle, seconds));
@@ -271,6 +273,10 @@ namespace VerisEditor.Interop
         internal static extern int LoadAssetCatalog(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string manifest);
         [DllImport(Library, EntryPoint = "veris_validate_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
+        [DllImport(Library, EntryPoint = "veris_load_scene_file", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int LoadSceneFile(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
+        [DllImport(Library, EntryPoint = "veris_validate_scene_file", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ValidateSceneFile(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
         [DllImport(Library, EntryPoint = "veris_configure_input", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ConfigureInput(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string directory);
         [DllImport(Library, EntryPoint = "veris_named_input", CallingConvention = CallingConvention.Cdecl)]

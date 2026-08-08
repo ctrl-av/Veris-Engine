@@ -715,3 +715,12 @@ int32_t veris_script_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t
     if (status == VerisOk && tooSmall) { LastError = "Script path buffer is too small."; return VerisBufferTooSmall; }
     return status;
 }
+
+int32_t veris_load_scene_file(uint64_t engine, const char* path)
+{
+    return Boundary([&] { if (!path) throw std::invalid_argument("Scene path is required."); FindEngine(engine).LoadSceneFile(std::filesystem::u8path(path)); });
+}
+int32_t veris_validate_scene_file(uint64_t engine, const char* path)
+{
+    return Boundary([&] { if (!path) throw std::invalid_argument("Scene path is required."); FindEngine(engine).ReadSceneFile(std::filesystem::u8path(path)); });
+}

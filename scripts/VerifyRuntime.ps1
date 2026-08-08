@@ -98,3 +98,16 @@ foreach ($invalidInputConfiguration in $invalidInputConfigurations) {
 }
 [IO.File]::WriteAllText($inputConfigurationFile, $validInputConfiguration)
 Write-Output "Runtime check fixtures and diagnostics: $fixtureDirectory"
+
+$startupFile = Join-Path $fixtureDirectory 'Content\start.verisscene'
+[IO.File]::WriteAllText($startupFile, '{"formatVersion":1,"entities":[]}')
+$projectSettings.startupScene = 'start.verisscene'
+[IO.File]::WriteAllText($projectFile, ($projectSettings | ConvertTo-Json))
+Invoke-RuntimeCheck 'valid-starting-scene' 0
+$projectSettings.startupScene = 'missing.verisscene'
+[IO.File]::WriteAllText($projectFile, ($projectSettings | ConvertTo-Json))
+Invoke-RuntimeCheck 'missing-starting-scene' 1
+[IO.File]::WriteAllText($startupFile, 'invalid json')
+$projectSettings.startupScene = 'start.verisscene'
+[IO.File]::WriteAllText($projectFile, ($projectSettings | ConvertTo-Json))
+Invoke-RuntimeCheck 'invalid-starting-scene' 1

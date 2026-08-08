@@ -20,7 +20,7 @@
 - [x] Atomic project creation with template folders, project identity, and failure cleanup.
 - [x] Existing-project opening with document and directory validation.
 - [x] Persisted recent projects with ordering, deduplication, moved-project updates, and missing-file handling.
-- [x] Standalone native executable with configured windows, timing, input actions, and frame presentation (scene loading and gameplay remain unimplemented).
+- [x] Standalone native executable with configured windows, starting scenes, Lua gameplay, fixed simulation, input actions, and frame presentation.
 - [x] Runtime window resizing, focus handling, fullscreen validation, and presentation suspension.
 - [x] Monotonic frame timing, fixed 60 Hz updates, pause/resume, and bounded catch-up.
 - [x] Keyboard and mouse pressed, held, and released states with movement, wheel, and focus handling.
@@ -49,3 +49,4 @@
 - [x] Pinned Lua gameplay scripts with isolated entity state, start/update callbacks, resource limits, failure diagnostics, scene persistence, and inspector assignment.
 - [x] Lua gameplay APIs for entities, transforms, configured input actions, physics, contacts, sprite animation/tint, audio, and cameras.
 - [x] Isolated editor play/pause/step/stop sessions with configured viewport input, paused audio, script diagnostics, and editing-state restoration.
+- [x] Validated starting-scene configuration, standalone scene loading, project play sessions, and deferred transactional Lua scene transitions.

@@ -121,6 +121,9 @@ VERIS_API int32_t __cdecl veris_pause_audio_all(uint64_t engine);
 VERIS_API int32_t __cdecl veris_resume_audio_all(uint64_t engine);
 VERIS_API int32_t __cdecl veris_script_path(uint64_t engine, uint64_t entity, char* utf8, uint32_t capacity, uint32_t* required);
 
+VERIS_API int32_t __cdecl veris_load_scene_file(uint64_t engine, const char* path);
+VERIS_API int32_t __cdecl veris_validate_scene_file(uint64_t engine, const char* path);
+
 #ifdef __cplusplus
 }
 #endif

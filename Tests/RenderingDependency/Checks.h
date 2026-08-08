@@ -33,3 +33,5 @@ void VerifyEntityPicking();
 void VerifyScripts(const std::filesystem::path& root);
 
 void VerifyGameplayApi(const std::filesystem::path& root);
+
+void VerifySceneLoading(const std::filesystem::path& root);

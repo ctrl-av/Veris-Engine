@@ -15,7 +15,7 @@ namespace VerisEditor.Workspace
         private bool _refreshingHierarchy;
         private WorkspaceEntity? _selectedEntity;
 
-        public ProjectDocument Project { get; }
+        public ProjectDocument Project { get; private set; }
         public string ProjectFile { get; }
         public string ContentRoot { get; }
         public ObservableCollection<FileSystemInfo> ContentEntries { get; } = new();
@@ -41,6 +41,7 @@ namespace VerisEditor.Workspace
         public EditorWorkspace(ProjectDocument project, string projectFile, string historyWarning = "")
         {
             Project = project;
+            StartupSceneInput = project.StartupScene ?? "";
             ProjectFile = Path.GetFullPath(projectFile);
             ContentRoot = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(ProjectFile)!, project.ContentDirectory));
             _currentDirectory = ContentRoot;

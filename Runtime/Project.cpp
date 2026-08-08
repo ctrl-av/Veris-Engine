@@ -40,9 +40,10 @@ Veris::RuntimeProject Veris::LoadProject(const std::filesystem::path& projectFil
     const auto content = ResolveDirectory(root, ReadRelativePath(document, "contentDirectory"));
     const auto gameCode = ResolveDirectory(root, ReadRelativePath(document, "gameCodeDirectory"));
     if (_wcsicmp(content.c_str(), gameCode.c_str()) == 0) throw std::runtime_error("Content and game code directories must be distinct.");
+    const auto startup = document.contains("startupScene") && !document.at("startupScene").is_null() ? std::optional<std::filesystem::path>{ReadRelativePath(document, "startupScene")} : std::nullopt;
     return {fullProjectFile, ReadText(document, "name"), content, gameCode,
         {{ReadDimension(document, "windowWidth", 1280), ReadDimension(document, "windowHeight", 720)},
-            ReadWindowMode(document), ReadBoolean(document, "windowResizable"), ReadBoolean(document, "verticalSync")}};
+            ReadWindowMode(document), ReadBoolean(document, "windowResizable"), ReadBoolean(document, "verticalSync")}, startup};
 }
 
 namespace

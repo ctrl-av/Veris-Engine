@@ -24,11 +24,16 @@ namespace VerisEditor.Workspace
             Tools.Cancel();
             if (_playEngine == null) CreatePlayEngine();
             else _playEngine.ResumeAllAudio();
+            BeginPlayback();
+        });
+
+        private void BeginPlayback()
+        {
             Playback = PlaybackState.Playing;
             _lastPlayTick = Stopwatch.GetTimestamp();
             _playAccumulator = 0;
             NotifyPlayback();
-        });
+        }
 
         private void CreatePlayEngine()
         {

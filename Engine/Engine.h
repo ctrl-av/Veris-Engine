@@ -48,8 +48,17 @@ namespace Veris
         std::array<sf::Vector2f, 4> EntityCorners(EntityId id) const;
         EntityId PickEntity(sf::Vector2i pixel, float tolerance = 8) const;
         const sf::Texture& GetFrame() const;
+        Scene ReadSceneFile(const std::filesystem::path& relativePath);
+        void LoadSceneFile(const std::filesystem::path& relativePath);
+        void RequestScene(const std::filesystem::path& relativePath);
+        const std::string& CurrentScene() const { return _currentScene; }
 
     private:
+        void CommitSceneTransition();
+        void ReplaceLoadedScene(Scene scene, std::string path);
+        std::unique_ptr<Scene> _pendingScene;
+        std::string _pendingScenePath;
+        std::string _currentScene;
         std::unique_ptr<sf::RenderTexture> _renderTarget;
         std::uint64_t _completedFrames = 0;
         std::uint64_t _completedFixedUpdates = 0;

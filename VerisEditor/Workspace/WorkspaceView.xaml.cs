@@ -34,6 +34,8 @@ namespace VerisEditor.Workspace
         private void PauseAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PauseAudio();
         private void ResumeAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ResumeAudio();
         private void StopAudio(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).StopAudio();
+        private void SaveStartingScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).SaveStartingScene();
+        private void PlayStartingScene(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PlayStartingScene();
         private void Play(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Play();
         private void Pause(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Pause();
         private void StepPlay(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).StepPlay();

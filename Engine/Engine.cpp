@@ -57,6 +57,7 @@ namespace Veris
         _scene.AdvanceAnimations(stepSeconds);
         _audio.StartAutomatic(_scene);
         ++_completedFixedUpdates;
+        CommitSceneTransition();
     }
 
     void Engine::Resize(sf::Vector2u viewportSize)
@@ -78,6 +79,7 @@ namespace Veris
         _audio.Clear();
         _physics.Clear();
         _scripts.Clear();
+        _pendingScene.reset(); _pendingScenePath.clear(); _currentScene.clear();
         PhysicsDebugEnabled = false;
         _textures.Reset();
         _renderTarget.reset();

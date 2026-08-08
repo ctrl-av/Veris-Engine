@@ -104,6 +104,7 @@
                     </Border>
                     <StackPanel DockPanel.Dock="Top" Background="#292D36">
                         <WrapPanel><Button x:Name="PlayButton" Content="Play / Resume" Click="Play" /><Button Content="Pause" Click="Pause" /><Button x:Name="StepPlayButton" Content="Step" Click="StepPlay" /><Button Content="Stop" Click="StopPlay" /><TextBlock Text="{Binding Playback}" Margin="8" /></WrapPanel>
+                        <WrapPanel IsEnabled="{Binding CanEditScene}"><TextBlock Text="Starting scene" Margin="4" /><TextBox Text="{Binding StartupSceneInput, UpdateSourceTrigger=PropertyChanged}" Width="180" /><Button Content="Save starting scene" Click="SaveStartingScene" /><Button Content="Play project" Click="PlayStartingScene" /></WrapPanel>
                         <TextBlock Text="{Binding RuntimeDiagnostics}" TextWrapping="Wrap" MaxHeight="65" />
                     </StackPanel>
                     <DockPanel DockPanel.Dock="Top" Background="#292D36" LastChildFill="False">

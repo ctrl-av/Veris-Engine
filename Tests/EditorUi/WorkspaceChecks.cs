@@ -37,6 +37,7 @@ internal static class WorkspaceChecks
             PhysicsChecks.Run(workspace);
             ContactChecks.Run(view, workspace);
             PlayChecks.Run(workspace);
+            StartupChecks.Run(workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

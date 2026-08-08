@@ -58,6 +58,7 @@ namespace
         engine.Scripts().SetRoot(project.GameCodeDirectory);
         engine.Textures().SetCatalog(project.ProjectFile.parent_path() / L".Veris" / L"assets.json");
         Veris::LoadInputConfiguration(project.ProjectFile.parent_path(), engine.Actions());
+        if (project.StartupScene) engine.LoadSceneFile(*project.StartupScene);
         Veris::GameWindow window(project.Window, project.Name);
         std::cout << "Loaded " << project.Name << " from " << project.ProjectFile.u8string() << '\n';
         RunFrames(window, engine, frameLimit);

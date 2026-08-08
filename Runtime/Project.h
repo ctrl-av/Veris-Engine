@@ -4,6 +4,7 @@
 #include "../Engine/Window.h"
 #include <filesystem>
 #include <string>
+#include <optional>
 
 namespace Veris
 {
@@ -14,6 +15,7 @@ namespace Veris
         std::filesystem::path ContentDirectory;
         std::filesystem::path GameCodeDirectory;
         WindowSettings Window;
+        std::optional<std::filesystem::path> StartupScene;
     };
 
     RuntimeProject LoadProject(const std::filesystem::path& projectFile);

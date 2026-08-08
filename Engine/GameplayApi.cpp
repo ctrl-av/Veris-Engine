@@ -116,6 +116,10 @@ namespace
         camera.SetCenter({Number(state, 1), Number(state, 2)}); camera.SetZoom(Number(state, 3)); camera.SetRotation(Number(state, 4));
         engine.ActiveCamera() = camera; return 0;
     }
+    int Transition(lua_State* state, Veris::Engine& engine)
+    {
+        engine.RequestScene(std::filesystem::u8path(Text(state, 1))); return 0;
+    }
     int Contacts(lua_State* state, Veris::Engine& engine)
     {
         const auto id = EntityArgument(state, 1); engine.ActiveScene().Get(id);
@@ -148,7 +152,7 @@ namespace Veris
         const luaL_Reg functions[]{ {"position", Boundary<Position>}, {"set_position", Boundary<SetPosition>}, {"rotation", Boundary<Rotation>}, {"set_rotation", Boundary<SetRotation>},
             {"velocity", Boundary<Velocity>}, {"set_velocity", Boundary<SetVelocity>}, {"impulse", Boundary<Impulse>}, {"action", Boundary<Action>},
             {"find", Boundary<Find>}, {"create", Boundary<Create>}, {"destroy", Boundary<Destroy>}, {"play_audio", Boundary<PlayAudio>},
-            {"pause_audio", Boundary<PauseAudio>}, {"stop_audio", Boundary<StopAudio>}, {"animation", Boundary<Animation>}, {"tint", Boundary<Tint>}, {"camera", Boundary<SetCameraView>}, {"contacts", Boundary<Contacts>}, {nullptr, nullptr} };
+            {"pause_audio", Boundary<PauseAudio>}, {"stop_audio", Boundary<StopAudio>}, {"animation", Boundary<Animation>}, {"tint", Boundary<Tint>}, {"camera", Boundary<SetCameraView>}, {"contacts", Boundary<Contacts>}, {"transition", Boundary<Transition>}, {nullptr, nullptr} };
         lua_newtable(state);
         for (const auto* function = functions; function->name; ++function)
         {

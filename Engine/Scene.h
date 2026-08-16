@@ -49,7 +49,9 @@ namespace Veris
         std::optional<AudioSource> Audio;
         std::optional<PhysicsBody> Physics;
         std::optional<ScriptComponent> Script;
+        std::string PrefabSource;
         Entity(EntityId id, std::string name) : Id(id), Name(std::move(name)) {}
+        void CopyStateFrom(const Entity& source);
         EntityId Parent() const noexcept { return _parent; }
 
     private:
@@ -64,6 +66,7 @@ namespace Veris
         EntityId ImportEntity(EntityId id, std::string name);
         void DestroyEntity(EntityId id);
         EntityId DuplicateEntity(EntityId id);
+        std::vector<EntityId> Subtree(EntityId id) const;
         void RenameEntity(EntityId id, std::string name);
         void SetParent(EntityId child, EntityId parent);
         Entity& Get(EntityId id) { return _entities.at(id); }
@@ -78,7 +81,6 @@ namespace Veris
         bool Matches(const Scene& other) const;
 
     private:
-        std::vector<EntityId> Subtree(EntityId id) const;
         EntityId _nextId = 1;
         std::map<EntityId, Entity> _entities;
     };

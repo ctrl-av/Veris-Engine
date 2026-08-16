@@ -26,6 +26,11 @@ namespace VerisEditor.Interop
             return entity;
         }
 
+        public string SerializePrefab(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.SerializePrefab(_handle, entity, buffer, capacity, out required));
+        public ulong InstantiatePrefab(string path, float x, float y) { Check(NativeMethods.InstantiatePrefab(_handle, path, x, y, out var root)); return root; }
+        public void ReapplyPrefab(ulong entity, string path) => Check(NativeMethods.ReapplyPrefab(_handle, entity, path));
+        public void UnpackPrefab(ulong entity) => Check(NativeMethods.UnpackPrefab(_handle, entity));
+        public string PrefabSource(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.PrefabSource(_handle, entity, buffer, capacity, out required));
         public void LoadSceneFile(string path) => Check(NativeMethods.LoadSceneFile(_handle, path));
         public void ValidateSceneFile(string path) => Check(NativeMethods.ValidateSceneFile(_handle, path));
         public void ConfigureInput(string directory) => Check(NativeMethods.ConfigureInput(_handle, directory));
@@ -273,6 +278,16 @@ namespace VerisEditor.Interop
         internal static extern int LoadAssetCatalog(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string manifest);
         [DllImport(Library, EntryPoint = "veris_validate_texture", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ValidateTexture([MarshalAs(UnmanagedType.LPWStr)] string source);
+        [DllImport(Library, EntryPoint = "veris_serialize_prefab", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int SerializePrefab(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
+        [DllImport(Library, EntryPoint = "veris_instantiate_prefab", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int InstantiatePrefab(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path, float x, float y, out ulong root);
+        [DllImport(Library, EntryPoint = "veris_reapply_prefab", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ReapplyPrefab(EngineHandle engine, ulong entity, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
+        [DllImport(Library, EntryPoint = "veris_unpack_prefab", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int UnpackPrefab(EngineHandle engine, ulong entity);
+        [DllImport(Library, EntryPoint = "veris_prefab_source", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int PrefabSource(EngineHandle engine, ulong entity, [Out] byte[]? utf8, uint capacity, out uint required);
         [DllImport(Library, EntryPoint = "veris_load_scene_file", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int LoadSceneFile(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
         [DllImport(Library, EntryPoint = "veris_validate_scene_file", CallingConvention = CallingConvention.Cdecl)]

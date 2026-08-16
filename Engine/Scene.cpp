@@ -39,10 +39,14 @@ namespace Veris
     std::vector<EntityId> Scene::Subtree(EntityId id) const
     {
         Get(id);
+        std::map<EntityId, std::vector<EntityId>> children;
+        for (const auto& entry : _entities) children[entry.second.Parent()].push_back(entry.first);
         std::vector<EntityId> subtree{id};
         for (std::size_t index = 0; index < subtree.size(); ++index)
-            for (const auto& entry : _entities)
-                if (entry.second.Parent() == subtree[index]) subtree.push_back(entry.first);
+        {
+            const auto found = children.find(subtree[index]);
+            if (found != children.end()) subtree.insert(subtree.end(), found->second.begin(), found->second.end());
+        }
         return subtree;
     }
 
@@ -60,12 +64,8 @@ namespace Veris
                 if (sourceId == id) root = copyId;
                 auto& copy = Get(copyId);
                 copy._parent = sourceId == id ? source.Parent() : copies.at(source.Parent());
-                copy.Transform = source.Transform;
-                copy.Sprite = source.Sprite;
-                copy.Animation = source.Animation;
-                copy.Audio = source.Audio;
-                copy.Physics = source.Physics;
-                copy.Script = source.Script;
+                copy.CopyStateFrom(source);
+                if (sourceId == id) copy.Name += " Copy";
                 copies.emplace(sourceId, copyId);
             }
         }
@@ -131,4 +131,11 @@ namespace Veris
         for (auto& entry : _entities)
             if (entry.second.Animation) entry.second.Animation->Advance(seconds);
     }
+}
+
+void Veris::Entity::CopyStateFrom(const Entity& source)
+{
+    Name = source.Name; Transform = source.Transform;
+    Sprite = source.Sprite; Animation = source.Animation; Audio = source.Audio;
+    Physics = source.Physics; Script = source.Script; PrefabSource = source.PrefabSource;
 }

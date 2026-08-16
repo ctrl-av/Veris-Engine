@@ -40,6 +40,18 @@ namespace VerisEditor.Workspace
         private void Pause(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Pause();
         private void StepPlay(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).StepPlay();
         private void StopPlay(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).StopPlay();
+        private void BrowsePrefab(object sender, RoutedEventArgs e)
+        {
+            var workspace = (EditorWorkspace)DataContext;
+            var picker = new Microsoft.Win32.OpenFileDialog { Title = "Instantiate prefab", Filter = "Veris prefab|*.verisprefab", InitialDirectory = workspace.ContentRoot };
+            if (picker.ShowDialog(Window.GetWindow(this)) != true) return;
+            workspace.PrefabPathInput = Path.GetRelativePath(workspace.ContentRoot, picker.FileName);
+            workspace.InstantiatePrefab();
+        }
+        private void SavePrefab(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).SavePrefab();
+        private void InstantiatePrefab(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).InstantiatePrefab();
+        private void ReapplyPrefab(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ReapplyPrefab();
+        private void UnpackPrefab(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).UnpackPrefab();
         private void ApplyScript(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyScript();
         private void RemoveScript(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).RemoveScript();
         private void ApplyPhysics(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyPhysics();
@@ -112,6 +124,12 @@ namespace VerisEditor.Workspace
                 ((EditorWorkspace)DataContext).NavigateTo(directory.FullName);
             else if (ContentFiles.SelectedItem is FileInfo file && file.Extension.Equals(".verisscene", StringComparison.OrdinalIgnoreCase))
                 ((EditorWorkspace)DataContext).OpenScene(Path.GetRelativePath(((EditorWorkspace)DataContext).ContentRoot, file.FullName), ChooseUnsaved);
+            else if (ContentFiles.SelectedItem is FileInfo prefab && prefab.Extension.Equals(".verisprefab", StringComparison.OrdinalIgnoreCase))
+            {
+                var workspace = (EditorWorkspace)DataContext;
+                workspace.PrefabPathInput = Path.GetRelativePath(workspace.ContentRoot, prefab.FullName);
+                workspace.InstantiatePrefab();
+            }
         }
     }
 }

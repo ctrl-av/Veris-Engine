@@ -75,6 +75,7 @@ internal static class Program
 
     internal static void SavePreview(FrameworkElement view, string filename)
     {
+        Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
         var preview = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32);
         preview.Render(view);
         var encoder = new PngBitmapEncoder();

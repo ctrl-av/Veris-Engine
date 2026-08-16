@@ -161,6 +161,7 @@
     <ClCompile Include="AssetCatalog.cpp" />
     <ClCompile Include="SceneFormat.cpp" />
     <ClCompile Include="SceneLoading.cpp" />
+    <ClCompile Include="Prefabs.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Audio.cpp" />

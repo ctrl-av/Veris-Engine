@@ -37,6 +37,7 @@
     <ClCompile Include="ScriptChecks.cpp" />
     <ClCompile Include="GameplayChecks.cpp" />
     <ClCompile Include="SceneLoadingChecks.cpp" />
+    <ClCompile Include="PrefabChecks.cpp" />
     <ClCompile Include="AnimationChecks.cpp" />
     <ClCompile Include="AudioChecks.cpp" />
     <ClCompile Include="PhysicsChecks.cpp" />

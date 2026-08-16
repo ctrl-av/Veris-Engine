@@ -27,6 +27,7 @@ namespace Veris
             if (entity.Audio) entities.back()["audio"] = Json::Parse(SerializeAudio(*entity.Audio));
             if (entity.Physics) entities.back()["physics"] = Json::Parse(SerializePhysics(*entity.Physics));
             if (entity.Script) entities.back()["script"] = Json::Parse(SerializeScript(*entity.Script));
+            if (!entity.PrefabSource.empty()) entities.back()["prefab"] = entity.PrefabSource;
         }
         return Document{{"formatVersion", 1}, {"entities", entities}}.dump(2);
     }
@@ -42,10 +43,16 @@ namespace Veris
         Scene scene;
         for (const auto& entity : entities)
         {
-            Json::Fields(entity, {"id", "name", "parent", "transform", "sprite"}, {"animation", "audio", "physics", "script"});
+            Json::Fields(entity, {"id", "name", "parent", "transform", "sprite"}, {"animation", "audio", "physics", "script", "prefab"});
             if (!entity.at("id").is_number_unsigned() || !entity.at("parent").is_number_unsigned()) throw std::invalid_argument("Scene identifiers must be unsigned integers.");
             const auto id = scene.ImportEntity(entity.at("id").get<EntityId>(), entity.at("name").get<std::string>());
             if (entity.contains("script") && !entity.at("script").is_null()) scene.Get(id).Script = DeserializeScript(entity.at("script").dump());
+            if (entity.contains("prefab"))
+            {
+                const auto path = entity.at("prefab").get<std::string>();
+                if (textures.ContentPath(std::filesystem::u8path(path)).extension() != L".verisprefab") throw std::invalid_argument("Prefab links require content-relative .verisprefab paths.");
+                scene.Get(id).PrefabSource = path;
+            }
             const auto& transform = entity.at("transform");
             Json::Fields(transform, {"position", "scale", "rotation"});
             scene.Get(id).Transform = {ReadVector(transform.at("position")), ReadVector(transform.at("scale")), Json::Number(transform.at("rotation"))};

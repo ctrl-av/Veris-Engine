@@ -50,3 +50,4 @@
 - [x] Lua gameplay APIs for entities, transforms, configured input actions, physics, contacts, sprite animation/tint, audio, and cameras.
 - [x] Isolated editor play/pause/step/stop sessions with configured viewport input, paused audio, script diagnostics, and editing-state restoration.
 - [x] Validated starting-scene configuration, standalone scene loading, project play sessions, and deferred transactional Lua scene transitions.
+- [x] Reusable prefab subtrees with fresh instance IDs, baked scene content, explicit source reapply, placement preservation, undo/redo, unpacking, and Lua spawning.

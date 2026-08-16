@@ -111,6 +111,7 @@
                         <TextBox x:Name="ScenePathInput" Text="{Binding ScenePathInput, UpdateSourceTrigger=PropertyChanged}" Width="145" Margin="4" ToolTip="Content-relative .verisscene file" />
                         <Button x:Name="OpenSceneButton" Content="Open" Click="OpenScene" />
                         <Button x:Name="SaveSceneButton" Content="Save" Click="SaveScene" />
+                        <Button Content="Instantiate prefab?" Click="BrowsePrefab" IsEnabled="{Binding CanEditScene}" />
                         <Button x:Name="NewSceneButton" Content="New" Click="NewScene" />
                     </DockPanel>
                     <DockPanel DockPanel.Dock="Top" Background="#292D36" LastChildFill="False">
@@ -158,6 +159,14 @@
                                         <WrapPanel><Button Content="Play" Click="PlayAudio" /><Button Content="Pause" Click="PauseAudio" /><Button Content="Resume" Click="ResumeAudio" /><Button Content="Stop" Click="StopAudio" /></WrapPanel>
                                     </StackPanel>
                                 </Expander>
+                                <Expander x:Name="PrefabInspector" Header="Prefab" Foreground="#DDE2EA"><StackPanel>
+                                        <TextBlock Text="Content-relative .verisprefab file" /><TextBox Text="{Binding PrefabPathInput, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBlock Text="{Binding PrefabSource}" TextWrapping="Wrap" />
+                                        <WrapPanel><TextBox Text="{Binding PrefabX, UpdateSourceTrigger=PropertyChanged}" Width="75" ToolTip="Spawn X" /><TextBox Text="{Binding PrefabY, UpdateSourceTrigger=PropertyChanged}" Width="75" ToolTip="Spawn Y" /></WrapPanel>
+                                        <Button x:Name="SavePrefabButton" Content="Save / overwrite selected subtree" Click="SavePrefab" />
+                                        <Button x:Name="InstantiatePrefabButton" Content="Instantiate prefab" Click="InstantiatePrefab" />
+                                        <Button Content="Reapply source (discard subtree edits)" Click="ReapplyPrefab" /><Button Content="Unpack selected instance" Click="UnpackPrefab" />
+                                    </StackPanel></Expander>
                                 <Expander Header="Gameplay script" Foreground="#DDE2EA"><StackPanel>
                                         <TextBlock Text="Lua file relative to GameCode" /><TextBox Text="{Binding ScriptPath, UpdateSourceTrigger=PropertyChanged}" />
                                         <Button Content="Assign script" Click="ApplyScript" /><Button Content="Remove script" Click="RemoveScript" />

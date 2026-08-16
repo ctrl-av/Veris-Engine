@@ -61,12 +61,12 @@ namespace VerisEditor.Assets
         private IEnumerable<JsonDocument> SavedScenes()
         {
             var options = new EnumerationOptions { RecurseSubdirectories = true, AttributesToSkip = FileAttributes.ReparsePoint, IgnoreInaccessible = false };
-            foreach (var path in Directory.EnumerateFiles(_contentRoot, "*.verisscene", options))
+            foreach (var path in Directory.EnumerateFiles(_contentRoot, "*", options))
             {
+                var extension = Path.GetExtension(path);
+                if (!extension.Equals(".verisscene", StringComparison.OrdinalIgnoreCase) && !extension.Equals(".verisprefab", StringComparison.OrdinalIgnoreCase)) continue;
                 if (new FileInfo(path).Length > 16 * 1024 * 1024) throw new InvalidDataException("Cannot validate references in an oversized saved scene.");
-                JsonDocument scene;
-                try { scene = JsonDocument.Parse(File.ReadAllText(path)); }
-                catch (JsonException exception) { throw new InvalidDataException("Cannot validate references in malformed scene: " + path, exception); }
+                var scene = ReadReferenceDocument(path, extension);
                 try { ValidateReferenceDocument(scene); }
                 catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or KeyNotFoundException)
                 {
@@ -75,6 +75,24 @@ namespace VerisEditor.Assets
                 }
                 yield return scene;
             }
+        }
+
+        private static JsonDocument ReadReferenceDocument(string path, string extension)
+        {
+            JsonDocument? document = null;
+            try
+            {
+                document = JsonDocument.Parse(File.ReadAllText(path));
+                if (!extension.Equals(".verisprefab", StringComparison.OrdinalIgnoreCase)) return document;
+                if (document.RootElement.GetProperty("formatVersion").GetInt32() != 1 || document.RootElement.GetProperty("root").GetUInt64() == 0)
+                    throw new InvalidDataException("Invalid prefab version or root.");
+                return JsonDocument.Parse(document.RootElement.GetProperty("scene").GetRawText());
+            }
+            catch (Exception exception) when (exception is JsonException or InvalidDataException or InvalidOperationException or KeyNotFoundException or FormatException)
+            {
+                throw new InvalidDataException("Cannot validate references in malformed content: " + path, exception);
+            }
+            finally { if (extension.Equals(".verisprefab", StringComparison.OrdinalIgnoreCase)) document?.Dispose(); }
         }
 
         private static void ValidateReferenceDocument(JsonDocument scene)

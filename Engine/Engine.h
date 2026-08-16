@@ -48,6 +48,8 @@ namespace Veris
         std::array<sf::Vector2f, 4> EntityCorners(EntityId id) const;
         EntityId PickEntity(sf::Vector2i pixel, float tolerance = 8) const;
         const sf::Texture& GetFrame() const;
+        EntityId InstantiatePrefab(const std::filesystem::path& path, sf::Vector2f position);
+        void ReapplyPrefab(EntityId root, const std::filesystem::path& path);
         Scene ReadSceneFile(const std::filesystem::path& relativePath);
         void LoadSceneFile(const std::filesystem::path& relativePath);
         void RequestScene(const std::filesystem::path& relativePath);

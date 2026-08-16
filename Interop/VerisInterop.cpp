@@ -2,6 +2,7 @@
 #include "../Engine/Engine.h"
 #include "../Engine/InputConfiguration.h"
 #include "../Engine/SceneFormat.h"
+#include "../Engine/Prefabs.h"
 #include <SFML/Graphics/Image.hpp>
 #include <Windows.h>
 #include <cstring>
@@ -723,4 +724,29 @@ int32_t veris_load_scene_file(uint64_t engine, const char* path)
 int32_t veris_validate_scene_file(uint64_t engine, const char* path)
 {
     return Boundary([&] { if (!path) throw std::invalid_argument("Scene path is required."); FindEngine(engine).ReadSceneFile(std::filesystem::u8path(path)); });
+}
+
+int32_t veris_serialize_prefab(uint64_t engine, uint64_t root, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&] { tooSmall = !CopyText(Veris::SerializePrefab(FindEngine(engine).ActiveScene(), root), utf8, capacity, required); });
+    if (status == VerisOk && tooSmall) { LastError = "Prefab buffer is too small."; return VerisBufferTooSmall; }
+    return status;
+}
+int32_t veris_instantiate_prefab(uint64_t engine, const char* path, float x, float y, uint64_t* root)
+{
+    if (root) *root = 0;
+    return Boundary([&] { if (!path || !root) throw std::invalid_argument("Prefab path and root output are required."); *root = FindEngine(engine).InstantiatePrefab(std::filesystem::u8path(path), {x, y}); });
+}
+int32_t veris_reapply_prefab(uint64_t engine, uint64_t root, const char* path)
+{
+    return Boundary([&] { if (!path) throw std::invalid_argument("Prefab source is required."); FindEngine(engine).ReapplyPrefab(root, std::filesystem::u8path(path)); });
+}
+int32_t veris_unpack_prefab(uint64_t engine, uint64_t root) { return Boundary([&] { FindEngine(engine).ActiveScene().Get(root).PrefabSource.clear(); }); }
+int32_t veris_prefab_source(uint64_t engine, uint64_t root, char* utf8, uint32_t capacity, uint32_t* required)
+{
+    bool tooSmall = false;
+    const auto status = Boundary([&] { tooSmall = !CopyText(FindEngine(engine).ActiveScene().Get(root).PrefabSource, utf8, capacity, required); });
+    if (status == VerisOk && tooSmall) { LastError = "Prefab source buffer is too small."; return VerisBufferTooSmall; }
+    return status;
 }

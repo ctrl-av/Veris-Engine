@@ -124,6 +124,12 @@ VERIS_API int32_t __cdecl veris_script_path(uint64_t engine, uint64_t entity, ch
 VERIS_API int32_t __cdecl veris_load_scene_file(uint64_t engine, const char* path);
 VERIS_API int32_t __cdecl veris_validate_scene_file(uint64_t engine, const char* path);
 
+VERIS_API int32_t __cdecl veris_serialize_prefab(uint64_t engine, uint64_t root, char* utf8, uint32_t capacity, uint32_t* required);
+VERIS_API int32_t __cdecl veris_instantiate_prefab(uint64_t engine, const char* path, float x, float y, uint64_t* root);
+VERIS_API int32_t __cdecl veris_reapply_prefab(uint64_t engine, uint64_t root, const char* path);
+VERIS_API int32_t __cdecl veris_unpack_prefab(uint64_t engine, uint64_t root);
+VERIS_API int32_t __cdecl veris_prefab_source(uint64_t engine, uint64_t root, char* utf8, uint32_t capacity, uint32_t* required);
+
 #ifdef __cplusplus
 }
 #endif

@@ -105,6 +105,10 @@ namespace VerisEditor.Workspace
             Tools.Cancel();
             _selectedEntity = selected;
             Inspector.Load(entityId);
+            PrefabSource = entityId == 0 ? "" : _engine.PrefabSource(entityId);
+            if (PrefabSource.Length != 0) PrefabPathInput = PrefabSource;
+            OnPropertyChanged(nameof(PrefabSource));
+            OnPropertyChanged(nameof(PrefabPathInput));
             ScriptPath = entityId == 0 ? "player.lua" : _engine.ScriptPath(entityId);
             OnPropertyChanged(nameof(ScriptPath));
             AnimationJson = entityId == 0 ? "null" : _engine.Animation(entityId);

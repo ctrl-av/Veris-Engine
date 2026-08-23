@@ -61,6 +61,30 @@ namespace VerisEditor.GameProject
             }
         }
 
+        private static void CopyPayload(string source, string destination)
+        {
+            var pending = new System.Collections.Generic.Stack<string>();
+            pending.Push(Path.GetFullPath(source));
+            long bytes = 0; var files = 0;
+            while (pending.Count != 0)
+            {
+                var directory = pending.Pop();
+                if ((File.GetAttributes(directory) & FileAttributes.ReparsePoint) != 0) throw new InvalidDataException("Template payload cannot contain links.");
+                foreach (var entry in new DirectoryInfo(directory).GetFileSystemInfos())
+                {
+                    if ((entry.Attributes & FileAttributes.ReparsePoint) != 0) throw new InvalidDataException("Template payload cannot contain links.");
+                    var relative = Path.GetRelativePath(source, entry.FullName);
+                    ProjectPaths.ValidateRelative(relative);
+                    if (relative.Split(Path.DirectorySeparatorChar)[0] is not ("Content" or "GameCode" or ".Veris")) throw new InvalidDataException("Payload files must stay in Content, GameCode or .Veris.");
+                    var target = Path.Combine(destination, relative);
+                    if (entry is DirectoryInfo) { Directory.CreateDirectory(target); pending.Push(entry.FullName); continue; }
+                    bytes += ((FileInfo)entry).Length;
+                    if (++files > 10000 || bytes > 256 * 1024 * 1024) throw new InvalidDataException("Template payload exceeds 10000 files or 256 MiB.");
+                    File.Copy(entry.FullName, target, true);
+                }
+            }
+        }
+
         private static void WriteProject(string stagingDirectory, string projectName, ProjectTemplate template)
         {
             foreach (var folder in template.Folders)
@@ -72,12 +96,14 @@ namespace VerisEditor.GameProject
             var project = new ProjectDocument
             {
                 FormatVersion = 1, ProjectId = Guid.NewGuid(), Name = projectName,
-                TemplateId = template.TemplateId, ContentDirectory = "Content", GameCodeDirectory = "GameCode"
+                TemplateId = template.TemplateId, ContentDirectory = "Content", GameCodeDirectory = "GameCode", StartupScene = template.StartupScene
             };
             File.WriteAllText(Path.Combine(stagingDirectory, template.ProjectFile), project.Serialize());
             var metadataDirectory = Path.Combine(stagingDirectory, ".Veris");
             Directory.CreateDirectory(metadataDirectory);
             File.WriteAllText(Path.Combine(metadataDirectory, "input-actions.json"), DefaultInputActions);
+            if (template.PayloadDirectory != null) CopyPayload(template.PayloadDirectory, stagingDirectory);
+            if (template.StartupScene != null && !File.Exists(Path.Combine(stagingDirectory, "Content", template.StartupScene))) throw new InvalidDataException("Template starting scene is missing from its payload.");
         }
     }
 }

@@ -1,0 +1,570 @@
+{
+  "formatVersion": 1,
+  "entities": [
+    {
+      "id": 1,
+      "name": "Floor",
+      "parent": 0,
+      "transform": {
+        "position": [
+          640,
+          360
+        ],
+        "scale": [
+          1280,
+          720
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 539837439,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      }
+    },
+    {
+      "id": 2,
+      "name": "North wall",
+      "parent": 0,
+      "transform": {
+        "position": [
+          640,
+          16
+        ],
+        "scale": [
+          1280,
+          32
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 3,
+      "name": "South wall",
+      "parent": 0,
+      "transform": {
+        "position": [
+          640,
+          704
+        ],
+        "scale": [
+          1280,
+          32
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 4,
+      "name": "West wall",
+      "parent": 0,
+      "transform": {
+        "position": [
+          16,
+          360
+        ],
+        "scale": [
+          32,
+          656
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 5,
+      "name": "East wall",
+      "parent": 0,
+      "transform": {
+        "position": [
+          1264,
+          360
+        ],
+        "scale": [
+          32,
+          656
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 6,
+      "name": "Crate A",
+      "parent": 0,
+      "transform": {
+        "position": [
+          500,
+          280
+        ],
+        "scale": [
+          80,
+          80
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 7,
+      "name": "Crate B",
+      "parent": 0,
+      "transform": {
+        "position": [
+          780,
+          480
+        ],
+        "scale": [
+          96,
+          96
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 8,
+      "name": "Crate C",
+      "parent": 0,
+      "transform": {
+        "position": [
+          950,
+          230
+        ],
+        "scale": [
+          80,
+          128
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 1685359615,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 9,
+      "name": "Goal",
+      "parent": 0,
+      "transform": {
+        "position": [
+          1050,
+          550
+        ],
+        "scale": [
+          48,
+          48
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/white.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca001",
+        "origin": [
+          0.5,
+          0.5
+        ],
+        "tint": 4207678975,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "physics": {
+        "type": 0,
+        "shape": 0,
+        "halfSize": [
+          0.5,
+          0.5
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": true,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      }
+    },
+    {
+      "id": 10,
+      "name": "Player",
+      "parent": 0,
+      "transform": {
+        "position": [
+          640,
+          360
+        ],
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/player.png",
+        "assetId": "1e974923-768c-405a-a444-9671880ca002",
+        "origin": [
+          16,
+          16
+        ],
+        "tint": 4294967295,
+        "layer": 2,
+        "visible": true,
+        "rectangle": [
+          0,
+          0,
+          32,
+          32
+        ]
+      },
+      "physics": {
+        "type": 2,
+        "shape": 0,
+        "halfSize": [
+          12,
+          12
+        ],
+        "radius": 16,
+        "offset": [
+          0,
+          0
+        ],
+        "velocity": [
+          0,
+          0
+        ],
+        "angularVelocity": 0,
+        "gravityScale": 0,
+        "density": 1,
+        "friction": 0,
+        "restitution": 0,
+        "fixedRotation": true,
+        "bullet": false,
+        "sensor": false,
+        "category": 1,
+        "mask": 65535,
+        "group": 0
+      },
+      "script": {
+        "path": "player.lua",
+        "enabled": true
+      },
+      "animation": {
+        "frames": [
+          {
+            "rectangle": [
+              0,
+              0,
+              32,
+              32
+            ],
+            "seconds": 0.12
+          },
+          {
+            "rectangle": [
+              32,
+              0,
+              32,
+              32
+            ],
+            "seconds": 0.12
+          }
+        ],
+        "loop": true,
+        "playing": false
+      }
+    }
+  ]
+}

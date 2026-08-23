@@ -2,7 +2,9 @@
 <Template Version="1">
   <Id>top-down</Id>
   <Name>Top-Down Project</Name>
-  <Description>A 2D top-down project layout. The preview is concept artwork; playable movement and example gameplay are not included yet.</Description>
+  <Description>Playable 2D arena with WASD/arrow movement, sprite animation, solid obstacles, camera following and a goal trigger.</Description>
+  <Payload>Payload</Payload>
+  <StartupScene>Scenes/arena.verisscene</StartupScene>
   <ProjectFile>project.veris</ProjectFile>
   <Icon>Icon.png.png</Icon>
   <Screenshot>Screenshot.png.png</Screenshot>

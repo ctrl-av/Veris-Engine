@@ -1,0 +1,17 @@
+{
+  "formatVersion": 1,
+  "assets": [
+    {
+      "id": "1e974923-768c-405a-a444-9671880ca001",
+      "path": "Textures/white.png",
+      "kind": "texture",
+      "sha256": "8d6a5297038c59e6e1243a7f7614a6bee5ef2d3525775761dacbfde3f39bd4db"
+    },
+    {
+      "id": "1e974923-768c-405a-a444-9671880ca002",
+      "path": "Textures/player.png",
+      "kind": "texture",
+      "sha256": "2d78180761454691bd700b2531ff64db07b616379dd981e1293c6e26b83f37d1"
+    }
+  ]
+}

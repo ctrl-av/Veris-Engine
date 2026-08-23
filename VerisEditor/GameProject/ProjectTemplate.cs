@@ -16,6 +16,8 @@ namespace VerisEditor.GameProject
         public required string IconPath { get; init; }
         public required string ScreenshotPath { get; init; }
         public required IReadOnlyList<string> Folders { get; init; }
+        public string? PayloadDirectory { get; init; }
+        public string? StartupScene { get; init; }
 
         public static ProjectTemplate Load(string descriptorPath)
         {
@@ -28,12 +30,22 @@ namespace VerisEditor.GameProject
             var folders = ReadFolders(root);
             if (folders.Any(folder => folder.Split('/', '\\')[0].Equals(projectFile, StringComparison.OrdinalIgnoreCase)))
                 throw new InvalidDataException("Template folders cannot conflict with the project filename.");
+            var payload = root.Element("Payload")?.Value.Trim();
+            if (payload != null)
+            {
+                ProjectPaths.ValidateRelative(payload);
+                payload = Path.GetFullPath(Path.Combine(templateDirectory, payload));
+                if (!Directory.Exists(payload) || (File.GetAttributes(payload) & FileAttributes.ReparsePoint) != 0) throw new InvalidDataException("Template payload must be a real directory.");
+            }
+            var startup = root.Element("StartupScene")?.Value.Trim();
+            if (startup != null) ProjectPaths.ValidateRelative(startup);
             return new ProjectTemplate
             {
                 TemplateId = identity, ProjectType = ReadRequired(root, "Name"),
                 Description = ReadRequired(root, "Description"), ProjectFile = projectFile,
                 IconPath = ReadAsset(root, "Icon", templateDirectory),
-                ScreenshotPath = ReadAsset(root, "Screenshot", templateDirectory), Folders = folders
+                ScreenshotPath = ReadAsset(root, "Screenshot", templateDirectory), Folders = folders,
+                PayloadDirectory = payload, StartupScene = startup
             };
         }
 

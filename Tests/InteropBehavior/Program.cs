@@ -6,6 +6,7 @@ try
     HierarchyChecks.Run();
     SceneFormatChecks.Run();
     PhysicsChecks.Run();
+    TemplateChecks.Run();
     Reject<NativeEngineException>(() => new NativeEngine(0, 8));
     for (var session = 0; session < 4; session++)
     {

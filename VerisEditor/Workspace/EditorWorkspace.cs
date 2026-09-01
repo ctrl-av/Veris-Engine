@@ -57,6 +57,7 @@ namespace VerisEditor.Workspace
                 _engine.SetContentRoot(ContentRoot);
                 _engine.SetScriptRoot(Path.Combine(Path.GetDirectoryName(ProjectFile)!, project.GameCodeDirectory));
                 _engine.LoadAssetCatalog(Catalog.ManifestPath);
+                InitializeProjectSettings();
                 RefreshAssetList();
                 RefreshScene();
                 EditorLog.Info($"Workspace opened: {ProjectFile}");
@@ -176,7 +177,7 @@ namespace VerisEditor.Workspace
         private void Run(Action operation)
         {
             try { operation(); Status = "Workspace refreshed"; }
-            catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or NativeEngineException or ArgumentException)
+            catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or NativeEngineException or ArgumentException or FormatException or OverflowException or System.Text.Json.JsonException)
             {
                 Status = exception.Message;
                 EditorLog.Error("Cannot refresh editor workspace.", exception);

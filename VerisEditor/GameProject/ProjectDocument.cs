@@ -27,6 +27,9 @@ namespace VerisEditor.GameProject
         public string WindowMode { get; init; } = "windowed";
         public bool WindowResizable { get; init; } = true;
         public bool VerticalSync { get; init; } = true;
+        public float GravityX { get; init; } = 0;
+        public float GravityY { get; init; } = 9.81f;
+        public float MasterVolume { get; init; } = 100;
 
         public static ProjectDocument Parse(string projectJson)
         {
@@ -60,8 +63,10 @@ namespace VerisEditor.GameProject
             if (ContentDirectory.Equals(GameCodeDirectory, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("Content and game code directories must be distinct.");
             if (StartupScene != null) ProjectPaths.ValidateRelative(StartupScene);
-            if (WindowWidth < 1 || WindowHeight < 1)
-                throw new InvalidDataException("Window dimensions must be positive.");
+            if (WindowWidth < 1 || WindowHeight < 1 || WindowWidth > 8192 || WindowHeight > 8192)
+                throw new InvalidDataException("Window dimensions must be between 1 and 8192 pixels.");
+            if (!float.IsFinite(GravityX) || !float.IsFinite(GravityY) || Math.Abs(GravityX) > 10000 || Math.Abs(GravityY) > 10000 || !float.IsFinite(MasterVolume) || MasterVolume < 0 || MasterVolume > 100)
+                throw new InvalidDataException("Gravity must be finite within ?10000 m/s?; master volume must be between 0 and 100.");
             if (WindowMode is not ("windowed" or "fullscreen"))
                 throw new InvalidDataException("Window mode must be windowed or fullscreen.");
         }

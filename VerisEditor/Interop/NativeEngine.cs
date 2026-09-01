@@ -33,6 +33,8 @@ namespace VerisEditor.Interop
         public string PrefabSource(ulong entity) => ReadUtf8((byte[]? buffer, uint capacity, out uint required) => NativeMethods.PrefabSource(_handle, entity, buffer, capacity, out required));
         public void LoadSceneFile(string path) => Check(NativeMethods.LoadSceneFile(_handle, path));
         public void ValidateSceneFile(string path) => Check(NativeMethods.ValidateSceneFile(_handle, path));
+        public void ConfigureSimulation(float x, float y, float volume) => Check(NativeMethods.ConfigureSimulation(_handle, x, y, volume));
+        public static void ValidateInputJson(string json) => Check(NativeMethods.ValidateInputJson(json));
         public void ConfigureInput(string directory) => Check(NativeMethods.ConfigureInput(_handle, directory));
         public void NamedInput(string binding, bool down) => Check(NativeMethods.NamedInput(_handle, binding, down ? 1 : 0));
         public void GameStep(double seconds) => Check(NativeMethods.GameStep(_handle, seconds));
@@ -292,6 +294,10 @@ namespace VerisEditor.Interop
         internal static extern int LoadSceneFile(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
         [DllImport(Library, EntryPoint = "veris_validate_scene_file", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ValidateSceneFile(EngineHandle engine, [MarshalAs(UnmanagedType.LPUTF8Str)] string path);
+        [DllImport(Library, EntryPoint = "veris_configure_simulation", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ConfigureSimulation(EngineHandle engine, float x, float y, float volume);
+        [DllImport(Library, EntryPoint = "veris_validate_input_json", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int ValidateInputJson([MarshalAs(UnmanagedType.LPUTF8Str)] string json);
         [DllImport(Library, EntryPoint = "veris_configure_input", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int ConfigureInput(EngineHandle engine, [MarshalAs(UnmanagedType.LPWStr)] string directory);
         [DllImport(Library, EntryPoint = "veris_named_input", CallingConvention = CallingConvention.Cdecl)]

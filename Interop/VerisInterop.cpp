@@ -750,3 +750,17 @@ int32_t veris_prefab_source(uint64_t engine, uint64_t root, char* utf8, uint32_t
     if (status == VerisOk && tooSmall) { LastError = "Prefab source buffer is too small."; return VerisBufferTooSmall; }
     return status;
 }
+
+int32_t veris_configure_simulation(uint64_t engine, float gravityX, float gravityY, float masterVolume)
+{
+    return Boundary([&]
+    {
+        Veris::AudioPlayback validation; validation.SetMasterVolume(masterVolume);
+        auto& session = FindEngine(engine);
+        session.Physics().SetGravity({gravityX, gravityY}); session.Audio().SetMasterVolume(masterVolume);
+    });
+}
+int32_t veris_validate_input_json(const char* json)
+{
+    return Boundary([&] { if (!json) throw std::invalid_argument("Input JSON is required."); Veris::ValidateInputConfiguration(json); });
+}

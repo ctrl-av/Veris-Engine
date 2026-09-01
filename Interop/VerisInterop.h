@@ -130,6 +130,9 @@ VERIS_API int32_t __cdecl veris_reapply_prefab(uint64_t engine, uint64_t root, c
 VERIS_API int32_t __cdecl veris_unpack_prefab(uint64_t engine, uint64_t root);
 VERIS_API int32_t __cdecl veris_prefab_source(uint64_t engine, uint64_t root, char* utf8, uint32_t capacity, uint32_t* required);
 
+VERIS_API int32_t __cdecl veris_configure_simulation(uint64_t engine, float gravityX, float gravityY, float masterVolume);
+VERIS_API int32_t __cdecl veris_validate_input_json(const char* json);
+
 #ifdef __cplusplus
 }
 #endif

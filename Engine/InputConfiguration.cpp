@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "InputConfiguration.h"
+#include "JsonValidation.h"
 #include <nlohmann/json.hpp>
 #include <Windows.h>
 #include <fstream>
@@ -132,7 +133,9 @@ void Veris::LoadInputConfiguration(const std::filesystem::path& projectDirectory
     }
     std::ifstream configurationStream(configurationFile, std::ios::binary);
     if (!configurationStream) throw std::runtime_error("Cannot read the input configuration file.");
-    actions.SetBindings(ReadConfiguration(nlohmann::json::parse(configurationStream)));
+    if (std::filesystem::file_size(configurationFile) > 1024 * 1024) throw std::invalid_argument("Input configuration cannot exceed 1 MiB.");
+    const std::string json((std::istreambuf_iterator<char>(configurationStream)), std::istreambuf_iterator<char>());
+    actions.SetBindings(ReadConfiguration(Json::Parse(json)));
 }
 
 namespace
@@ -185,4 +188,11 @@ void Veris::SetNamedInput(InputState& input, const std::string& binding, bool do
     const auto button = MouseNames.at(binding.substr(6));
     if (down) { sf::Event::MouseButtonPressed event{}; event.button = button; input.HandleEvent(event); }
     else { sf::Event::MouseButtonReleased event{}; event.button = button; input.HandleEvent(event); }
+}
+
+void Veris::ValidateInputConfiguration(std::string_view json)
+{
+    if (json.size() > 1024 * 1024) throw std::invalid_argument("Input configuration cannot exceed 1 MiB.");
+    InputActions candidate;
+    candidate.SetBindings(ReadConfiguration(Json::Parse(json)));
 }

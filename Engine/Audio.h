@@ -36,6 +36,7 @@ namespace Veris
         sf::SoundSource::Status Status(std::uint64_t entity) const;
         std::size_t VoiceCount() const { return _voices.size(); }
         void Clear() noexcept { _voices.clear(); _suspended.clear(); }
+        void SetMasterVolume(float volume);
         void PauseAll();
         void ResumeAll();
 
@@ -44,9 +45,11 @@ namespace Veris
         {
             std::shared_ptr<const sf::SoundBuffer> Buffer;
             sf::Sound Sound;
-            Voice(const AudioSource& source);
+            float SourceVolume;
+            Voice(const AudioSource& source, float masterVolume);
         };
         std::map<std::uint64_t, std::unique_ptr<Voice>> _voices;
         std::set<std::uint64_t> _suspended;
+        float _masterVolume = 100;
     };
 }

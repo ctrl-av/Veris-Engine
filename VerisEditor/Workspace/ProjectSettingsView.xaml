@@ -1,0 +1,14 @@
+<UserControl x:Class="VerisEditor.Workspace.ProjectSettingsView" Background="#F1F5F9" Foreground="#18212F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:VerisEditor.Workspace">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="18" IsEnabled="{Binding CanEditScene}">
+        <TextBlock Text="Project name" /><TextBox Text="{Binding SettingName, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
+        <TextBlock Text="Game window width / height (1–8192 pixels)" /><UniformGrid Columns="2"><TextBox Text="{Binding SettingWidth, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,10" /><TextBox Text="{Binding SettingHeight, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" /></UniformGrid>
+        <ComboBox ItemsSource="{x:Static local:EditorWorkspace.WindowModes}" SelectedItem="{Binding SettingWindowMode}" />
+        <CheckBox Content="Resizable window" IsChecked="{Binding SettingResizable}" Margin="0,8" /><CheckBox Content="Vertical synchronization" IsChecked="{Binding SettingVsync}" Margin="0,4,0,12" />
+        <TextBlock Text="Gravity X / Y (m/s²)" /><UniformGrid Columns="2"><TextBox Text="{Binding SettingGravityX, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,6,10" /><TextBox Text="{Binding SettingGravityY, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" /></UniformGrid>
+        <TextBlock Text="Master volume (0–100)" /><TextBox Text="{Binding SettingMasterVolume, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" />
+        <Button x:Name="SaveSettingsButton" Content="Save project settings" Click="SaveSettings" Padding="10,6" />
+        <TextBlock Text="Input actions — version 1 JSON" Margin="0,20,0,4" /><TextBox Text="{Binding InputBindingsJson, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="150" />
+        <Button Content="Validate and save input bindings" Click="SaveInput" Padding="10,6" Margin="0,8" />
+        <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,8" />
+    </StackPanel></ScrollViewer>
+</UserControl>

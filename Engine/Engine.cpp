@@ -22,6 +22,7 @@ namespace Veris
         _camera.Resize(viewportSize);
         _completedFrames = 0;
         _physics.SetGravity({0, 9.81f});
+        _audio.SetMasterVolume(100);
     }
 
     void Engine::Update()

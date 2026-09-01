@@ -26,6 +26,10 @@ namespace VerisEditor.Workspace
             e.Handled = true;
         }
 
+        private void OpenSettings(object sender, RoutedEventArgs e)
+        {
+            new Window { Title = "Project settings", Width = 460, Height = 720, Owner = Window.GetWindow(this), Content = new ProjectSettingsView((EditorWorkspace)DataContext) }.ShowDialog();
+        }
         private void RefreshWorkspace(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).Refresh();
         private void ApplyAnimation(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).ApplyAnimation();
         private void PreviewAnimation(object sender, RoutedEventArgs e) => ((EditorWorkspace)DataContext).PreviewAnimation();

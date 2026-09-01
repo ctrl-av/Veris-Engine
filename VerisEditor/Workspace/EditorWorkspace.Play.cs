@@ -44,6 +44,7 @@ namespace VerisEditor.Workspace
                 runtime.LoadAssetCatalog(Catalog.ManifestPath);
                 runtime.SetScriptRoot(Path.Combine(Path.GetDirectoryName(ProjectFile)!, Project.GameCodeDirectory));
                 runtime.ConfigureInput(Path.GetDirectoryName(ProjectFile)!);
+                runtime.ConfigureSimulation(Project.GravityX, Project.GravityY, Project.MasterVolume);
                 runtime.DeserializeScene(_engine.SerializeScene());
                 runtime.SetPhysicsDebug(PhysicsDebug);
                 _playEngine = runtime;

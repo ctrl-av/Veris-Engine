@@ -16,6 +16,8 @@ namespace Veris
         std::filesystem::path GameCodeDirectory;
         WindowSettings Window;
         std::optional<std::filesystem::path> StartupScene;
+        sf::Vector2f Gravity{0, 9.81f};
+        float MasterVolume = 100;
     };
 
     RuntimeProject LoadProject(const std::filesystem::path& projectFile);

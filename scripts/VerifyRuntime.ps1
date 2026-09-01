@@ -49,6 +49,9 @@ Invoke-RuntimeCheck 'negative-frame-limit' 1 '-1'
 Invoke-RuntimeCheck 'nonnumeric-frame-limit' 1 'invalid'
 Invoke-RuntimeCheck 'overflowing-frame-limit' 1 '18446744073709551616'
 $invalidProjects = @(
+    @{ Name = 'oversized-window'; Key = 'windowWidth'; Value = 8193 },
+    @{ Name = 'invalid-master-volume'; Key = 'masterVolume'; Value = 101 },
+    @{ Name = 'invalid-gravity'; Key = 'gravityY'; Value = 10001 },
     @{ Name = 'invalid-window-mode'; Key = 'windowMode'; Value = 'invalid' },
     @{ Name = 'invalid-vsync-type'; Key = 'verticalSync'; Value = 1 },
     @{ Name = 'unsupported-fullscreen'; Key = 'windowMode'; Value = 'fullscreen' },

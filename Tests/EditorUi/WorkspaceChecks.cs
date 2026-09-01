@@ -39,6 +39,7 @@ internal static class WorkspaceChecks
             PlayChecks.Run(workspace);
             StartupChecks.Run(workspace);
             PrefabChecks.Run(view, workspace);
+            SettingsChecks.Run(workspace);
             Program.Arrange(view, 1280, 720);
             Program.SavePreview(view, "editor-workspace.png");
             workspace.Dispose();

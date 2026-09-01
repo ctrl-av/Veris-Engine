@@ -56,6 +56,8 @@ namespace
         engine.Initialize(project.Window.Size);
         engine.Textures().SetRoot(project.ContentDirectory);
         engine.Scripts().SetRoot(project.GameCodeDirectory);
+        engine.Physics().SetGravity(project.Gravity);
+        engine.Audio().SetMasterVolume(project.MasterVolume);
         engine.Textures().SetCatalog(project.ProjectFile.parent_path() / L".Veris" / L"assets.json");
         Veris::LoadInputConfiguration(project.ProjectFile.parent_path(), engine.Actions());
         if (project.StartupScene) engine.LoadSceneFile(*project.StartupScene);

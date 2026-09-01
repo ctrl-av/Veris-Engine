@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Audio.h"
+#include <cmath>
 #include "Scene.h"
 #include "TextureResources.h"
 #include "JsonValidation.h"
@@ -36,16 +37,16 @@ namespace Veris
         return source;
     }
 
-    AudioPlayback::Voice::Voice(const AudioSource& source) : Buffer(source.Buffer), Sound(*Buffer)
+    AudioPlayback::Voice::Voice(const AudioSource& source, float masterVolume) : Buffer(source.Buffer), Sound(*Buffer), SourceVolume(source.Volume)
     {
-        Sound.setVolume(source.Volume);
+        Sound.setVolume(source.Volume * masterVolume / 100);
         Sound.setLooping(source.Loop);
     }
 
     void AudioPlayback::Play(std::uint64_t entity, const AudioSource& source)
     {
         if (!source.Buffer) throw std::invalid_argument("Audio playback requires an owned decoded buffer.");
-        auto voice = std::make_unique<Voice>(source);
+        auto voice = std::make_unique<Voice>(source, _masterVolume);
         voice->Sound.play();
         _voices[entity] = std::move(voice);
     }
@@ -91,4 +92,11 @@ void Veris::AudioPlayback::ResumeAll()
     for (const auto id : _suspended)
         if (_voices.count(id) && _voices.at(id)->Sound.getStatus() == sf::SoundSource::Status::Paused) _voices.at(id)->Sound.play();
     _suspended.clear();
+}
+
+void Veris::AudioPlayback::SetMasterVolume(float volume)
+{
+    if (!std::isfinite(volume) || volume < 0 || volume > 100) throw std::invalid_argument("Master volume must be between 0 and 100.");
+    _masterVolume = volume;
+    for (auto& voice : _voices) voice.second->Sound.setVolume(voice.second->SourceVolume * volume / 100);
 }

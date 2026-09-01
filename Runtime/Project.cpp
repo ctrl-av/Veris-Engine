@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <objbase.h>
 #include <algorithm>
+#include <cmath>
 #include <cwctype>
 #include <fstream>
 #include <limits>
@@ -12,13 +13,21 @@
 
 namespace
 {
-    const std::unordered_set<std::string> ProjectKeys{"formatVersion", "projectId", "name", "templateId", "contentDirectory", "gameCodeDirectory", "startupScene", "windowWidth", "windowHeight", "windowMode", "windowResizable", "verticalSync"};
+    const std::unordered_set<std::string> ProjectKeys{"formatVersion", "projectId", "name", "templateId", "contentDirectory", "gameCodeDirectory", "startupScene", "windowWidth", "windowHeight", "windowMode", "windowResizable", "verticalSync", "gravityX", "gravityY", "masterVolume"};
     const std::wstring Whitespace = L" \t\n\v\f\r\u0085\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000";
     const std::unordered_set<std::wstring> ReservedNames{
         L"CON", L"PRN", L"AUX", L"NUL", L"CONIN$", L"CONOUT$",
         L"COM1", L"COM2", L"COM3", L"COM4", L"COM5", L"COM6", L"COM7", L"COM8", L"COM9", L"COM\u00b9", L"COM\u00b2", L"COM\u00b3",
         L"LPT1", L"LPT2", L"LPT3", L"LPT4", L"LPT5", L"LPT6", L"LPT7", L"LPT8", L"LPT9", L"LPT\u00b9", L"LPT\u00b2", L"LPT\u00b3"};
 
+    float ReadSetting(const nlohmann::json& document, const char* key, float fallback, float minimum, float maximum)
+    {
+        if (!document.contains(key)) return fallback;
+        if (!document.at(key).is_number()) throw std::runtime_error(std::string("Project setting must be numeric: ") + key);
+        const auto number = document.at(key).get<float>();
+        if (!std::isfinite(number) || number < minimum || number > maximum) throw std::runtime_error(std::string("Project setting is outside its supported range: ") + key);
+        return number;
+    }
     void ValidateDocument(const nlohmann::json& document);
     std::string ReadText(const nlohmann::json& document, const char* key);
     std::filesystem::path ReadRelativePath(const nlohmann::json& document, const char* key);
@@ -43,7 +52,8 @@ Veris::RuntimeProject Veris::LoadProject(const std::filesystem::path& projectFil
     const auto startup = document.contains("startupScene") && !document.at("startupScene").is_null() ? std::optional<std::filesystem::path>{ReadRelativePath(document, "startupScene")} : std::nullopt;
     return {fullProjectFile, ReadText(document, "name"), content, gameCode,
         {{ReadDimension(document, "windowWidth", 1280), ReadDimension(document, "windowHeight", 720)},
-            ReadWindowMode(document), ReadBoolean(document, "windowResizable"), ReadBoolean(document, "verticalSync")}, startup};
+            ReadWindowMode(document), ReadBoolean(document, "windowResizable"), ReadBoolean(document, "verticalSync")}, startup,
+        {ReadSetting(document, "gravityX", 0, -10000, 10000), ReadSetting(document, "gravityY", 9.81f, -10000, 10000)}, ReadSetting(document, "masterVolume", 100, 0, 100)};
 }
 
 namespace
@@ -125,7 +135,7 @@ namespace
     {
         if (!document.contains(key)) return defaultDimension;
         const auto& dimension = document.at(key);
-        if (!dimension.is_number_integer() || dimension < 1 || dimension > std::numeric_limits<int>::max())
+        if (!dimension.is_number_integer() || dimension < 1 || dimension > 8192)
             throw std::runtime_error(std::string("Window dimension must be a positive 32-bit integer: ") + key);
         return dimension.get<unsigned int>();
     }

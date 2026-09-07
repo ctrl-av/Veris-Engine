@@ -46,7 +46,9 @@ jobs:
       - name: Verify template browser bindings
         run: dotnet run --project Tests/EditorUi/EditorUi.csproj --configuration ${{ matrix.configuration }}
       - name: Publish editor prototype
-        run: dotnet publish VerisEditor/VerisEditor.csproj --configuration ${{ matrix.configuration }} --no-build --no-restore --output artifacts/publish/editor
+        run: ./scripts/PublishEditor.ps1 -Configuration ${{ matrix.configuration }} -OutputDirectory artifacts/publish/editor
+      - name: Verify standalone export
+        run: dotnet run --project Tests/InteropBehavior/InteropBehavior.csproj --configuration ${{ matrix.configuration }} -- --runtime artifacts/publish/editor/Runtime
       - name: Verify built editor resources
         run: ./scripts/VerifyEditorResources.ps1 -EditorDirectory artifacts/bin/VerisEditor/${{ matrix.configuration }}/net8.0-windows -Configuration ${{ matrix.configuration }}
       - name: Verify published editor resources

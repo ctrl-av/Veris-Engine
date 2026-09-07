@@ -1,5 +1,4 @@
 using System.IO;
-using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -50,7 +49,7 @@ namespace VerisEditor.Assets
             foreach (var asset in _assets) if (asset.Path.Equals(relativePath.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase)) return asset;
             var kind = AssetKind(path);
             ValidateAsset(path, kind);
-            var record = new AssetRecord(Guid.NewGuid(), relativePath.Replace('\\', '/'), kind, Hash(path));
+            var record = new AssetRecord(Guid.NewGuid(), relativePath.Replace('\\', '/'), kind, ProjectContent.Sha256(path));
             var replacement = new List<AssetRecord>(_assets) { record };
             Save(replacement);
             return record;
@@ -75,7 +74,7 @@ namespace VerisEditor.Assets
                 if (new FileInfo(source).Length > 256 * 1024 * 1024) throw new InvalidDataException("Texture imports cannot exceed 256 MiB.");
                 File.Copy(source, staged);
                 ValidateAsset(staged, asset.Kind);
-                var replacement = asset with { Sha256 = Hash(staged) };
+                var replacement = asset with { Sha256 = ProjectContent.Sha256(staged) };
                 var records = new List<AssetRecord>(_assets);
                 records.RemoveAll(registered => registered.Id == asset.Id);
                 records.Add(replacement);
@@ -134,10 +133,5 @@ namespace VerisEditor.Assets
 
         private static string AssetKind(string path) => Path.GetExtension(path).ToLowerInvariant() is ".wav" or ".ogg" or ".flac" ? "audio" : "texture";
 
-        private static string Hash(string path)
-        {
-            using var stream = File.OpenRead(path);
-            return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
-        }
     }
 }

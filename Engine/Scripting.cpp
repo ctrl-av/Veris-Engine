@@ -148,6 +148,13 @@ namespace Veris
         const auto path = _files.ContentPath(std::filesystem::u8path(script.Path));
         if (path.extension() != L".lua" || !std::filesystem::is_regular_file(path) || std::filesystem::file_size(path) > 256 * 1024)
             throw std::invalid_argument("Scripts must be .lua files inside GameCode and at most 256 KiB.");
+        std::ifstream stream(path, std::ios::binary);
+        if (!stream) throw std::runtime_error("Cannot read gameplay script.");
+        const std::string source((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+        std::unique_ptr<lua_State, decltype(&lua_close)> state(luaL_newstate(), lua_close);
+        if (!state) throw std::runtime_error("Cannot allocate Lua validation state.");
+        if (luaL_loadbufferx(state.get(), source.data(), source.size(), script.Path.c_str(), "t") != LUA_OK)
+            throw std::invalid_argument(lua_tostring(state.get(), -1));
     }
     void ScriptRuntime::Update(Engine& engine, double seconds)
     {

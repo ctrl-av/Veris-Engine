@@ -26,6 +26,11 @@ namespace VerisEditor.Workspace
             e.Handled = true;
         }
 
+        private void ExportGame(object sender, RoutedEventArgs e)
+        {
+            var picker = new Microsoft.Win32.SaveFileDialog { Title = "Choose a new export directory", FileName = "My Game", Filter = "Export directory|*", CheckPathExists = true, OverwritePrompt = false };
+            if (picker.ShowDialog(Window.GetWindow(this)) == true) ((EditorWorkspace)DataContext).ExportGame(picker.FileName);
+        }
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
             new Window { Title = "Project settings", Width = 460, Height = 720, Owner = Window.GetWindow(this), Content = new ProjectSettingsView((EditorWorkspace)DataContext) }.ShowDialog();

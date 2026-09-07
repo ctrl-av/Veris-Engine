@@ -39,6 +39,7 @@
         </Grid.RowDefinitions>
         <Border Background="#292D36" Padding="16,6">
             <DockPanel>
+                <Button Content="Export game?" DockPanel.Dock="Right" Click="ExportGame" IsEnabled="{Binding CanEditScene}" />
                 <Button Content="Project settings" DockPanel.Dock="Right" Click="OpenSettings" IsEnabled="{Binding CanEditScene}" />
                 <Button x:Name="RefreshWorkspaceButton" DockPanel.Dock="Right" Content="Refresh workspace" Click="RefreshWorkspace" />
                 <Button x:Name="RedoButton" DockPanel.Dock="Right" Content="Redo" Click="Redo" IsEnabled="{Binding CanRedo}" />

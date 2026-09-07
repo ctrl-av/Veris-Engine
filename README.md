@@ -53,3 +53,4 @@
 - [x] Reusable prefab subtrees with fresh instance IDs, baked scene content, explicit source reapply, placement preservation, undo/redo, unpacking, and Lua spawning.
 - [x] Playable Top-Down template with copied game content, animated movement, collision, camera following, and a goal trigger.
 - [x] Persisted project settings for game windows, gravity, per-engine master volume, and validated input-action bindings.
+- [x] Transactional Windows game export with a Release executable, validated content/scripts, app-local dependencies, and a SHA-256 file manifest.

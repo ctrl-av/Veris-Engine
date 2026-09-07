@@ -15,7 +15,7 @@ namespace VerisEditor.Assets
                 {
                     var path = ContentPaths.Resolve(_contentRoot, asset.Path);
                     if (!File.Exists(path)) throw new IOException("Missing file; restore it or reimport this asset using its existing GUID.");
-                    var digest = Hash(path);
+                    var digest = ProjectContent.Sha256(path);
                     if (digest == asset.Sha256) continue;
                     ValidateAsset(path, asset.Kind);
                     reload(asset);

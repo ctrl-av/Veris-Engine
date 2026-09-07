@@ -39,15 +39,18 @@ namespace
 {
     std::pair<std::filesystem::path, std::uint64_t> ReadArguments(int count, wchar_t* arguments[])
     {
-        if (count != 2 && count != 4) throw std::runtime_error("Usage: VerisRuntime.exe <project.veris> [--frames positive-count]");
-        if (count == 2) return {arguments[1], 0};
-        const std::wstring frameText(arguments[3]);
-        if (std::wstring_view(arguments[2]) != L"--frames" || frameText.empty() ||
+        const bool packaged = count == 1 || count == 3;
+        const auto project = packaged ? std::filesystem::absolute(arguments[0]).parent_path() / "game.veris" : std::filesystem::path(arguments[1]);
+        if (count == 1 || count == 2) return {project, 0};
+        if (count != 3 && count != 4) throw std::runtime_error("Usage: VerisRuntime.exe <project.veris> [--frames positive-count]");
+        const auto option = packaged ? 1 : 2;
+        const std::wstring frameText(arguments[option + 1]);
+        if (std::wstring_view(arguments[option]) != L"--frames" || frameText.empty() ||
             !std::all_of(frameText.begin(), frameText.end(), [](wchar_t character) { return character >= L'0' && character <= L'9'; }))
             throw std::runtime_error("--frames requires a positive integer.");
         const auto frameLimit = std::stoull(frameText);
         if (frameLimit == 0) throw std::runtime_error("--frames requires a positive integer.");
-        return {arguments[1], frameLimit};
+        return {project, frameLimit};
     }
 
     int RunProject(const Veris::RuntimeProject& project, std::uint64_t frameLimit)

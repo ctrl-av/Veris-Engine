@@ -1,0 +1,17 @@
+{
+  "formatVersion": 1,
+  "projectId": "0ac9e72e-6bb9-43a2-9dc9-586c513ed913",
+  "name": "Beacon Run",
+  "templateId": "top-down",
+  "contentDirectory": "Content",
+  "gameCodeDirectory": "GameCode",
+  "startupScene": "Scenes/title.verisscene",
+  "windowWidth": 960,
+  "windowHeight": 640,
+  "windowMode": "windowed",
+  "windowResizable": true,
+  "verticalSync": true,
+  "gravityX": 0,
+  "gravityY": 0,
+  "masterVolume": 60
+}

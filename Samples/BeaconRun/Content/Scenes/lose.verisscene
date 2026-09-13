@@ -1,0 +1,37 @@
+{
+  "formatVersion": 1,
+  "entities": [
+    {
+      "id": 1,
+      "name": "Defeat screen",
+      "parent": 0,
+      "transform": {
+        "position": [
+          480,
+          320
+        ],
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/lose.png",
+        "assetId": "1a34ec92-a7ac-5115-ab67-4f20ccd988bc",
+        "origin": [
+          480,
+          320
+        ],
+        "tint": 4294967295,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "script": {
+        "path": "end.lua",
+        "enabled": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "formatVersion": 1,
+  "actions": {
+    "Quit": [
+      "Key:Escape"
+    ],
+    "Start": [
+      "Key:Enter"
+    ],
+    "Restart": [
+      "Key:R"
+    ],
+    "MoveUp": [
+      "Key:W",
+      "Key:Up"
+    ],
+    "MoveDown": [
+      "Key:S",
+      "Key:Down"
+    ],
+    "MoveLeft": [
+      "Key:A",
+      "Key:Left"
+    ],
+    "MoveRight": [
+      "Key:D",
+      "Key:Right"
+    ]
+  }
+}

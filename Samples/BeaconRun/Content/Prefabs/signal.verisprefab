@@ -1,0 +1,93 @@
+{
+  "formatVersion": 1,
+  "root": 1,
+  "scene": {
+    "formatVersion": 1,
+    "entities": [
+      {
+        "id": 1,
+        "name": "Signal",
+        "parent": 0,
+        "transform": {
+          "position": [
+            0,
+            0
+          ],
+          "scale": [
+            24,
+            24
+          ],
+          "rotation": 0
+        },
+        "sprite": {
+          "texture": "Textures/white.png",
+          "assetId": "a1bd1243-946e-51cd-b8e0-027be533e3c2",
+          "origin": [
+            0.5,
+            0.5
+          ],
+          "tint": 4207678975,
+          "layer": 2,
+          "visible": true,
+          "rectangle": null
+        },
+        "physics": {
+          "type": 0,
+          "shape": 0,
+          "halfSize": [
+            0.5,
+            0.5
+          ],
+          "radius": 0.5,
+          "offset": [
+            0,
+            0
+          ],
+          "velocity": [
+            0,
+            0
+          ],
+          "angularVelocity": 0,
+          "gravityScale": 0,
+          "density": 1,
+          "friction": 0,
+          "restitution": 0,
+          "fixedRotation": true,
+          "bullet": false,
+          "sensor": true,
+          "category": 1,
+          "mask": 65535,
+          "group": 0
+        }
+      },
+      {
+        "id": 2,
+        "name": "Signal halo",
+        "parent": 1,
+        "transform": {
+          "position": [
+            0,
+            0
+          ],
+          "scale": [
+            1.6,
+            1.6
+          ],
+          "rotation": 0
+        },
+        "sprite": {
+          "texture": "Textures/white.png",
+          "assetId": "a1bd1243-946e-51cd-b8e0-027be533e3c2",
+          "origin": [
+            0.5,
+            0.5
+          ],
+          "tint": 4207678768,
+          "layer": 1,
+          "visible": true,
+          "rectangle": null
+        }
+      }
+    ]
+  }
+}

@@ -33,6 +33,11 @@ namespace
         try { return Operation(state, engine); }
         catch (const std::exception& exception) { return luaL_error(state, "%s", exception.what()); }
     }
+    int Viewport(lua_State* state, Veris::Engine& engine)
+    {
+        const auto size = engine.GetFrame().getSize();
+        lua_pushinteger(state, size.x); lua_pushinteger(state, size.y); return 2;
+    }
     int Position(lua_State* state, Veris::Engine& engine)
     {
         const auto& transform = engine.ActiveScene().Get(EntityArgument(state, 1)).Transform;
@@ -154,7 +159,7 @@ namespace Veris
 {
     void RegisterGameplayApi(lua_State* state, Engine& engine)
     {
-        const luaL_Reg functions[]{ {"position", Boundary<Position>}, {"set_position", Boundary<SetPosition>}, {"rotation", Boundary<Rotation>}, {"set_rotation", Boundary<SetRotation>},
+        const luaL_Reg functions[]{ {"position", Boundary<Position>}, {"viewport", Boundary<Viewport>}, {"set_position", Boundary<SetPosition>}, {"rotation", Boundary<Rotation>}, {"set_rotation", Boundary<SetRotation>},
             {"velocity", Boundary<Velocity>}, {"set_velocity", Boundary<SetVelocity>}, {"impulse", Boundary<Impulse>}, {"action", Boundary<Action>},
             {"find", Boundary<Find>}, {"create", Boundary<Create>}, {"destroy", Boundary<Destroy>}, {"play_audio", Boundary<PlayAudio>},
             {"pause_audio", Boundary<PauseAudio>}, {"stop_audio", Boundary<StopAudio>}, {"animation", Boundary<Animation>}, {"tint", Boundary<Tint>}, {"camera", Boundary<SetCameraView>}, {"contacts", Boundary<Contacts>}, {"transition", Boundary<Transition>}, {"prefab", Boundary<Prefab>}, {nullptr, nullptr} };

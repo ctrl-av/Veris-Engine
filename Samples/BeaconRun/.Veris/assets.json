@@ -1,0 +1,53 @@
+{
+  "formatVersion": 1,
+  "assets": [
+    {
+      "id": "1c010f71-801e-506f-a03a-368db46115d1",
+      "path": "Audio/signal.wav",
+      "kind": "audio",
+      "sha256": "7d59c19bddb7d94e03ac5d25f786f6bbe923dda10fac82f6ac0fab9155ea98e9"
+    },
+    {
+      "id": "10812cd3-faac-5358-bcb5-418045fcf54a",
+      "path": "Textures/hud.png",
+      "kind": "texture",
+      "sha256": "699b35064e76d0f21dedf0c490dba84401409d6a6fdd4e8df81d81be917324f7"
+    },
+    {
+      "id": "1a34ec92-a7ac-5115-ab67-4f20ccd988bc",
+      "path": "Textures/lose.png",
+      "kind": "texture",
+      "sha256": "bcc539fc26d44c5978d0a751a7ac2052e23e86a5f7b51f6644b4397e7c373457"
+    },
+    {
+      "id": "433254e9-477b-549a-a144-2f42e1d94e95",
+      "path": "Textures/player.png",
+      "kind": "texture",
+      "sha256": "2d78180761454691bd700b2531ff64db07b616379dd981e1293c6e26b83f37d1"
+    },
+    {
+      "id": "44fcb481-f2f8-525e-bcbe-e698502a53c8",
+      "path": "Textures/score.png",
+      "kind": "texture",
+      "sha256": "9d5425179125311fa336a5cd9107e95c66d31f63c491aded8f25569a93c555f5"
+    },
+    {
+      "id": "9998f448-2278-58a2-9d87-b748b55f364e",
+      "path": "Textures/title.png",
+      "kind": "texture",
+      "sha256": "bc4e6c4f34637fd4420e30f074707a63437d0b4d46f923558360a6466932e91c"
+    },
+    {
+      "id": "a1bd1243-946e-51cd-b8e0-027be533e3c2",
+      "path": "Textures/white.png",
+      "kind": "texture",
+      "sha256": "8d6a5297038c59e6e1243a7f7614a6bee5ef2d3525775761dacbfde3f39bd4db"
+    },
+    {
+      "id": "76335749-3be8-5b40-8c62-23a61d2082a8",
+      "path": "Textures/win.png",
+      "kind": "texture",
+      "sha256": "055da4cda55f7b94353ef0d6d53a7920d325149902de981bd9afd48741d7ad2e"
+    }
+  ]
+}

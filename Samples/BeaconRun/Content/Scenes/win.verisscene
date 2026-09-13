@@ -1,0 +1,37 @@
+{
+  "formatVersion": 1,
+  "entities": [
+    {
+      "id": 1,
+      "name": "Victory screen",
+      "parent": 0,
+      "transform": {
+        "position": [
+          480,
+          320
+        ],
+        "scale": [
+          1,
+          1
+        ],
+        "rotation": 0
+      },
+      "sprite": {
+        "texture": "Textures/win.png",
+        "assetId": "76335749-3be8-5b40-8c62-23a61d2082a8",
+        "origin": [
+          480,
+          320
+        ],
+        "tint": 4294967295,
+        "layer": 0,
+        "visible": true,
+        "rectangle": null
+      },
+      "script": {
+        "path": "end.lua",
+        "enabled": true
+      }
+    }
+  ]
+}

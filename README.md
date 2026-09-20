@@ -55,3 +55,4 @@
 - [x] Persisted project settings for game windows, gravity, per-engine master volume, and validated input-action bindings.
 - [x] Transactional Windows game export with a Release executable, validated content/scripts, app-local dependencies, and a SHA-256 file manifest.
 - [x] Complete Beacon Run sample with title/game/result scenes, collectible prefabs, moving hazards, audio, HUD, time limits, restart, and automated game-state checks.
+- [x] Unified Debug/Release validation with native/editor/gameplay suites, exported-game execution, and cross-system business-rule and failure-cleanup regressions.

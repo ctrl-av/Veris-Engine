@@ -27,7 +27,7 @@ namespace VerisEditor.Build
                 StageProject(root, staged, project, runtimeDirectory);
                 ValidateContent(staged, project);
                 WriteManifest(staged, project.ProjectId);
-                Directory.Move(staged, destination);
+                ProjectContent.PublishDirectory(staged, destination);
                 return Path.Combine(destination, "Game.exe");
             }
             finally { if (Directory.Exists(staged)) Directory.Delete(staged, true); }

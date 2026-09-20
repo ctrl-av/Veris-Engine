@@ -40,7 +40,7 @@ namespace VerisEditor.GameProject
             try
             {
                 WriteProject(stagingDirectory, projectName, template);
-                Directory.Move(stagingDirectory, projectDirectory);
+                ProjectContent.PublishDirectory(stagingDirectory, projectDirectory);
                 return Path.Combine(projectDirectory, template.ProjectFile);
             }
             finally

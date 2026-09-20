@@ -5,6 +5,19 @@ namespace VerisEditor
 {
     public static class ProjectContent
     {
+        public static void PublishDirectory(string source, string destination)
+        {
+            for (var attempt = 0; ; attempt++)
+            {
+                try { Directory.Move(source, destination); return; }
+                catch (IOException exception) when (attempt < 4 && (exception.HResult & 65535) is 5 or 32 or 33 &&
+                    Directory.Exists(source) && !Directory.Exists(destination) && !File.Exists(destination))
+                {
+                    Thread.Sleep(50 * (attempt + 1));
+                }
+            }
+        }
+
         public static void CopyFile(string source, string target)
         {
             File.Copy(source, target, true); File.SetAttributes(target, FileAttributes.Normal);

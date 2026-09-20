@@ -20,7 +20,7 @@ Copy-Item -LiteralPath (Join-Path $native 'VerisRuntime.exe') -Destination $runt
 Get-ChildItem -LiteralPath $native -Filter '*.dll' | Copy-Item -Destination $runtime -Force
 Copy-Item -LiteralPath (Join-Path $native 'licenses') -Destination $runtime -Recurse -Force
 $redist = Get-ChildItem -LiteralPath (Join-Path $installation 'VC\Redist\MSVC') -Directory |
-    Where-Object { $_.Name -match '^\d+\.\d+\.\d+$' } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1
+    Where-Object { $runtimeVersion = $null; [Version]::TryParse($_.Name, [ref]$runtimeVersion) } | Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1
 if (!$redist) { throw 'MSVC redistributable files are missing.' }
 $crt = Join-Path $redist.FullName 'x64\Microsoft.VC143.CRT'
 Get-ChildItem -LiteralPath $crt -Filter '*.dll' | Copy-Item -Destination $runtime -Force

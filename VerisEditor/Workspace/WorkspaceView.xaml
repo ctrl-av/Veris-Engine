@@ -39,7 +39,7 @@
         </Grid.RowDefinitions>
         <Border Background="#292D36" Padding="16,6">
             <DockPanel>
-                <Button Content="Export game?" DockPanel.Dock="Right" Click="ExportGame" IsEnabled="{Binding CanEditScene}" />
+                <Button Content="Export game…" DockPanel.Dock="Right" Click="ExportGame" IsEnabled="{Binding CanEditScene}" ToolTip="Export saved scenes and a Release runtime into a new directory outside the project." />
                 <Button Content="Project settings" DockPanel.Dock="Right" Click="OpenSettings" IsEnabled="{Binding CanEditScene}" />
                 <Button x:Name="RefreshWorkspaceButton" DockPanel.Dock="Right" Content="Refresh workspace" Click="RefreshWorkspace" />
                 <Button x:Name="RedoButton" DockPanel.Dock="Right" Content="Redo" Click="Redo" IsEnabled="{Binding CanRedo}" />
@@ -105,7 +105,7 @@
                         </DockPanel>
                     </Border>
                     <StackPanel DockPanel.Dock="Top" Background="#292D36">
-                        <WrapPanel><Button x:Name="PlayButton" Content="Play / Resume" Click="Play" /><Button Content="Pause" Click="Pause" /><Button x:Name="StepPlayButton" Content="Step" Click="StepPlay" /><Button Content="Stop" Click="StopPlay" /><TextBlock Text="{Binding Playback}" Margin="8" /></WrapPanel>
+                        <WrapPanel><Button x:Name="PlayButton" Content="Play / Resume" Click="Play" ToolTip="Run a copy of the current editing scene, including unsaved edits, or resume paused gameplay." /><Button Content="Pause" Click="Pause" /><Button x:Name="StepPlayButton" Content="Step" Click="StepPlay" ToolTip="Advance one 1/60-second tick while paused." /><Button Content="Stop" Click="StopPlay" ToolTip="Discard runtime changes and return to the original editing scene." /><TextBlock Text="{Binding Playback}" Margin="8" /></WrapPanel>
                         <WrapPanel IsEnabled="{Binding CanEditScene}"><TextBlock Text="Starting scene" Margin="4" /><TextBox Text="{Binding StartupSceneInput, UpdateSourceTrigger=PropertyChanged}" Width="180" /><Button Content="Save starting scene" Click="SaveStartingScene" /><Button Content="Play project" Click="PlayStartingScene" /></WrapPanel>
                         <TextBlock Text="{Binding RuntimeDiagnostics}" TextWrapping="Wrap" MaxHeight="65" />
                     </StackPanel>
@@ -113,7 +113,7 @@
                         <TextBox x:Name="ScenePathInput" Text="{Binding ScenePathInput, UpdateSourceTrigger=PropertyChanged}" Width="145" Margin="4" ToolTip="Content-relative .verisscene file" />
                         <Button x:Name="OpenSceneButton" Content="Open" Click="OpenScene" />
                         <Button x:Name="SaveSceneButton" Content="Save" Click="SaveScene" />
-                        <Button Content="Instantiate prefab?" Click="BrowsePrefab" IsEnabled="{Binding CanEditScene}" />
+                        <Button Content="Instantiate prefab…" Click="BrowsePrefab" IsEnabled="{Binding CanEditScene}" />
                         <Button x:Name="NewSceneButton" Content="New" Click="NewScene" />
                     </DockPanel>
                     <DockPanel DockPanel.Dock="Top" Background="#292D36" LastChildFill="False">

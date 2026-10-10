@@ -1,59 +1,43 @@
-- [x] Visual Studio solution with C++ engine, standalone runtime, and C# editor projects.
-- [x] C++ static library with an owned render target and initialization, update, shutdown, and reinitialization.
-- [x] .NET 8 WPF editor shell.
-- [x] Project-browser dialog shown on editor startup.
-- [x] Switching between Open Project and Create Project views.
-- [x] Project-browser UI with working Create, Open, Browse, and recent-project actions.
-- [x] Bindable new-project name and destination path fields.
-- [x] Shared property-change notification base for view models.
-- [x] Validated Empty and Top-Down template loading with application-relative resource discovery.
-- [x] Prototype icons and screenshots for Empty, Top-Down, First-Person, and Third-Person projects.
-- [x] Version 1 scope and release acceptance criteria.
-- [x] Portable repository-local build output paths.
-- [x] Template assets copied beside the built and published editor.
-- [x] Pinned SFML 3.0.1 graphics dependency with checksum-verified setup and native smoke checks.
-- [x] Automated Windows Debug and Release builds with resource checks and build artifacts.
-- [x] Persistent editor logging and visible template and application error reporting.
-- [x] Versioned .veris JSON format with validated identity, paths, and window settings.
-- [x] Template browser with icons, descriptions, previews, selection, and folder browsing.
-- [x] Project location validation for names, destination conflicts, parent paths, and write access.
-- [x] Atomic project creation with template folders, project identity, and failure cleanup.
-- [x] Existing-project opening with document and directory validation.
-- [x] Persisted recent projects with ordering, deduplication, moved-project updates, and missing-file handling.
-- [x] Standalone native executable with configured windows, starting scenes, Lua gameplay, fixed simulation, input actions, and frame presentation.
-- [x] Runtime window resizing, focus handling, fullscreen validation, and presentation suspension.
-- [x] Monotonic frame timing, fixed 60 Hz updates, pause/resume, and bounded catch-up.
-- [x] Keyboard and mouse pressed, held, and released states with movement, wheel, and focus handling.
-- [x] Configurable named input actions with project-local bindings and default controls.
-- [x] Textured sprite submissions with transforms, tint, alpha blending, atlas regions, and stable layer ordering.
-- [x] Active 2D cameras with pan, zoom, rotation, resize handling, and world/pixel coordinate mapping.
-- [x] Scene entities with stable IDs, parent/child transforms, optional sprite components, and recursive deletion.
-- [x] Content-relative texture caching, shared resource ownership, eviction, and transactional reload.
-- [x] C ABI and C# SafeHandle bridge with explicit ownership, UTF-8 diagnostics, entity access, and caller-owned frame copies.
-- [x] Resizable editor workspace with hierarchy, scene summary, project inspector, content navigation, and log output.
-- [x] Live embedded WPF viewport with native frame transfer, DPI-aware resizing, and deterministic rendering cleanup.
-- [x] Editable entity hierarchy with creation, rename, subtree duplication, parenting, cycle rejection, and recursive deletion.
-- [x] Synchronized hierarchy and viewport selection with native picking, layer priority, and entity outlines.
-- [x] Component inspector for validated local transforms and textured sprites, tint, visibility, layers, origins, and atlas rectangles.
-- [x] Viewport move, rotate, and scale tools with grid/angle/scale snapping, parent-aware coordinates, and drag cancellation.
-- [x] Scene undo and redo with stable IDs, subtree/component restoration, grouped drags, and bounded native snapshot ownership.
-- [x] Versioned scene JSON with stable entity/component round trips, transactional loading, atomic saves, and content-relative paths.
-- [x] Save-point dirty tracking and Save/Discard/Cancel protection for scene replacement, project switching, and editor closing.
-- [x] Validated texture importing and reimport with persistent GUIDs, project asset catalogs, content hashes, and stable scene references.
-- [x] Asset browser with search, previews, GUID metadata, folder creation, assignment, move/rename, reimport, and reference-aware deletion.
-- [x] Debounced external asset monitoring with hash reconciliation, missing/corrupt reference diagnostics, last-good texture retention, and recovery without scene edits.
-- [x] Fixed-step sprite atlas animation with frame durations, looping, pause, one-shot completion, inspector previews, serialization, and undo.
-- [x] SFML audio playback with owned buffers, play/pause/resume/stop, volume, looping, automatic start, imported audio GUIDs, and scene/editor integration.
-- [x] Pinned Box2D physics with static/kinematic/dynamic bodies, box/circle colliders, gravity, materials, impulses, fixed stepping, serialization, and undoable editor simulation.
-- [x] Collision begin/stay/end events, nonblocking triggers, category/mask/group filtering, contact geometry, and camera-aligned collider/velocity/normal debugging.
-- [x] Pinned Lua gameplay scripts with isolated entity state, start/update callbacks, resource limits, failure diagnostics, scene persistence, and inspector assignment.
-- [x] Lua gameplay APIs for entities, transforms, configured input actions, physics, contacts, sprite animation/tint, audio, and cameras.
-- [x] Isolated editor play/pause/step/stop sessions with configured viewport input, paused audio, script diagnostics, and editing-state restoration.
-- [x] Validated starting-scene configuration, standalone scene loading, project play sessions, and deferred transactional Lua scene transitions.
-- [x] Reusable prefab subtrees with fresh instance IDs, baked scene content, explicit source reapply, placement preservation, undo/redo, unpacking, and Lua spawning.
-- [x] Playable Top-Down template with copied game content, animated movement, collision, camera following, and a goal trigger.
-- [x] Persisted project settings for game windows, gravity, per-engine master volume, and validated input-action bindings.
-- [x] Transactional Windows game export with a Release executable, validated content/scripts, app-local dependencies, and a SHA-256 file manifest.
-- [x] Complete Beacon Run sample with title/game/result scenes, collectible prefabs, moving hazards, audio, HUD, time limits, restart, and automated game-state checks.
-- [x] Unified Debug/Release validation with native/editor/gameplay suites, exported-game execution, and cross-system business-rule and failure-cleanup regressions.
-- [x] Release performance budgets and repeatable sample-frame/lifecycle profiling.
+Veris is a 64-bit Windows 2D game engine built using C++ and C#. It uses SFML and the MSBuild build system. I am a lifelong gamer, and I built this to see if I could create my own game engine.
+
+## Prerequisites
+
+- Windows 10 or Windows 11, x64
+- Visual Studio 2022 with the C++ and .NET desktop workloads
+- MSVC v143 and a Windows SDK
+- .NET 8 SDK
+
+Note: Run the commands from a Visual Studio Developer PowerShell in the repository root.
+
+## Building
+
+The build process is managed by `Veris.sln` and the PowerShell scripts in `scripts/`.
+
+### Build and Run
+
+```powershell
+powershell -File scripts/InitializeDependencies.ps1                  # Set up native dependencies
+msbuild Veris.sln /restore /p:Configuration=Release /p:Platform=x64   # Build the engine and editor
+./artifacts/bin/VerisEditor/Release/net8.0-windows/VerisEditor.exe    # Run the editor
+msbuild Veris.sln /t:Clean /p:Configuration=Release /p:Platform=x64   # Clean Release build outputs
+```
+
+### Publishing
+
+```powershell
+powershell -File scripts/PublishEditor.ps1 -Configuration Release -OutputDirectory artifacts/publish/editor
+./artifacts/publish/editor/VerisEditor.exe
+```
+
+Choose **Export game...** in the published editor to create a standalone Windows game.
+
+## References
+
+- SFML 3.0.1
+- Box2D 2.4.1
+- Lua 5.4.8
+- Windows Presentation Foundation (WPF)
+
+## License
+
+No project license has been specified yet.

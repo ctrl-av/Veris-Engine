@@ -30,6 +30,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Manifest Include="..\Windows.manifest" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClInclude Include="InputConfiguration.h" />

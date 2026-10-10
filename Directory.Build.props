@@ -3,6 +3,7 @@
     <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts\bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);**/bin/**;**/obj/**</DefaultItemExcludes>
+    <ApplicationManifest Condition="'$(MSBuildProjectExtension)' == '.csproj'">$(MSBuildThisFileDirectory)Windows.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
     <OutDir>$(BaseOutputPath)$(Platform)\$(Configuration)\</OutDir>

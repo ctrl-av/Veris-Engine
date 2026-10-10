@@ -32,7 +32,10 @@ jobs:
       - name: Initialize native dependency
         run: ./scripts/InitializeDependencies.ps1
       - name: Build and validate complete project
-        run: ./scripts/VerifyProject.ps1 -Configuration ${{ matrix.configuration }}
+        run: |
+          $verification = Join-Path (Get-Location).Path 'scripts/VerifyProject.ps1'
+          Set-Location $env:RUNNER_TEMP
+          & $verification -Configuration ${{ matrix.configuration }}
       - name: Upload build outputs
         uses: actions/upload-artifact@v4
         with:

@@ -43,3 +43,11 @@ foreach ($nativeFile in $nativeFiles) {
     }
 }
 Write-Output "PASS: $Configuration interop, four SFML DLLs, and four dependency licenses match their build sources."
+foreach ($name in @('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')) {
+    $editorCrt = Join-Path $EditorDirectory $name
+    $runtimeCrt = Join-Path $EditorDirectory "Runtime\$name"
+    if (!(Test-Path -LiteralPath $editorCrt) -or !(Test-Path -LiteralPath $runtimeCrt) -or (Get-FileHash -LiteralPath $editorCrt).Hash -ne (Get-FileHash -LiteralPath $runtimeCrt).Hash) {
+        throw "Missing or mismatched app-local MSVC runtime: $name"
+    }
+}
+Write-Output 'PASS: Editor and game runtime contain matching app-local MSVC dependencies.'

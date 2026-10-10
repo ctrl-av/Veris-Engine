@@ -10,9 +10,9 @@ if (!$installation) { throw 'Visual Studio C++ tools are required to package the
 $msbuild = Join-Path $installation 'MSBuild\Current\Bin\MSBuild.exe'
 & $msbuild (Join-Path $repository 'Runtime\VerisRuntime.vcxproj') /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
 if ($LASTEXITCODE -ne 0) { throw 'Release runtime build failed.' }
-dotnet publish (Join-Path $repository 'VerisEditor\VerisEditor.csproj') --configuration $Configuration --output $OutputDirectory --verbosity quiet
+$output = [IO.Path]::GetFullPath([IO.Path]::Combine((Get-Location).Path, $OutputDirectory))
+dotnet publish (Join-Path $repository 'VerisEditor\VerisEditor.csproj') --configuration $Configuration --output $output --verbosity quiet
 if ($LASTEXITCODE -ne 0) { throw 'Editor publication failed.' }
-$output = [IO.Path]::GetFullPath($OutputDirectory)
 $runtime = Join-Path $output 'Runtime'
 New-Item -ItemType Directory -Path $runtime -Force | Out-Null
 $native = Join-Path $repository 'artifacts\bin\VerisRuntime\x64\Release'
@@ -24,6 +24,7 @@ $redist = Get-ChildItem -LiteralPath (Join-Path $installation 'VC\Redist\MSVC') 
 if (!$redist) { throw 'MSVC redistributable files are missing.' }
 $crt = Join-Path $redist.FullName 'x64\Microsoft.VC143.CRT'
 Get-ChildItem -LiteralPath $crt -Filter '*.dll' | Copy-Item -Destination $runtime -Force
+Get-ChildItem -LiteralPath $crt -Filter '*.dll' | Copy-Item -Destination $output -Force
 foreach ($required in @('VerisRuntime.exe', 'sfml-graphics-3.dll', 'sfml-audio-3.dll', 'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')) {
     if (!(Test-Path -LiteralPath (Join-Path $runtime $required))) { throw "Runtime package is incomplete: $required" }
 }

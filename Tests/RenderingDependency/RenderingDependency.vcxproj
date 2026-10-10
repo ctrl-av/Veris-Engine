@@ -33,6 +33,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Manifest Include="..\..\Windows.manifest" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScriptChecks.cpp" />
     <ClCompile Include="GameplayChecks.cpp" />

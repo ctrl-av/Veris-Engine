@@ -19,6 +19,25 @@ void VerifyGraphicsDependency()
         "SFML graphics dependency check failed.");
 }
 
+void VerifyViewportRendering()
+{
+    const sf::Context context;
+    const auto maximum = sf::Texture::getMaximumSize();
+    const auto& settings = context.getSettings();
+    std::cout << "Graphics: OpenGL " << settings.majorVersion << '.' << settings.minorVersion
+        << ", maximum texture dimension " << maximum << '\n';
+    Require(maximum >= 2048, "Graphics checks require texture dimensions of at least 2048. Install a capable OpenGL driver; Windows CI must initialize Mesa before validation.");
+    sf::RenderTexture viewport({1280, 720});
+    viewport.clear(sf::Color::Black);
+    sf::RectangleShape corner({1.f, 1.f});
+    corner.setPosition({1279.f, 719.f});
+    corner.setFillColor(sf::Color::Red);
+    viewport.draw(corner);
+    viewport.display();
+    Require(viewport.getTexture().copyToImage().getPixel({1279, 719}) == sf::Color::Red,
+        "The template viewport must render pixels beyond the legacy 1024-pixel texture limit.");
+}
+
 void VerifyEngineLifecycle()
 {
     Veris::Engine engine;
@@ -45,6 +64,7 @@ int wmain(int, wchar_t* arguments[])
 {
     try
     {
+        VerifyViewportRendering();
         VerifyScripts(std::filesystem::absolute(arguments[0]).parent_path() / "Script fixtures");
         VerifyGameplayApi(std::filesystem::absolute(arguments[0]).parent_path() / "Gameplay fixtures");
         VerifySceneLoading(std::filesystem::absolute(arguments[0]).parent_path() / "Scene loading fixtures");

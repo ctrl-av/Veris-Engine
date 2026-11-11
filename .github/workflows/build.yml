@@ -33,13 +33,25 @@ jobs:
           version: '26.0.3'
           build-type: release-msvc
           deployment-choice: '1'
-      - name: Cache verified native dependency
-        uses: actions/cache@v4
+      - name: Check dependency download recovery
+        run: ./Tests/DependencyDownloads.ps1
+      - name: Restore verified native dependencies
+        id: native-dependencies
+        uses: actions/cache/restore@v4
         with:
           path: .dependencies
-          key: sfml-windows-x64-${{ hashFiles('scripts/InitializeDependencies.ps1') }}
+          key: native-windows-x64-${{ hashFiles('scripts/InitializeDependencies.ps1', 'scripts/DependencyDownloads.ps1') }}
+          restore-keys: |
+            native-windows-x64-
+            sfml-windows-x64-
       - name: Initialize native dependency
         run: ./scripts/InitializeDependencies.ps1
+      - name: Save verified native dependencies
+        if: steps.native-dependencies.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .dependencies
+          key: ${{ steps.native-dependencies.outputs.cache-primary-key }}
       - name: Build and validate complete project
         run: |
           $verification = Join-Path (Get-Location).Path 'scripts/VerifyProject.ps1'

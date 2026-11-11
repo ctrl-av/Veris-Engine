@@ -1,17 +1,12 @@
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'DependencyDownloads.ps1')
 $dependencyDirectory = Join-Path $PSScriptRoot '..\.dependencies'
 $archivePath = Join-Path $dependencyDirectory 'SFML-3.0.1-windows-vc17-64-bit.zip'
 $expectedHash = '2DA4B95BAB898686E06C6DD7F2333BCAAD572CB70DEB96C41D52321DF90AF48B'
 
 try {
     New-Item -ItemType Directory -Path $dependencyDirectory -Force | Out-Null
-    if (!(Test-Path -LiteralPath $archivePath)) {
-        Invoke-WebRequest -Uri 'https://www.sfml-dev.org/files/SFML-3.0.1-windows-vc17-64-bit.zip' -OutFile $archivePath
-    }
-
-    if ((Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash -ne $expectedHash) {
-        throw "SFML archive checksum mismatch. Remove '$archivePath' and run setup again."
-    }
+    Get-VerifiedDependencyFile -Sources 'https://www.sfml-dev.org/files/SFML-3.0.1-windows-vc17-64-bit.zip' -Destination $archivePath -Sha256 $expectedHash
 
     $graphicsHeader = Join-Path $dependencyDirectory 'SFML-3.0.1\include\SFML\Graphics.hpp'
     $graphicsLibrary = Join-Path $dependencyDirectory 'SFML-3.0.1\lib\sfml-graphics.lib'
@@ -28,26 +23,18 @@ try {
     foreach ($jsonFile in $jsonFiles) {
         $destination = Join-Path $jsonDirectory $jsonFile.Path
         New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
-        if (!(Test-Path -LiteralPath $destination)) { Invoke-WebRequest -Uri $jsonFile.Url -OutFile $destination }
-        if ((Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash -ne $jsonFile.Hash) {
-            throw "JSON dependency checksum mismatch: $destination. Remove this file and run setup again."
-        }
+        Get-VerifiedDependencyFile -Sources $jsonFile.Url -Destination $destination -Sha256 $jsonFile.Hash
     }
     Write-Output 'nlohmann/json 3.12.0 is ready.'
     $physicsArchive = Join-Path $dependencyDirectory 'box2d-2.4.1.zip'
-    if (!(Test-Path -LiteralPath $physicsArchive)) {
-        Invoke-WebRequest -Uri 'https://codeload.github.com/erincatto/box2d/zip/refs/tags/v2.4.1' -OutFile $physicsArchive
-    }
-    if ((Get-FileHash -LiteralPath $physicsArchive -Algorithm SHA256).Hash -ne '0CB512DFA5BE79CA227CD881B279ADEE61249C85C8B51CAF5AA036B71E943002') {
-        throw 'Box2D archive checksum mismatch.'
-    }
+    Get-VerifiedDependencyFile -Sources 'https://codeload.github.com/erincatto/box2d/zip/refs/tags/v2.4.1' -Destination $physicsArchive -Sha256 '0CB512DFA5BE79CA227CD881B279ADEE61249C85C8B51CAF5AA036B71E943002'
     if (!(Test-Path -LiteralPath (Join-Path $dependencyDirectory 'box2d-2.4.1\src\dynamics\b2_world.cpp'))) {
         Expand-Archive -LiteralPath $physicsArchive -DestinationPath $dependencyDirectory -Force
     }
     Write-Output 'Box2D 2.4.1 is ready.'
     $luaArchive = Join-Path $dependencyDirectory 'lua-5.4.8.tar.gz'
-    if (!(Test-Path -LiteralPath $luaArchive)) { Invoke-WebRequest -Uri 'https://www.lua.org/ftp/lua-5.4.8.tar.gz' -OutFile $luaArchive }
-    if ((Get-FileHash -LiteralPath $luaArchive -Algorithm SHA256).Hash -ne '4F18DDAE154E793E46EEAB727C59EF1C0C0C2B744E7B94219710D76F530629AE') { throw 'Lua archive checksum mismatch.' }
+    $luaSources = @('https://www.lua.org/ftp/lua-5.4.8.tar.gz', 'https://distfiles.macports.org/lua/lua-5.4.8.tar.gz')
+    Get-VerifiedDependencyFile -Sources $luaSources -Destination $luaArchive -Sha256 '4F18DDAE154E793E46EEAB727C59EF1C0C0C2B744E7B94219710D76F530629AE'
     if (!(Test-Path -LiteralPath (Join-Path $dependencyDirectory 'lua-5.4.8\src\lua.h'))) {
         tar -xzf $luaArchive -C $dependencyDirectory
         if ($LASTEXITCODE -ne 0) { throw 'Lua extraction failed.' }
